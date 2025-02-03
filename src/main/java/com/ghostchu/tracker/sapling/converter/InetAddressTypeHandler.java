@@ -1,0 +1,44 @@
+package com.ghostchu.tracker.sapling.converter;
+
+import org.apache.ibatis.type.BaseTypeHandler;
+import org.apache.ibatis.type.JdbcType;
+import org.postgresql.util.PGobject;
+import java.net.InetAddress;
+import java.sql.*;
+
+public class InetAddressTypeHandler extends BaseTypeHandler<InetAddress> {
+
+    @Override
+    public void setNonNullParameter(PreparedStatement ps, int i, InetAddress parameter, JdbcType jdbcType) throws SQLException {
+        PGobject pgObject = new PGobject();
+        pgObject.setType("inet");
+        pgObject.setValue(parameter.getHostAddress());
+        ps.setObject(i, pgObject);
+    }
+
+    @Override
+    public InetAddress getNullableResult(ResultSet rs, String columnName) throws SQLException {
+        String inetString = rs.getString(columnName);
+        return parseInetAddress(inetString);
+    }
+
+    @Override
+    public InetAddress getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
+        String inetString = rs.getString(columnIndex);
+        return parseInetAddress(inetString);
+    }
+
+    @Override
+    public InetAddress getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
+        String inetString = cs.getString(columnIndex);
+        return parseInetAddress(inetString);
+    }
+
+    private InetAddress parseInetAddress(String inetString) {
+        try {
+            return InetAddress.getByName(inetString);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid inet address: " + inetString, e);
+        }
+    }
+}

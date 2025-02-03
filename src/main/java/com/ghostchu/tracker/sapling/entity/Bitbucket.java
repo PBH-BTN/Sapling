@@ -1,0 +1,87 @@
+package com.ghostchu.tracker.sapling.entity;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Map;
+
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.ghostchu.tracker.sapling.converter.JsonbTypeHandler;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+/**
+ * <p>
+ * 
+ * </p>
+ *
+ * @author Ghost_chu
+ * @since 2025-02-04
+ */
+@Getter
+@Setter
+@ToString
+public class Bitbucket implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 文件上传ID
+     */
+    private Long id;
+
+    /**
+     * 文件显示名称
+     */
+    private String displayName;
+
+    /**
+     * 文件存储位置
+     */
+    private String filePath;
+
+    /**
+     * 路由处理程序
+     */
+    private String handler;
+
+    /**
+     * 文件所属人
+     */
+    private Long owner;
+
+    /**
+     * 文件上传时间
+     */
+    private LocalDateTime createdAt;
+
+    /**
+     * 文件最后访问时间
+     */
+    private LocalDateTime lastAccessAt;
+
+    /**
+     * 删除时间，NULL 为未删除
+     */
+    private LocalDateTime deletedAt;
+
+    /**
+     * 删除操作者
+     */
+    private Long deletedBy;
+
+    /**
+     * 允许外部直接访问（通过浏览器）
+     */
+    private Boolean directAccess;
+
+    /**
+     * 文件大小
+     */
+    private Long fileSize;
+
+    /**
+     * 扩展信息
+     */
+    @TableField(typeHandler = JsonbTypeHandler.class)
+    private Map<String, Object> extra;
+}
