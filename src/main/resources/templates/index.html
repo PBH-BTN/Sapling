@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/import :: import(title='用户登录')}"></head>
+<body>
+<header th:replace="~{fragments/header :: header(user=${user})}">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/}">
+                <i class="fas fa-seedling mr-2"></i>Sapling
+            </a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/register}">注册</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<main>
+
+</main>
+
+<!-- 使用通用 Footer -->
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>
