@@ -2,6 +2,8 @@ package com.ghostchu.tracker.sapling.entity;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -48,12 +50,12 @@ public class Reports implements Serializable {
     /**
      * 报告创建时间
      */
-    private LocalDateTime reportedAt;
+    private OffsetDateTime reportedAt;
 
     /**
      * 报告解决时间
      */
-    private LocalDateTime resolvedAt;
+    private OffsetDateTime resolvedAt;
 
     /**
      * 报告处理用户ID

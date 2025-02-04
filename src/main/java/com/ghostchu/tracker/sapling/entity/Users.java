@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Map;
 
 import com.ghostchu.tracker.sapling.converter.InetAddressTypeHandler;
@@ -52,17 +53,17 @@ public class Users implements Serializable {
     /**
      * 用户注册时间
      */
-    private LocalDateTime registerAt;
+    private OffsetDateTime registerAt;
 
     /**
      * 用户上次登录时间
      */
-    private LocalDateTime lastLoginAt;
+    private OffsetDateTime lastLoginAt;
 
     /**
      * 用户上次访问时间
      */
-    private LocalDateTime lastAccessAt;
+    private OffsetDateTime lastAccessAt;
 
     /**
      * 注册 IP 地址
@@ -100,7 +101,7 @@ public class Users implements Serializable {
     /**
      * 所属权限组 ID
      */
-    private Long permissionGroup;
+    private Long primaryPermissionGroup;
 
     /**
      * BT 上传量
@@ -177,4 +178,16 @@ public class Users implements Serializable {
      */
     @TableField(typeHandler = JsonbTypeHandler.class)
     private Map<String, Object> extra;
+    /**
+     * 是否为系统账户
+     */
+    private Boolean systemAccount;
+    /**
+     * 是否允许登录会话
+     */
+    private Boolean allowLogin;
+    /**
+     * 晋级权限组
+     */
+    private Long levelPermissionGroup;
 }

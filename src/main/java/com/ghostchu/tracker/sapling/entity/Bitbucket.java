@@ -2,6 +2,7 @@ package com.ghostchu.tracker.sapling.entity;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Map;
 
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -52,17 +53,17 @@ public class Bitbucket implements Serializable {
     /**
      * 文件上传时间
      */
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 
     /**
      * 文件最后访问时间
      */
-    private LocalDateTime lastAccessAt;
+    private OffsetDateTime lastAccessAt;
 
     /**
      * 删除时间，NULL 为未删除
      */
-    private LocalDateTime deletedAt;
+    private OffsetDateTime deletedAt;
 
     /**
      * 删除操作者

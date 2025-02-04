@@ -2,6 +2,8 @@ package com.ghostchu.tracker.sapling.entity;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -48,17 +50,17 @@ public class Inboxes implements Serializable {
     /**
      * 发件时间
      */
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 
     /**
      * 阅读时间，NULL 为未读
      */
-    private LocalDateTime readedAt;
+    private OffsetDateTime readedAt;
 
     /**
      * 删除时间，NULL 为未删除
      */
-    private LocalDateTime deletedAt;
+    private OffsetDateTime deletedAt;
 
     /**
      * 标记为保存，不会自动删除

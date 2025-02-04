@@ -2,6 +2,8 @@ package com.ghostchu.tracker.sapling.entity;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -28,11 +30,11 @@ public class Comments implements Serializable {
 
     private Long parentComment;
 
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 
-    private LocalDateTime editedAt;
+    private OffsetDateTime editedAt;
 
-    private LocalDateTime deletedAt;
+    private OffsetDateTime deletedAt;
 
     private Long deletedBy;
 }

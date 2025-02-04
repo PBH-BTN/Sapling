@@ -3,6 +3,8 @@ package com.ghostchu.tracker.sapling.entity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -35,5 +37,5 @@ public class TorrentReviewQueue implements Serializable {
     /**
      * 种子提交时间
      */
-    private LocalDateTime submitAt;
+    private OffsetDateTime submitAt;
 }

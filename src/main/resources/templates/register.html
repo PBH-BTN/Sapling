@@ -28,7 +28,7 @@
                     <h4 class="mb-0"><i class="fas fa-user-plus mr-2"></i>创建新账户</h4>
                 </div>
                 <div class="card-body">
-                    <form th:action="@{/register}" method="post" th:object="${registerForm}">
+                    <form th:action="@{/auth/register}" method="post" th:object="${registerForm}">
                         <!-- 用户名 -->
                         <div class="form-group">
                             <label for="username">用户名</label>

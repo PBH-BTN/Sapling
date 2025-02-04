@@ -3,6 +3,8 @@ package com.ghostchu.tracker.sapling.entity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -40,12 +42,12 @@ public class UserBanLogs implements Serializable {
     /**
      * 封禁操作时间
      */
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 
     /**
      * 封禁结束时间
      */
-    private LocalDateTime endedAt;
+    private OffsetDateTime endedAt;
 
     /**
      * 封禁原因描述

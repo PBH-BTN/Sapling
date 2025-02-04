@@ -2,6 +2,7 @@ package com.ghostchu.tracker.sapling.entity;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Map;
 
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -92,7 +93,7 @@ public class Torrents implements Serializable {
     /**
      * 种子创建时间
      */
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 
     /**
      * 删除时间，NULL 为未删除

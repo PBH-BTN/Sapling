@@ -29,7 +29,7 @@
                     <h4 class="mb-0"><i class="fas fa-sign-in-alt mr-2"></i>用户登录</h4>
                 </div>
                 <div class="card-body">
-                    <form th:action="@{/login}" method="post">
+                    <form th:action="@{/auth/login}" method="post">
                         <!-- 错误提示 -->
                         <div th:if="${param.error}" class="alert alert-danger">
                             用户名或密码错误
@@ -67,22 +67,6 @@
                             <i class="fas fa-sign-in-alt mr-2"></i>登录
                         </button>
                     </form>
-
-                    <!-- 第三方登录 -->
-                    <div class="mt-4 text-center">
-                        <p class="text-muted">或使用以下方式登录</p>
-                        <div class="btn-group">
-                            <a href="#" class="btn btn-outline-secondary">
-                                <i class="fab fa-google"></i>
-                            </a>
-                            <a href="#" class="btn btn-outline-secondary">
-                                <i class="fab fa-github"></i>
-                            </a>
-                            <a href="#" class="btn btn-outline-secondary">
-                                <i class="fab fa-discord"></i>
-                            </a>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

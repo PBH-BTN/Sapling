@@ -2,6 +2,8 @@ package com.ghostchu.tracker.sapling.entity;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -43,15 +45,15 @@ public class News implements Serializable {
     /**
      * 公告创建时间
      */
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 
     /**
      * 公告到期时间
      */
-    private LocalDateTime expiredAt;
+    private OffsetDateTime expiredAt;
 
     /**
      * 公告删除时间
      */
-    private LocalDateTime deletedAt;
+    private OffsetDateTime deletedAt;
 }
