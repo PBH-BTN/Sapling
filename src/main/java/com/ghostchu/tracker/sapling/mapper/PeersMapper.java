@@ -13,7 +13,7 @@ import com.ghostchu.tracker.sapling.entity.Peers;
  * @author Ghost_chu
  * @since 2025-02-04
  */
-public interface PeersMapper extends BaseMapper<Peers> {
+public interface PeersMapper extends SaplingMapper<Peers> {
 
 }
 

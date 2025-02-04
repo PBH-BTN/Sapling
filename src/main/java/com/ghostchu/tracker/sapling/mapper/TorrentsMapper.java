@@ -1,5 +1,6 @@
 package com.ghostchu.tracker.sapling.mapper;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ghostchu.tracker.sapling.entity.Torrents;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
@@ -12,7 +13,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author Ghost_chu
  * @since 2025-02-04
  */
-public interface TorrentsMapper extends BaseMapper<Torrents> {
+public interface TorrentsMapper extends SaplingMapper<Torrents> {
 
 }
 

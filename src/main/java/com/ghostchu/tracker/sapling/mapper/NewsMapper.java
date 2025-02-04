@@ -12,7 +12,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author Ghost_chu
  * @since 2025-02-04
  */
-public interface NewsMapper extends BaseMapper<News> {
+public interface NewsMapper extends SaplingMapper<News> {
 
 }
 

@@ -12,7 +12,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author Ghost_chu
  * @since 2025-02-04
  */
-public interface ThanksMapper extends BaseMapper<Thanks> {
+public interface ThanksMapper extends SaplingMapper<Thanks> {
 
 }
 

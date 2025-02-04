@@ -1,0 +1,165 @@
+<!-- src/main/resources/templates/torrents/list.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/import :: import(title='种子列表')}">
+    <!-- 页面特定样式 -->
+    <style>
+        .torrent-card:hover {
+            transform: translateY(-3px);
+            transition: transform 0.2s ease;
+        }
+        .seed-leech-badge {
+            min-width: 80px;
+        }
+    </style>
+</head>
+<body>
+<!-- 插入 Header -->
+<div th:replace="~{fragments/header :: header(${user})}"></div>
+
+<main class="container my-4">
+    <!-- 面包屑导航 -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-light">
+            <li class="breadcrumb-item"><a th:href="@{/}">首页</a></li>
+            <li class="breadcrumb-item active">种子列表</li>
+        </ol>
+    </nav>
+
+    <!-- 搜索栏 -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <form th:action="@{/torrents}" method="get">
+                <div class="input-group">
+                    <input type="search" name="keyword" class="form-control"
+                           placeholder="搜索种子..." aria-label="搜索">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 排序筛选栏 -->
+    <div class="d-flex justify-content-between mb-3">
+        <div class="btn-group">
+            <button type="button" class="btn btn-outline-secondary dropdown-toggle"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                排序方式
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="#">最新上传</a>
+                <a class="dropdown-item" href="#">最多下载</a>
+                <a class="dropdown-item" href="#">文件大小</a>
+            </div>
+        </div>
+        <span class="text-muted">
+                共 <span th:text="${pagination.total}"></span> 个种子
+            </span>
+    </div>
+
+    <!-- 种子列表 -->
+    <div class="row">
+        <div th:each="torrent : ${torrents}" class="col-md-12 mb-3">
+            <div class="card torrent-card shadow-sm h-100">
+                <div class="card-body d-flex">
+                    <!-- 种子封面 -->
+                    <div class="flex-shrink-0 mr-3">
+                        <img src="/images/torrent-cover.png"
+                             class="img-fluid rounded"
+                             style="width: 120px"
+                             alt="种子封面">
+                    </div>
+
+                    <!-- 种子信息 -->
+                    <div class="flex-grow-1">
+                        <h5 class="card-title">
+                            <a th:href="@{/torrents/{id}(id=${torrent.id})}"
+                               th:text="${torrent.title}"></a>
+                            <small class="text-muted ml-2"
+                                   th:text="'[' + ${torrent.category?.name} + ']'"></small>
+                        </h5>
+
+                        <div class="mb-2">
+                            <span class="badge badge-info" th:text="${torrent.status.value}"></span>
+                            <span th:each="tag : ${torrent.tags}"
+                                  class="badge mr-1"
+                                  th:style="'background-color:' + ${tag.color}"
+                                  th:text="${tag.name}"></span>
+                        </div>
+
+                        <p class="card-text text-muted small"
+                           th:text="${torrent.description?.length() > 100 ?
+                                        torrent.description?.substring(0,100) + '...' :
+                                        torrent.description}">
+                        </p>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="text-muted small">
+                                    <span class="mr-3">
+                                        <i class="fas fa-upload"></i>
+                                        <span th:text="${#dates.format(torrent.createdAt, 'yyyy-MM-dd')}"></span>
+                                    </span>
+                                <span class="mr-3">
+                                        <i class="fas fa-user"></i>
+                                        <span th:text="${torrent.uploader.username}"></span>
+                                    </span>
+                                <span class="mr-3">
+                                        <i class="fas fa-database"></i>
+                                        <span th:text="${#numbers.formatDecimal(torrent.size, 1, 'COMMA', 2, 'B')}"></span>
+                                    </span>
+                            </div>
+
+                            <div class="btn-group">
+                                    <span class="badge badge-success seed-leech-badge">
+                                        <i class="fas fa-arrow-up"></i>
+                                        <span th:text="${torrent.seeders}"></span>
+                                    </span>
+                                <span class="badge badge-danger seed-leech-badge">
+                                        <i class="fas fa-arrow-down"></i>
+                                        <span th:text="${torrent.leechers}"></span>
+                                    </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 分页控件 -->
+    <nav th:if="${pagination.pages > 1}" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <!-- 上一页 -->
+            <li class="page-item" th:classappend="${pagination.current == 1} ? 'disabled'">
+                <a class="page-link" th:href="@{/torrents(page=${pagination.current - 1}, size=${pagination.size})}">
+                    <i class="fas fa-angle-left"></i>
+                </a>
+            </li>
+
+            <!-- 页码 -->
+            <li th:each="pageNum : ${#numbers.sequence(1, pagination.pages)}"
+                class="page-item"
+                th:classappend="${pageNum == pagination.current} ? 'active'">
+                <a class="page-link"
+                   th:href="@{/torrents(page=${pageNum}, size=${pagination.size})}"
+                   th:text="${pageNum}"></a>
+            </li>
+
+            <!-- 下一页 -->
+            <li class="page-item" th:classappend="${pagination.current == pagination.pages} ? 'disabled'">
+                <a class="page-link" th:href="@{/torrents(page=${pagination.current + 1}, size=${pagination.size})}">
+                    <i class="fas fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</main>
+
+<!-- 插入 Footer -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

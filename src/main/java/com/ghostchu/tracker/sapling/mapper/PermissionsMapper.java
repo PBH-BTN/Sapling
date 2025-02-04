@@ -12,7 +12,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author Ghost_chu
  * @since 2025-02-04
  */
-public interface PermissionsMapper extends BaseMapper<Permissions> {
+public interface PermissionsMapper extends SaplingMapper<Permissions> {
 
 }
 

@@ -1,5 +1,6 @@
 package com.ghostchu.tracker.sapling.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ghostchu.tracker.sapling.entity.Torrents;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -12,5 +13,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2025-02-04
  */
 public interface ITorrentsService extends IService<Torrents> {
+
+    IPage<Torrents> getTorrentsByPage(long page, int size);
 
 }

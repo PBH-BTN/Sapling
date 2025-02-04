@@ -12,7 +12,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author Ghost_chu
  * @since 2025-02-04
  */
-public interface CategoriesMapper extends BaseMapper<Categories> {
+public interface CategoriesMapper extends SaplingMapper<Categories> {
 
 }
 
