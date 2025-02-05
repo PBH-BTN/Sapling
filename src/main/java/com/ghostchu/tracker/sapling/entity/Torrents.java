@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.ghostchu.tracker.sapling.converter.JsonbTypeHandler;
+import com.ghostchu.tracker.sapling.util.TorrentParser;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -112,6 +113,12 @@ public class Torrents implements Serializable {
      * 是否公众可见；非公众可见也对 Tracker 不可见
      */
     private boolean visible;
+
+    /**
+     * 扩展信息
+     */
+    @TableField(typeHandler = JsonbTypeHandler.class)
+    private TorrentParser.TorrentInfo info;
 
     /**
      * 扩展信息

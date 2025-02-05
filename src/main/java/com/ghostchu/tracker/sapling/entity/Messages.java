@@ -20,7 +20,7 @@ import java.time.OffsetDateTime;
 @Getter
 @Setter
 @ToString
-public class Inboxes implements Serializable {
+public class Messages implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -58,7 +58,7 @@ public class Inboxes implements Serializable {
     /**
      * 阅读时间，NULL 为未读
      */
-    private OffsetDateTime readedAt;
+    private OffsetDateTime readAt;
 
     /**
      * 删除时间，NULL 为未删除

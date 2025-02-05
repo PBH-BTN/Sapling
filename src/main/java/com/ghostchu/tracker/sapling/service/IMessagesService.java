@@ -1,6 +1,6 @@
 package com.ghostchu.tracker.sapling.service;
 
-import com.ghostchu.tracker.sapling.entity.Inboxes;
+import com.ghostchu.tracker.sapling.entity.Messages;
 import com.github.yulichang.base.MPJBaseService;
 
 /**
@@ -11,6 +11,6 @@ import com.github.yulichang.base.MPJBaseService;
  * @author Ghost_chu
  * @since 2025-02-04
  */
-public interface IInboxesService extends MPJBaseService<Inboxes> {
+public interface IMessagesService extends MPJBaseService<Messages> {
 
 }

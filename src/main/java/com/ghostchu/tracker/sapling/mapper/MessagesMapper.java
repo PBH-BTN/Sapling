@@ -1,6 +1,6 @@
 package com.ghostchu.tracker.sapling.mapper;
 
-import com.ghostchu.tracker.sapling.entity.Inboxes;
+import com.ghostchu.tracker.sapling.entity.Messages;
 
 
 /**
@@ -11,7 +11,7 @@ import com.ghostchu.tracker.sapling.entity.Inboxes;
  * @author Ghost_chu
  * @since 2025-02-04
  */
-public interface InboxesMapper extends SaplingMapper<Inboxes> {
+public interface MessagesMapper extends SaplingMapper<Messages> {
 
 }
 

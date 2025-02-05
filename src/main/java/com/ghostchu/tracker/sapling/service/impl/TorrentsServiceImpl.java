@@ -151,6 +151,7 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
         torrents.setNumFiles(torrentInfo.files());
         torrents.setCreatedAt(OffsetDateTime.now());
         torrents.setVisible(true); // 默认不审核
+        torrents.setInfo(torrentInfo);
         this.save(torrents);
         return torrents;
     }

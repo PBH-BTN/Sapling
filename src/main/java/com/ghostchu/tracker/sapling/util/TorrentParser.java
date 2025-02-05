@@ -53,7 +53,8 @@ public class TorrentParser {
                 isPrivate(info),
                 (String) info.get("publisher"),
                 (String) torrentMap.get("comment"),
-                v2Found,
+                v2Found ? 2 : 1,
+                v1Found && v2Found,
                 v1Found ? infohash.toString() : null,
                 v2Found ? infohash2.toString() : null,
                 v1Found ? infohash.asBytes() : null,
@@ -224,7 +225,8 @@ public class TorrentParser {
 
     // 数据结构定义
     public record TorrentInfo(List<String> trackers, String createdBy, OffsetDateTime creationDate, String encoding,
-                              TorrentNode fileTree, boolean isPrivate, String publisher, String comment, boolean btv2,
+                              TorrentNode fileTree, boolean isPrivate, String publisher, String comment,
+                              int metaVersion, boolean hybrid,
                               String infoHashV1, String infoHashV2, byte[] infoHashV1Bytes, byte[] infoHashV2Bytes,
                               long totalSize,
                               long files) {
