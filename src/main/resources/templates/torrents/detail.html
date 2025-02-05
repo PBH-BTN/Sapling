@@ -131,6 +131,70 @@
                 <!--                </div>-->
             </div>
 
+            <!-- 在种子详情页添加以下代码 -->
+            <div class="mb-4" id="thanksContent">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- 标题和总数 -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-heart text-danger"></i>
+                                感谢此种子
+                                <small class="text-muted">（共 <span th:text="${totalThanks}"></span> 次感谢）</small>
+                            </h5>
+                            <!-- 感谢按钮 -->
+                            <button th:unless="${thankedTorrent}"
+                                    class="btn btn-outline-primary btn-sm"
+                                    id="thankButton">
+                                <i class="fas fa-hand-holding-heart"></i> 说谢谢
+                            </button>
+                        </div>
+
+                        <!-- 用户列表 -->
+                        <div class="d-flex flex-wrap gap-2">
+                <span th:each="thank : ${thanks}">
+                    <a th:href="@{/profile/{id}(id=${thank.owner.id})}"
+                       class="badge badge-pill"
+                       th:style="'background-color:' + ${thank.owner.primaryPermissionGroup.color} + ';color:white'"
+                       th:text="${thank.owner.name}">
+                    </a>
+                </span>
+                            <!-- 显示更多数量 -->
+                            <span th:if="${thanksTotalSize > #lists.size(thanks)}"
+                                  class="badge badge-pill badge-secondary">
+                    +<span th:text="${thanksTotalSize - #lists.size(thanks)}"></span> 位用户
+                </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 操作脚本 -->
+            <script th:inline="javascript">
+                /*<![CDATA[*/
+                document.getElementById('thankButton').addEventListener('click', function () {
+                    fetch([[@{/thanks/
+                }]]
+                    +[[${torrent.id}]], {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                )
+                .
+                    then(response => {
+                        if (response.ok) {
+                            window.location.reload();
+                        } else {
+                            alert('操作失败，请稍后重试');
+                        }
+                    })
+                        .catch(error => console.error('Error:', error));
+                });
+                /*]]>*/
+            </script>
+
             <!-- 操作按钮 -->
             <div class="text-center">
                 <a th:href="@{/torrents/{id}/download(id=${torrent.id})}"

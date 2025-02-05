@@ -6,8 +6,10 @@ import com.ghostchu.tracker.sapling.dto.TorrentUploadFormDTO;
 import com.ghostchu.tracker.sapling.entity.Torrents;
 import com.ghostchu.tracker.sapling.entity.Users;
 import com.ghostchu.tracker.sapling.service.ICategoriesService;
+import com.ghostchu.tracker.sapling.service.IThanksService;
 import com.ghostchu.tracker.sapling.service.ITorrentsService;
 import com.ghostchu.tracker.sapling.service.IUsersService;
+import com.ghostchu.tracker.sapling.vo.ThanksVO;
 import jakarta.validation.Valid;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -41,6 +44,8 @@ public class TorrentsController {
     private ICategoriesService categoriesService;
     @Autowired
     private IUsersService usersService;
+    @Autowired
+    private IThanksService thanksService;
 
     @GetMapping
     public String torrentList(
@@ -66,6 +71,13 @@ public class TorrentsController {
         }
         // 准备模型数据
         model.addAttribute("torrent", torrentsService.toDetailsVO(torrent));
+        var recentThanks = thanksService.getThanksByPageByTorrent(id, 1, 20);
+        model.addAttribute("totalThanks", recentThanks.getTotal());
+        List<ThanksVO> thanksVOList = recentThanks.getRecords().stream().map(thanksService::toVO).toList();
+        model.addAttribute("thanks", thanksVOList);
+        model.addAttribute("thankedTorrent", thanksService.isUserThankedTorrent(StpUtil.getLoginIdAsLong(), id));
+
+
         return "torrents/detail";
     }
 

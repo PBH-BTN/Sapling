@@ -1,7 +1,5 @@
-package com.ghostchu.tracker.sapling.entity;
+package com.ghostchu.tracker.sapling.vo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -20,25 +18,24 @@ import java.time.OffsetDateTime;
 @Getter
 @Setter
 @ToString
-public class Thanks implements Serializable {
+public class ThanksVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
      * 说谢谢记录ID
      */
-    @TableId(type = IdType.AUTO)
-    private Long id;
+    private long id;
 
     /**
      * 用户ID
      */
-    private long owner;
+    private UserVO owner;
 
     /**
      * 种子ID
      */
-    private long torrent;
+    private TorrentVO torrent;
 
     private OffsetDateTime createAt;
 }
