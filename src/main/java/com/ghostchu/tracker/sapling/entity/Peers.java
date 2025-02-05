@@ -21,19 +21,19 @@ public class Peers implements Serializable {
     private static final long serialVersionUID = 1L;
     @TableId(type = IdType.AUTO)
     private Long id;
-    private Long torrent;
-    private Long peerId;
+    private long torrent;
+    private byte[] peerId;
     @TableField(typeHandler = InetAddressTypeHandler.class)
     private InetAddress ip;
-    private Integer port;
-    private Long uploaded;
-    private Long downloaded;
-    private Long toGo;
+    private int port;
+    private long uploaded;
+    private long downloaded;
+    private long toGo;
     private OffsetDateTime started;
     private OffsetDateTime lastAnnounce;
     private Boolean connectable;
-    private Long downloadOffset;
-    private Long uploadOffset;
+    private long downloadOffset;
+    private long uploadOffset;
     private String userAgent;
     private String lastAction;
 

@@ -35,7 +35,7 @@ public class TorrentReviewQueue implements Serializable {
     /**
      * 种子ID
      */
-    private Long torrent;
+    private long torrent;
 
     /**
      * 种子提交时间

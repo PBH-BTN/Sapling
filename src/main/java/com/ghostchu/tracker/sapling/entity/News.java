@@ -43,7 +43,7 @@ public class News implements Serializable {
     /**
      * 公告创建用户ID
      */
-    private Long owner;
+    private long owner;
 
     /**
      * 公告创建时间

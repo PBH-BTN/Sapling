@@ -39,7 +39,7 @@ public class PermissionGroups implements Serializable {
     /**
      * 权限组优先级
      */
-    private Integer priority;
+    private int priority;
 
     /**
      * 权限组颜色 #hex

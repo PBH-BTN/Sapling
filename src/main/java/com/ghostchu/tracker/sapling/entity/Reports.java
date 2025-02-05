@@ -33,17 +33,17 @@ public class Reports implements Serializable {
     /**
      * 类型
      */
-    private Short type;
+    private short type;
 
     /**
      * 目标类型的 ID 值
      */
-    private Long targetId;
+    private long targetId;
 
     /**
      * 报告所属用户ID
      */
-    private Long owner;
+    private long owner;
 
     /**
      * 报告备注

@@ -101,37 +101,37 @@ public class Users implements Serializable {
     /**
      * 所属权限组 ID
      */
-    private Long primaryPermissionGroup;
+    private long primaryPermissionGroup;
 
     /**
      * BT 上传量
      */
-    private Long uploaded;
+    private long uploaded;
 
     /**
      * BT 上传量（真实数据）
      */
-    private Long uploadedReal;
+    private long uploadedReal;
 
     /**
      * BT 下载量
      */
-    private Long downloaded;
+    private long downloaded;
 
     /**
      * BT 下载量（真实数据）
      */
-    private Long downloadedReal;
+    private long downloadedReal;
 
     /**
      * BT 做种持续时间（毫秒）
      */
-    private Long seedTime;
+    private long seedTime;
 
     /**
      * BT 下载持续时间（毫秒）
      */
-    private Long leechTime;
+    private long leechTime;
 
     /**
      * 语言代码
@@ -159,11 +159,6 @@ public class Users implements Serializable {
     private String myIsp;
 
     /**
-     * 账号暂停状态
-     */
-    private Boolean parked;
-
-    /**
      * 账号封禁 ID，指向一条封禁记录，NULL 则未封禁
      */
     private Long bannedId;
@@ -181,13 +176,13 @@ public class Users implements Serializable {
     /**
      * 是否为系统账户
      */
-    private Boolean systemAccount;
+    private boolean systemAccount;
     /**
      * 是否允许登录会话
      */
-    private Boolean allowLogin;
+    private boolean allowLogin;
     /**
      * 晋级权限组
      */
-    private Long levelPermissionGroup;
+    private long levelPermissionGroup;
 }

@@ -37,5 +37,5 @@ public class Permissions implements Serializable {
     /**
      * 所属权限组
      */
-    private Integer targetGroup;
+    private long targetGroup;
 }

@@ -27,9 +27,9 @@ public class Comments implements Serializable {
     @TableId(type = IdType.AUTO)
     private Long id;
 
-    private Long owner;
+    private long owner;
 
-    private Long torrent;
+    private long torrent;
 
     private Long parentComment;
 

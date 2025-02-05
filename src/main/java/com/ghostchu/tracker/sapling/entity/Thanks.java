@@ -32,10 +32,10 @@ public class Thanks implements Serializable {
     /**
      * 用户ID
      */
-    private Long owner;
+    private long owner;
 
     /**
      * 种子ID
      */
-    private Long torrent;
+    private long torrent;
 }

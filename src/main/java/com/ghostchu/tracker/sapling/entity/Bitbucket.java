@@ -51,7 +51,7 @@ public class Bitbucket implements Serializable {
     /**
      * 文件所属人
      */
-    private Long owner;
+    private long owner;
 
     /**
      * 文件上传时间
@@ -76,12 +76,12 @@ public class Bitbucket implements Serializable {
     /**
      * 允许外部直接访问（通过浏览器）
      */
-    private Boolean directAccess;
+    private boolean directAccess;
 
     /**
      * 文件大小
      */
-    private Long fileSize;
+    private long fileSize;
 
     /**
      * 扩展信息

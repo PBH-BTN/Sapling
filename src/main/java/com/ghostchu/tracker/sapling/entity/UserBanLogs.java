@@ -35,12 +35,12 @@ public class UserBanLogs implements Serializable {
     /**
      * 关联用户ID
      */
-    private Long owner;
+    private long owner;
 
     /**
      * 操作员ID
      */
-    private Long operator;
+    private long operator;
 
     /**
      * 封禁操作时间
@@ -60,5 +60,5 @@ public class UserBanLogs implements Serializable {
     /**
      * 封禁活动状态
      */
-    private Boolean active;
+    private boolean active;
 }

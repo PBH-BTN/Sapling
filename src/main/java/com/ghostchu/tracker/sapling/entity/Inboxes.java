@@ -33,12 +33,12 @@ public class Inboxes implements Serializable {
     /**
      * 收件用户ID
      */
-    private Long owner;
+    private long owner;
 
     /**
      * 发件用户ID
      */
-    private Long sender;
+    private long sender;
 
     /**
      * 信件标题
@@ -68,5 +68,5 @@ public class Inboxes implements Serializable {
     /**
      * 标记为保存，不会自动删除
      */
-    private Boolean saved;
+    private boolean saved;
 }

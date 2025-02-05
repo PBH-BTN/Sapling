@@ -60,5 +60,5 @@ public class UserWarningLogs implements Serializable {
     /**
      * 警告活动状态
      */
-    private Boolean active;
+    private boolean active;
 }

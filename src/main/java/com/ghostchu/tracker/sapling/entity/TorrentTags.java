@@ -34,7 +34,7 @@ public class TorrentTags implements Serializable {
     /**
      * 种子ID
      */
-    private Long torrent;
+    private long torrent;
 
     /**
      * 标签ID
