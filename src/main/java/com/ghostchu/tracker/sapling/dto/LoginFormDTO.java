@@ -3,7 +3,7 @@ package com.ghostchu.tracker.sapling.dto;
 import jakarta.validation.constraints.NotBlank;
 
 
-public class LoginForm {
+public class LoginFormDTO {
     @NotBlank(message = "用户名不能为空")
     private String username;
 

@@ -1,6 +1,7 @@
 package com.ghostchu.tracker.sapling.service;
 
 import com.ghostchu.tracker.sapling.entity.PermissionGroups;
+import com.ghostchu.tracker.sapling.vo.PermissionGroupVO;
 import com.github.yulichang.base.MPJBaseService;
 
 /**
@@ -13,4 +14,7 @@ import com.github.yulichang.base.MPJBaseService;
  */
 public interface IPermissionGroupsService extends MPJBaseService<PermissionGroups> {
 
+    PermissionGroups getPermissionGroupById(Long id);
+
+    PermissionGroupVO toVO(PermissionGroups groups);
 }

@@ -2,7 +2,7 @@ package com.ghostchu.tracker.sapling.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.ghostchu.tracker.sapling.dto.TorrentUploadForm;
+import com.ghostchu.tracker.sapling.dto.TorrentUploadFormDTO;
 import com.ghostchu.tracker.sapling.entity.Torrents;
 import com.ghostchu.tracker.sapling.service.ICategoriesService;
 import com.ghostchu.tracker.sapling.service.ITorrentsService;
@@ -44,17 +44,29 @@ public class TorrentsController {
         IPage<Torrents> pageResult = torrentsService.getTorrentsByPage(page, size, false, false);
 
         // 准备模型数据
-        model.addAttribute("torrents", pageResult.getRecords().stream().map(torrentsService::toDTO).toList());
+        model.addAttribute("torrents", pageResult.getRecords().stream().map(torrentsService::toVO).toList());
         model.addAttribute("pagination", pageResult);
 
         return "torrents";
+    }
+
+    @GetMapping("/{id}")
+    public String torrentDetail(@PathVariable long id, Model model) {
+        // 获取种子详情
+        Torrents torrent = torrentsService.getTorrentById(id);
+        if (torrent == null) {
+            return "redirect:/torrents";
+        }
+        // 准备模型数据
+        model.addAttribute("torrent", torrentsService.toDetailsVO(torrent));
+        return "torrents/detail";
     }
 
 
     @GetMapping("/upload")
     public String uploadForm(Model model) {
         // 初始化表单对象
-        model.addAttribute("torrent", new TorrentUploadForm());
+        model.addAttribute("torrent", new TorrentUploadFormDTO());
         // 获取所有分类供下拉选择
         model.addAttribute("categories", categoriesService.getAllCategories());
         return "torrents/upload";
@@ -62,7 +74,7 @@ public class TorrentsController {
 
     @PostMapping("/upload")
     public String handleUpload(
-            @ModelAttribute("torrent") @Valid TorrentUploadForm form,
+            @ModelAttribute("torrent") @Valid TorrentUploadFormDTO form,
             BindingResult result,
             @RequestParam("torrentFile") MultipartFile file,
             Model model) throws IOException {

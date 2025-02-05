@@ -1,6 +1,7 @@
 package com.ghostchu.tracker.sapling.service;
 
 import com.ghostchu.tracker.sapling.entity.Users;
+import com.ghostchu.tracker.sapling.vo.UserVO;
 import com.github.yulichang.base.MPJBaseService;
 
 import java.net.InetAddress;
@@ -24,4 +25,6 @@ public interface IUsersService extends MPJBaseService<Users> {
     boolean userNameExists(String username);
 
     boolean userEmailExists(String email);
+
+    UserVO toVO(Users userById);
 }

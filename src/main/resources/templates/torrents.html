@@ -81,7 +81,7 @@
                             <a th:href="@{/torrents/{id}(id=${torrent.id})}"
                                th:text="${torrent.title}"></a>
                             <small class="text-muted ml-2"
-                                   th:text="'[' + ${torrent.categoryName} + ']'"></small>
+                                   th:text="'[' + ${torrent.category.name} + ']'"></small>
                         </h5>
 
                         <!--                        <div class="mb-2">-->
@@ -92,12 +92,6 @@
                         <!--                                  th:text="${tag.name}"></span>-->
                         <!--                        </div>-->
 
-                        <p class="card-text text-muted small"
-                           th:text="${torrent.description?.length() > 100 ?
-                                        torrent.description?.substring(0,100) + '...' :
-                                        torrent.description}">
-                        </p>
-
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="text-muted small">
                                     <span class="mr-3">
@@ -106,7 +100,7 @@
                                     </span>
                                 <span class="mr-3">
                                         <i class="fas fa-user"></i>
-                                        <span th:text="${torrent.ownerName}"></span>
+                                        <span th:text="${torrent.anonymous ? '匿名' : torrent.owner.name}"></span>
                                     </span>
                                 <span class="mr-3">
                                         <i class="fas fa-database"></i>

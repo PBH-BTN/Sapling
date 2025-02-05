@@ -1,8 +1,9 @@
 package com.ghostchu.tracker.sapling.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.ghostchu.tracker.sapling.dto.TorrentDTO;
 import com.ghostchu.tracker.sapling.entity.Torrents;
+import com.ghostchu.tracker.sapling.vo.TorrentDetailsVO;
+import com.ghostchu.tracker.sapling.vo.TorrentVO;
 import com.github.yulichang.base.MPJBaseService;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,10 +18,15 @@ import java.io.IOException;
  * @since 2025-02-04
  */
 public interface ITorrentsService extends MPJBaseService<Torrents> {
+    Torrents getTorrentById(Long id);
 
     IPage<Torrents> getTorrentsByPage(long page, int size, boolean includeInvisible, boolean includeDeleted);
 
-    TorrentDTO toDTO(Torrents torrent);
+    TorrentVO toVO(Torrents torrent);
+
+    TorrentDetailsVO toDetailsVO(Torrents torrent);
+
+    boolean isTorrentExists(byte[] infoHash);
 
     Torrents createTorrent(Long owner, MultipartFile file, Long categoryId, String title, String subtitle, String description, boolean anonymous) throws IOException;
 }

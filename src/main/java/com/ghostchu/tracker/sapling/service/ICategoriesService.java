@@ -1,6 +1,7 @@
 package com.ghostchu.tracker.sapling.service;
 
 import com.ghostchu.tracker.sapling.entity.Categories;
+import com.ghostchu.tracker.sapling.vo.CategoryVO;
 import com.github.yulichang.base.MPJBaseService;
 
 import java.util.List;
@@ -18,4 +19,6 @@ public interface ICategoriesService extends MPJBaseService<Categories> {
     List<Categories> getAllCategories();
 
     Categories getCategoryById(long category);
+
+    CategoryVO toVO(Categories categoryById);
 }

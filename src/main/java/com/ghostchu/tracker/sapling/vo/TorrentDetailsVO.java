@@ -1,19 +1,16 @@
-package com.ghostchu.tracker.sapling.dto;
+package com.ghostchu.tracker.sapling.vo;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.ghostchu.tracker.sapling.converter.JsonbTypeHandler;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
-import java.util.Map;
 
 @Getter
 @Setter
 @ToString
-public class TorrentDTO implements Serializable {
+public class TorrentDetailsVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -25,19 +22,7 @@ public class TorrentDTO implements Serializable {
     /**
      * 种子所有者
      */
-    private long owner;
-
-    private String ownerName;
-
-    /**
-     * 种子infohash (v1) sha1
-     */
-    private String hashV1;
-
-    /**
-     * 种子infohash (v2) sha2-256
-     */
-    private String hashV2;
+    private UserVO owner;
 
     /**
      * 种子主标题
@@ -62,9 +47,7 @@ public class TorrentDTO implements Serializable {
     /**
      * 分类
      */
-    private long category;
-
-    private String categoryName;
+    private CategoryVO category;
 
     /**
      * 种子内部文件数量
@@ -76,9 +59,6 @@ public class TorrentDTO implements Serializable {
      */
     private OffsetDateTime createdAt;
 
-    /**
-     * 扩展信息
-     */
-    @TableField(typeHandler = JsonbTypeHandler.class)
-    private Map<String, Object> extra;
+    private boolean anonymous;
+
 }
