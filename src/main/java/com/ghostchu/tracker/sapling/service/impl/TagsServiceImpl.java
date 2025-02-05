@@ -3,7 +3,7 @@ package com.ghostchu.tracker.sapling.service.impl;
 import com.ghostchu.tracker.sapling.entity.Tags;
 import com.ghostchu.tracker.sapling.mapper.TagsMapper;
 import com.ghostchu.tracker.sapling.service.ITagsService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.yulichang.base.MPJBaseServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,6 +15,6 @@ import org.springframework.stereotype.Service;
  * @since 2025-02-04
  */
 @Service
-public class TagsServiceImpl extends ServiceImpl<TagsMapper, Tags> implements ITagsService {
+public class TagsServiceImpl extends MPJBaseServiceImpl<TagsMapper, Tags> implements ITagsService {
 
 }

@@ -1,7 +1,6 @@
 package com.ghostchu.tracker.sapling.mapper;
 
 import com.ghostchu.tracker.sapling.entity.Bitbucket;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 
 /**

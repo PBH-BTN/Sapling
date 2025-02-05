@@ -3,7 +3,7 @@ package com.ghostchu.tracker.sapling.service.impl;
 import com.ghostchu.tracker.sapling.entity.UserWarningLogs;
 import com.ghostchu.tracker.sapling.mapper.UserWarningLogsMapper;
 import com.ghostchu.tracker.sapling.service.IUserWarningLogsService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.yulichang.base.MPJBaseServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,6 +15,6 @@ import org.springframework.stereotype.Service;
  * @since 2025-02-04
  */
 @Service
-public class UserWarningLogsServiceImpl extends ServiceImpl<UserWarningLogsMapper, UserWarningLogs> implements IUserWarningLogsService {
+public class UserWarningLogsServiceImpl extends MPJBaseServiceImpl<UserWarningLogsMapper, UserWarningLogs> implements IUserWarningLogsService {
 
 }

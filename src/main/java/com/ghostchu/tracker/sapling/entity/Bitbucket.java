@@ -1,18 +1,20 @@
 package com.ghostchu.tracker.sapling.entity;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.util.Map;
-
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.ghostchu.tracker.sapling.converter.JsonbTypeHandler;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.io.Serializable;
+import java.time.OffsetDateTime;
+import java.util.Map;
+
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author Ghost_chu
@@ -28,6 +30,7 @@ public class Bitbucket implements Serializable {
     /**
      * 文件上传ID
      */
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**

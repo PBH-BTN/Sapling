@@ -3,7 +3,7 @@ package com.ghostchu.tracker.sapling.service.impl;
 import com.ghostchu.tracker.sapling.entity.Thanks;
 import com.ghostchu.tracker.sapling.mapper.ThanksMapper;
 import com.ghostchu.tracker.sapling.service.IThanksService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.yulichang.base.MPJBaseServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,6 +15,6 @@ import org.springframework.stereotype.Service;
  * @since 2025-02-04
  */
 @Service
-public class ThanksServiceImpl extends ServiceImpl<ThanksMapper, Thanks> implements IThanksService {
+public class ThanksServiceImpl extends MPJBaseServiceImpl<ThanksMapper, Thanks> implements IThanksService {
 
 }

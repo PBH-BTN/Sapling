@@ -30,6 +30,7 @@ public class ServletUtil {
         }
         return ip;
     }
+
     @SneakyThrows(UnknownHostException.class)
     public static InetAddress inet(HttpServletRequest request) {
         return InetAddress.getByName(ip(request));

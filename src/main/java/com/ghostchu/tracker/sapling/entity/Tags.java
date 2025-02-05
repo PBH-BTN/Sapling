@@ -1,12 +1,16 @@
 package com.ghostchu.tracker.sapling.entity;
 
-import java.io.Serializable;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.io.Serializable;
+
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author Ghost_chu
@@ -22,6 +26,7 @@ public class Tags implements Serializable {
     /**
      * 标签ID
      */
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**

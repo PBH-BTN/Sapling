@@ -3,8 +3,6 @@ package com.ghostchu.tracker.sapling;
 import com.baomidou.mybatisplus.generator.FastAutoGenerator;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 
-import java.nio.file.Paths;
-
 public class TestEntrypoint {
     public static void main(String[] args) {
         FastAutoGenerator.create("jdbc:postgresql://nahida:5432/sapling", "sapling", "N7tzj6857pwWWcFA")

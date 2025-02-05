@@ -3,7 +3,7 @@ package com.ghostchu.tracker.sapling.service.impl;
 import com.ghostchu.tracker.sapling.entity.Permissions;
 import com.ghostchu.tracker.sapling.mapper.PermissionsMapper;
 import com.ghostchu.tracker.sapling.service.IPermissionsService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.yulichang.base.MPJBaseServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,6 +15,6 @@ import org.springframework.stereotype.Service;
  * @since 2025-02-04
  */
 @Service
-public class PermissionsServiceImpl extends ServiceImpl<PermissionsMapper, Permissions> implements IPermissionsService {
+public class PermissionsServiceImpl extends MPJBaseServiceImpl<PermissionsMapper, Permissions> implements IPermissionsService {
 
 }

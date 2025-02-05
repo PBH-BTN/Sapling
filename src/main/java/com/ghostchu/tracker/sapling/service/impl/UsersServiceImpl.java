@@ -1,14 +1,13 @@
 package com.ghostchu.tracker.sapling.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ghostchu.tracker.sapling.entity.Users;
 import com.ghostchu.tracker.sapling.mapper.UsersMapper;
 import com.ghostchu.tracker.sapling.service.IUsersService;
+import com.github.yulichang.base.MPJBaseServiceImpl;
 import org.springframework.stereotype.Service;
 
 import java.net.InetAddress;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -21,13 +20,18 @@ import java.util.UUID;
  * @since 2025-02-04
  */
 @Service
-public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements IUsersService {
+public class UsersServiceImpl extends MPJBaseServiceImpl<UsersMapper, Users> implements IUsersService {
 
     @Override
     public Users getUserByUsernameAndPasswordHash(String username, String passhash) {
         return getOne(new QueryWrapper<Users>()
                 .eq("name", username)
                 .eq("passhash", passhash));
+    }
+
+    @Override
+    public Users getUserById(long id) {
+        return baseMapper.selectById(id);
     }
 
     @Override

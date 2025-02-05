@@ -1,8 +1,7 @@
 package com.ghostchu.tracker.sapling.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.ghostchu.tracker.sapling.entity.Peers;
-import com.ghostchu.tracker.sapling.entity.Tags;
+import com.github.yulichang.base.MPJBaseService;
 
 /**
  * <p>
@@ -12,6 +11,6 @@ import com.ghostchu.tracker.sapling.entity.Tags;
  * @author Ghost_chu
  * @since 2025-02-04
  */
-public interface IPeersService extends IService<Peers> {
+public interface IPeersService extends MPJBaseService<Peers> {
 
 }

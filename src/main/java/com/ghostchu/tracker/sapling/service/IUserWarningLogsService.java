@@ -1,7 +1,7 @@
 package com.ghostchu.tracker.sapling.service;
 
 import com.ghostchu.tracker.sapling.entity.UserWarningLogs;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.github.yulichang.base.MPJBaseService;
 
 /**
  * <p>
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author Ghost_chu
  * @since 2025-02-04
  */
-public interface IUserWarningLogsService extends IService<UserWarningLogs> {
+public interface IUserWarningLogsService extends MPJBaseService<UserWarningLogs> {
 
 }

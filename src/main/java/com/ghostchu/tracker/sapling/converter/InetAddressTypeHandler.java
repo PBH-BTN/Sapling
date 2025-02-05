@@ -3,8 +3,12 @@ package com.ghostchu.tracker.sapling.converter;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 import org.postgresql.util.PGobject;
+
 import java.net.InetAddress;
-import java.sql.*;
+import java.sql.CallableStatement;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class InetAddressTypeHandler extends BaseTypeHandler<InetAddress> {
 

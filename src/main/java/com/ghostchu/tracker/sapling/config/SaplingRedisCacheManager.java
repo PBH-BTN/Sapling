@@ -8,7 +8,7 @@ import org.springframework.util.StringUtils;
 
 import java.time.Duration;
 
-public class SaplingRedisCacheManager extends RedisCacheManager{
+public class SaplingRedisCacheManager extends RedisCacheManager {
     public SaplingRedisCacheManager(RedisCacheWriter cacheWriter, RedisCacheConfiguration defaultCacheConfiguration) {
         super(cacheWriter, defaultCacheConfiguration);
     }

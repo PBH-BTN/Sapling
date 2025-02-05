@@ -54,7 +54,7 @@ public enum Permission {
         this.node = node;
     }
 
-    public String node(){
+    public String node() {
         return node;
     }
 

@@ -1,16 +1,18 @@
 package com.ghostchu.tracker.sapling.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.io.Serializable;
+import java.time.OffsetDateTime;
+
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author Ghost_chu
@@ -27,6 +29,7 @@ public class TorrentReviewQueue implements Serializable {
     /**
      * 种子待审队列
      */
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**

@@ -8,6 +8,7 @@
             transform: translateY(-3px);
             transition: transform 0.2s ease;
         }
+
         .seed-leech-badge {
             min-width: 80px;
         }
@@ -66,12 +67,12 @@
         <div th:each="torrent : ${torrents}" class="col-md-12 mb-3">
             <div class="card torrent-card shadow-sm h-100">
                 <div class="card-body d-flex">
-                    <!-- 种子封面 -->
+                    <!-- 分类封面 -->
                     <div class="flex-shrink-0 mr-3">
                         <img src="/images/torrent-cover.png"
                              class="img-fluid rounded"
                              style="width: 120px"
-                             alt="种子封面">
+                             alt="分类封面">
                     </div>
 
                     <!-- 种子信息 -->
@@ -80,16 +81,16 @@
                             <a th:href="@{/torrents/{id}(id=${torrent.id})}"
                                th:text="${torrent.title}"></a>
                             <small class="text-muted ml-2"
-                                   th:text="'[' + ${torrent.category?.name} + ']'"></small>
+                                   th:text="'[' + ${torrent.categoryName} + ']'"></small>
                         </h5>
 
-                        <div class="mb-2">
-                            <span class="badge badge-info" th:text="${torrent.status.value}"></span>
-                            <span th:each="tag : ${torrent.tags}"
-                                  class="badge mr-1"
-                                  th:style="'background-color:' + ${tag.color}"
-                                  th:text="${tag.name}"></span>
-                        </div>
+                        <!--                        <div class="mb-2">-->
+                        <!--                            <span class="badge badge-info" th:text="${torrent.status.value}"></span>-->
+                        <!--                            <span th:each="tag : ${torrent.tags}"-->
+                        <!--                                  class="badge mr-1"-->
+                        <!--                                  th:style="'background-color:' + ${tag.color}"-->
+                        <!--                                  th:text="${tag.name}"></span>-->
+                        <!--                        </div>-->
 
                         <p class="card-text text-muted small"
                            th:text="${torrent.description?.length() > 100 ?
@@ -101,27 +102,37 @@
                             <div class="text-muted small">
                                     <span class="mr-3">
                                         <i class="fas fa-upload"></i>
-                                        <span th:text="${#dates.format(torrent.createdAt, 'yyyy-MM-dd')}"></span>
+                                        <span th:text="${#temporals.format(torrent.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></span>
                                     </span>
                                 <span class="mr-3">
                                         <i class="fas fa-user"></i>
-                                        <span th:text="${torrent.uploader.username}"></span>
+                                        <span th:text="${torrent.ownerName}"></span>
                                     </span>
                                 <span class="mr-3">
                                         <i class="fas fa-database"></i>
-                                        <span th:text="${#numbers.formatDecimal(torrent.size, 1, 'COMMA', 2, 'B')}"></span>
+                                        <span th:text="${T(com.ghostchu.tracker.sapling.util.UnitConverter).autoUnit(torrent.size)}"></span>
                                     </span>
                             </div>
 
                             <div class="btn-group">
-                                    <span class="badge badge-success seed-leech-badge">
+                                <span class="badge badge-secondary seed-leech-badge">
+                                        <i class="fas fa-comment"></i>
+                                        <span>0</span>
+                                    </span>
+                                <span class="badge badge-info seed-leech-badge">
+                                        <i class="fas fa-clock"></i>
+                                        <span>0</span>
+                                    </span>
+                                <span class="badge badge-success seed-leech-badge">
                                         <i class="fas fa-arrow-up"></i>
-                                        <span th:text="${torrent.seeders}"></span>
+
+                                        <span>0</span>
                                     </span>
                                 <span class="badge badge-danger seed-leech-badge">
                                         <i class="fas fa-arrow-down"></i>
-                                        <span th:text="${torrent.leechers}"></span>
+                                        <span>0</span>
                                     </span>
+
                             </div>
                         </div>
                     </div>

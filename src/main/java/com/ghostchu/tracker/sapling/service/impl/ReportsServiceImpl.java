@@ -3,7 +3,7 @@ package com.ghostchu.tracker.sapling.service.impl;
 import com.ghostchu.tracker.sapling.entity.Reports;
 import com.ghostchu.tracker.sapling.mapper.ReportsMapper;
 import com.ghostchu.tracker.sapling.service.IReportsService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.yulichang.base.MPJBaseServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,6 +15,6 @@ import org.springframework.stereotype.Service;
  * @since 2025-02-04
  */
 @Service
-public class ReportsServiceImpl extends ServiceImpl<ReportsMapper, Reports> implements IReportsService {
+public class ReportsServiceImpl extends MPJBaseServiceImpl<ReportsMapper, Reports> implements IReportsService {
 
 }

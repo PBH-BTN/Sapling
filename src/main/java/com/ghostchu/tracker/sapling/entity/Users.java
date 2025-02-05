@@ -3,20 +3,20 @@ package com.ghostchu.tracker.sapling.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
-import java.net.InetAddress;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.util.Map;
-
 import com.ghostchu.tracker.sapling.converter.InetAddressTypeHandler;
 import com.ghostchu.tracker.sapling.converter.JsonbTypeHandler;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.io.Serializable;
+import java.net.InetAddress;
+import java.time.OffsetDateTime;
+import java.util.Map;
+
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author Ghost_chu
@@ -32,7 +32,7 @@ public class Users implements Serializable {
     /**
      * 用户 ID
      */
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**

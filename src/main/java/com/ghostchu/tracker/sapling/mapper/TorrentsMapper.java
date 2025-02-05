@@ -1,8 +1,6 @@
 package com.ghostchu.tracker.sapling.mapper;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ghostchu.tracker.sapling.entity.Torrents;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 
 /**

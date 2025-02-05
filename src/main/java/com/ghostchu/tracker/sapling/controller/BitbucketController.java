@@ -1,7 +1,8 @@
 package com.ghostchu.tracker.sapling.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
+import lombok.Data;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * <p>
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Controller;
  * @since 2025-02-04
  */
 @Controller
+@Data
 @RequestMapping("/bitbucket")
 public class BitbucketController {
 

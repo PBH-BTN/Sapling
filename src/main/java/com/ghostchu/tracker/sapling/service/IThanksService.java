@@ -1,7 +1,7 @@
 package com.ghostchu.tracker.sapling.service;
 
 import com.ghostchu.tracker.sapling.entity.Thanks;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.github.yulichang.base.MPJBaseService;
 
 /**
  * <p>
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author Ghost_chu
  * @since 2025-02-04
  */
-public interface IThanksService extends IService<Thanks> {
+public interface IThanksService extends MPJBaseService<Thanks> {
 
 }

@@ -1,7 +1,7 @@
 package com.ghostchu.tracker.sapling.service;
 
 import com.ghostchu.tracker.sapling.entity.News;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.github.yulichang.base.MPJBaseService;
 
 /**
  * <p>
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author Ghost_chu
  * @since 2025-02-04
  */
-public interface INewsService extends IService<News> {
+public interface INewsService extends MPJBaseService<News> {
 
 }

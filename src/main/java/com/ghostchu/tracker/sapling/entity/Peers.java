@@ -1,6 +1,8 @@
 package com.ghostchu.tracker.sapling.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.ghostchu.tracker.sapling.converter.InetAddressTypeHandler;
 import com.ghostchu.tracker.sapling.converter.JsonbTypeHandler;
 import lombok.Getter;
@@ -17,7 +19,7 @@ import java.util.Map;
 @ToString
 public class Peers implements Serializable {
     private static final long serialVersionUID = 1L;
-
+    @TableId(type = IdType.AUTO)
     private Long id;
     private Long torrent;
     private Long peerId;

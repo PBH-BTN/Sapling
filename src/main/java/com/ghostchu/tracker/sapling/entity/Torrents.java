@@ -1,18 +1,20 @@
 package com.ghostchu.tracker.sapling.entity;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.util.Map;
-
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.ghostchu.tracker.sapling.converter.JsonbTypeHandler;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.io.Serializable;
+import java.time.OffsetDateTime;
+import java.util.Map;
+
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author Ghost_chu
@@ -28,12 +30,13 @@ public class Torrents implements Serializable {
     /**
      * 种子ID
      */
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
      * 种子所有者
      */
-    private Long owner;
+    private long owner;
 
     /**
      * 种子infohash (v1) sha1
@@ -48,17 +51,17 @@ public class Torrents implements Serializable {
     /**
      * 种子infohash (v2) sha2-256 (裁断)
      */
-    private String hashV2Short;
+    private byte[] hashV2Short;
 
     /**
      * 隐藏上传者信息
      */
-    private Boolean privacy;
+    private boolean anonymous;
 
     /**
      * 指向的 BitBucket 的原始文件
      */
-    private Long file;
+    private long file;
 
     /**
      * 种子主标题
@@ -78,17 +81,17 @@ public class Torrents implements Serializable {
     /**
      * 种子内容总大小
      */
-    private Long size;
+    private long size;
 
     /**
      * 目录ID
      */
-    private Long category;
+    private long category;
 
     /**
      * 种子内部文件数量
      */
-    private Long numFiles;
+    private long numFiles;
 
     /**
      * 种子创建时间
@@ -98,7 +101,7 @@ public class Torrents implements Serializable {
     /**
      * 删除时间，NULL 为未删除
      */
-    private Boolean deletedAt;
+    private OffsetDateTime deletedAt;
 
     /**
      * 删除操作用户ID
@@ -108,7 +111,7 @@ public class Torrents implements Serializable {
     /**
      * 是否公众可见；非公众可见也对 Tracker 不可见
      */
-    private Boolean visible;
+    private boolean visible;
 
     /**
      * 扩展信息
