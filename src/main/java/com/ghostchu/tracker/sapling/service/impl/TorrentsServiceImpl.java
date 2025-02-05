@@ -60,6 +60,7 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
     public IPage<Torrents> getTorrentsByPage(long page, int size, boolean includeInvisible, boolean includeDeleted) {
         IPage<Torrents> iPage = new Page<>(page, size);
         return baseMapper.selectPage(iPage, new QueryWrapper<Torrents>()
+                .orderBy(true, false, "created_at")
                 .eq(!includeInvisible, "visible", true)
                 .isNull(!includeDeleted, "deleted_at"));
 
@@ -101,6 +102,7 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
         return baseMapper.selectCount(new QueryWrapper<Torrents>().eq("hash_v1", infoHash).or().eq("hash_v2", infoHash)) > 0;
     }
 
+    @Override
     public byte[] downloadTorrentForUser(Torrents torrents, Users user) throws IOException {
         @Cleanup
         var in = bitbucketService.readBitBucket(torrents.getFile());

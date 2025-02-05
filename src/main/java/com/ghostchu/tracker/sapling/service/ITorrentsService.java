@@ -2,6 +2,7 @@ package com.ghostchu.tracker.sapling.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ghostchu.tracker.sapling.entity.Torrents;
+import com.ghostchu.tracker.sapling.entity.Users;
 import com.ghostchu.tracker.sapling.vo.TorrentDetailsVO;
 import com.ghostchu.tracker.sapling.vo.TorrentVO;
 import com.github.yulichang.base.MPJBaseService;
@@ -27,6 +28,8 @@ public interface ITorrentsService extends MPJBaseService<Torrents> {
     TorrentDetailsVO toDetailsVO(Torrents torrent);
 
     boolean isTorrentExists(byte[] infoHash);
+
+    byte[] downloadTorrentForUser(Torrents torrents, Users user) throws IOException;
 
     Torrents createTorrent(Long owner, MultipartFile file, Long categoryId, String title, String subtitle, String description, boolean anonymous) throws IOException;
 }

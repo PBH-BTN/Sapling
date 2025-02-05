@@ -133,7 +133,7 @@
 
             <!-- 操作按钮 -->
             <div class="text-center">
-                <a th:href="@{/download/{id}(id=${torrent.id})}"
+                <a th:href="@{/torrents/{id}/download(id=${torrent.id})}"
                    class="btn btn-primary btn-lg mr-3">
                     <i class="fas fa-download mr-2"></i>下载种子
                 </a>

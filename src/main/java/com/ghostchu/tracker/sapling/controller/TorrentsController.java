@@ -4,17 +4,22 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ghostchu.tracker.sapling.dto.TorrentUploadFormDTO;
 import com.ghostchu.tracker.sapling.entity.Torrents;
+import com.ghostchu.tracker.sapling.entity.Users;
 import com.ghostchu.tracker.sapling.service.ICategoriesService;
 import com.ghostchu.tracker.sapling.service.ITorrentsService;
+import com.ghostchu.tracker.sapling.service.IUsersService;
 import jakarta.validation.Valid;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -34,6 +39,8 @@ public class TorrentsController {
     private ITorrentsService torrentsService;
     @Autowired
     private ICategoriesService categoriesService;
+    @Autowired
+    private IUsersService usersService;
 
     @GetMapping
     public String torrentList(
@@ -93,5 +100,17 @@ public class TorrentsController {
         // 处理文件上传
         Torrents newTorrent = torrentsService.createTorrent(StpUtil.getLoginIdAsLong(), file, form.getCategoryId(), form.getTitle(), form.getSubtitle(), form.getDescription(), form.isAnonymous());
         return "redirect:/torrents/" + newTorrent.getId();
+    }
+
+    @GetMapping("/{id}/download")
+    public ResponseEntity<InputStreamResource> downloadTorrent(@PathVariable long id) throws IOException {
+        Torrents torrent = torrentsService.getTorrentById(id);
+        if (torrent == null) {
+            return ResponseEntity.notFound().build();
+        }
+        Users user = usersService.getUserById(StpUtil.getLoginIdAsLong());
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=\"" + torrent.getTitle() + ".torrent\"")
+                .body(new InputStreamResource(new ByteArrayInputStream(torrentsService.downloadTorrentForUser(torrent, user))));
     }
 }
