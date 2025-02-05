@@ -38,6 +38,12 @@ public class AuthController {
         return "login";
     }
 
+    @GetMapping("/logout")
+    public String logout(Model model) {
+        StpUtil.logout();
+        return "redirect:/auth/login";
+    }
+
     @PostMapping("/login")
     public String handleLogin(@Valid LoginFormDTO loginFormDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {

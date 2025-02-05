@@ -7,14 +7,20 @@
             transition: transform 0.2s ease;
         }
         .seed-leech-badge {
-            min-width: 80px;
+            min-width: 70px; /* 缩小徽章宽度 */
+            padding: 0.25rem 0.5rem; /* 减少内边距 */
+            font-size: 0.85rem; /* 缩小字体 */
         }
 
-        /* 新增自定义样式 */
-        .card-content-wrapper {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
+        /* 新增紧凑布局样式 */
+        .compact-card .card-body {
+            padding: 1rem; /* 减少卡片内边距 */
+        }
+
+        .compact-card img {
+            width: 64px;
+            height: 64px;
+            object-fit: cover; /* 保持图片比例 */
         }
     </style>
 </head>
@@ -22,7 +28,7 @@
 <div th:replace="~{fragments/header :: header(${user})}"></div>
 
 <main class="container my-4">
-    <!-- 面包屑导航 -->
+    <!-- 面包屑导航 (保持原样) -->
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb bg-light">
             <li class="breadcrumb-item"><a th:href="@{/}">首页</a></li>
@@ -30,7 +36,7 @@
         </ol>
     </nav>
 
-    <!-- 搜索栏 -->
+    <!-- 搜索栏 (保持原样) -->
     <div class="card mb-4 shadow-sm">
         <div class="card-body">
             <form th:action="@{/torrents}" method="get">
@@ -47,7 +53,7 @@
         </div>
     </div>
 
-    <!-- 排序筛选栏 -->
+    <!-- 排序筛选栏 (保持原样) -->
     <div class="d-flex justify-content-between mb-3">
         <div class="btn-group">
             <button type="button" class="btn btn-outline-secondary dropdown-toggle"
@@ -65,53 +71,58 @@
         </span>
     </div>
 
-    <!-- 种子列表 -->
+    <!-- 种子列表 (修改部分) -->
     <div class="row">
-        <div th:each="torrent : ${torrents}" class="col-md-12 mb-3 h-100"> <!-- 添加 h-100 -->
-            <div class="card torrent-card shadow-sm h-100">
-                <div class="card-body d-flex flex-column"> <!-- 改为 flex-column -->
-                    <div class="d-flex flex-grow-1 align-items-center"> <!-- 新增 flex 容器 -->
+        <div th:each="torrent : ${torrents}" class="col-md-12 mb-3 h-100">
+            <div class="card torrent-card shadow-sm h-100 compact-card">  <!-- 添加 compact-card 类 -->
+                <div class="card-body d-flex flex-column p-2">  <!-- 减少内边距 -->
+                    <div class="d-flex flex-grow-1 align-items-center">  <!-- 添加 align-items-center -->
                         <!-- 分类封面 -->
                         <div class="flex-shrink-0 mr-3">
                             <img th:src="${torrent.category.icon}"
                                  class="img-fluid rounded"
-                                 style="height: 64px" alt="分类封面">
+                                 style="width:64px; height:64px" alt="分类封面">
                         </div>
 
                         <!-- 种子信息 -->
                         <div class="flex-grow-1" style="min-width: 0;">
-                            <div class="card-content-wrapper"> <!-- 新增内容包裹层 -->
-                                <div> <!-- 主要内容区域 -->
-                                    <h5 class="card-title d-flex align-items-center gap-2">
-                                        <small class="text-muted flex-shrink-0"
+                            <div class="card-content-wrapper">
+                                <!-- 标题区域 -->
+                                <div class="mb-1">  <!-- 减少底部间距 -->
+                                    <h6 class="card-title d-flex align-items-center mb-0">
+                                        <small class="text-muted flex-shrink-0 mr-2"
+                                               style="font-size:0.9rem"
                                                th:text="'['+${torrent.category.name}+']'"></small>
                                         <a class="text-truncate flex-grow-1"
                                            th:href="@{/torrents/{id}(id=${torrent.id})}"
                                            th:text="${torrent.title}"
-                                           style="min-width: 0;"></a>
-                                    </h5>
-                                    <h6 class="text-muted text-truncate mb-2"
-                                        th:text="${torrent.subtitle}"></h6>
+                                           style="font-size:1rem; min-width: 0;"></a>
+                                    </h6>
+                                    <small class="text-muted text-truncate d-block"
+                                           th:text="${torrent.subtitle}"
+                                           style="font-size:0.85rem"></small>
                                 </div>
 
-                                <!-- 固定在底部的信息栏 -->
-                                <div class="mt-auto pt-2"> <!-- 关键修改 -->
+                                <!-- 底部信息栏 -->
+                                <div class="mt-auto pt-1">  <!-- 减少顶部间距 -->
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <div class="text-muted small">
-                                            <span class="mr-3">
+                                        <!-- 左侧信息 -->
+                                        <div class="text-muted" style="font-size:0.85rem">  <!-- 缩小字体 -->
+                                            <span class="mr-2">
                                                 <i class="fas fa-upload"></i>
-                                                <span th:text="${#temporals.format(torrent.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></span>
+                                                <span th:text="${#temporals.format(torrent.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
                                             </span>
-                                            <span class="mr-3">
+                                            <span class="mr-2">
                                                 <i class="fas fa-user"></i>
                                                 <span th:text="${torrent.anonymous ? '匿名' : torrent.owner.name}"></span>
                                             </span>
-                                            <span class="mr-3">
+                                            <span class="mr-2">
                                                 <i class="fas fa-database"></i>
                                                 <span th:text="${T(com.ghostchu.tracker.sapling.util.UnitConverter).autoUnit(torrent.size)}"></span>
                                             </span>
                                         </div>
 
+                                        <!-- 右侧按钮组 -->
                                         <div class="btn-group">
                                             <span class="badge badge-secondary seed-leech-badge">
                                                 <i class="fas fa-comment"></i>
@@ -140,7 +151,7 @@
         </div>
     </div>
 
-    <!-- 分页控件 -->
+    <!-- 分页控件 (保持原样) -->
     <nav th:if="${pagination.pages > 1}" class="mt-4">
         <ul class="pagination justify-content-center">
             <li class="page-item" th:classappend="${pagination.current == 1} ? 'disabled'">

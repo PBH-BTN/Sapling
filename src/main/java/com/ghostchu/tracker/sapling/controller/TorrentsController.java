@@ -2,6 +2,7 @@ package com.ghostchu.tracker.sapling.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.ghostchu.tracker.sapling.dto.TorrentEditFormDTO;
 import com.ghostchu.tracker.sapling.dto.TorrentUploadFormDTO;
 import com.ghostchu.tracker.sapling.entity.Torrents;
 import com.ghostchu.tracker.sapling.entity.Users;
@@ -9,7 +10,9 @@ import com.ghostchu.tracker.sapling.service.ICategoriesService;
 import com.ghostchu.tracker.sapling.service.IThanksService;
 import com.ghostchu.tracker.sapling.service.ITorrentsService;
 import com.ghostchu.tracker.sapling.service.IUsersService;
+import com.ghostchu.tracker.sapling.vo.CategoryVO;
 import com.ghostchu.tracker.sapling.vo.ThanksVO;
+import com.ghostchu.tracker.sapling.vo.TorrentDetailsVO;
 import jakarta.validation.Valid;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,5 +125,45 @@ public class TorrentsController {
         return ResponseEntity.ok()
                 .header("Content-Disposition", "attachment; filename=\"" + torrent.getTitle() + ".torrent\"")
                 .body(new InputStreamResource(new ByteArrayInputStream(torrentsService.downloadTorrentForUser(torrent, user))));
+    }
+
+
+    // 显示编辑页面
+    @GetMapping("/{id}/edit")
+    public String showEditForm(@PathVariable Long id, Model model) {
+        // 获取种子详细信息（示例代码）
+        TorrentDetailsVO torrent = torrentsService.toDetailsVO(torrentsService.getTorrentById(id));
+        if (StpUtil.getLoginIdAsLong() != torrent.getOwner().getId()) {
+            return "redirect:/torrents/" + id; // 权限不足
+        }
+        // 获取分类列表
+        List<CategoryVO> categories = categoriesService.getAllCategories().stream().map(categoriesService::toVO).toList();
+        model.addAttribute("torrent", torrent);
+        model.addAttribute("categories", categories);
+        return "torrents/edit";
+    }
+
+    // 处理编辑提交
+    @PutMapping("/{id}/edit")
+    public String handleEdit(
+            @PathVariable Long id,
+            @ModelAttribute("torrent") @Valid TorrentEditFormDTO form,
+            BindingResult result,
+            Model model) {
+
+        if (result.hasErrors()) {
+            // 重新加载分类数据
+            model.addAttribute("categories", categoriesService.getAllCategories());
+            return "torrents/edit";
+        }
+
+        try {
+            // 更新数据库逻辑（示例）
+            torrentService.updateTorrent(id, form);
+            return "redirect:/torrents/" + id;
+        } catch (TorrentNotFoundException e) {
+            result.reject("torrent.notfound", "种子不存在");
+            return "torrents/edit";
+        }
     }
 }
