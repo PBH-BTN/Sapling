@@ -3,8 +3,9 @@ package com.ghostchu.tracker.sapling.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.ghostchu.tracker.sapling.converter.JsonbTypeHandler;
-import com.ghostchu.tracker.sapling.util.TorrentParser;
+import com.ghostchu.tracker.sapling.util.TorrentInfo;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -24,6 +25,7 @@ import java.util.Map;
 @Getter
 @Setter
 @ToString
+@TableName(autoResultMap = true)
 public class Torrents implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -118,7 +120,7 @@ public class Torrents implements Serializable {
      * 扩展信息
      */
     @TableField(typeHandler = JsonbTypeHandler.class)
-    private TorrentParser.TorrentInfo info;
+    private TorrentInfo info;
 
     /**
      * 扩展信息

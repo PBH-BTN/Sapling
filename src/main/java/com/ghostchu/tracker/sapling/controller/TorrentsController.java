@@ -76,8 +76,6 @@ public class TorrentsController {
         List<ThanksVO> thanksVOList = recentThanks.getRecords().stream().map(thanksService::toVO).toList();
         model.addAttribute("thanks", thanksVOList);
         model.addAttribute("thankedTorrent", thanksService.isUserThankedTorrent(StpUtil.getLoginIdAsLong(), id));
-
-
         return "torrents/detail";
     }
 

@@ -1,6 +1,6 @@
 package com.ghostchu.tracker.sapling.vo;
 
-import com.ghostchu.tracker.sapling.util.TorrentParser;
+import com.ghostchu.tracker.sapling.util.TorrentInfo;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -60,7 +60,7 @@ public class TorrentDetailsVO implements Serializable {
      */
     private OffsetDateTime createdAt;
 
-    private TorrentParser.TorrentInfo info;
+    private TorrentInfo info;
 
     private boolean anonymous;
 

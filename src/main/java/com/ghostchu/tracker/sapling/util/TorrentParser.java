@@ -2,12 +2,8 @@ package com.ghostchu.tracker.sapling.util;
 
 import com.dampcake.bencode.Bencode;
 import com.dampcake.bencode.Type;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.hash.Hashing;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -17,6 +13,7 @@ import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class TorrentParser {
 
     private static final Bencode BENCODE = new Bencode(StandardCharsets.ISO_8859_1);
@@ -35,10 +32,11 @@ public class TorrentParser {
         // 计算 infohash2 (SHA-256, BEP-52)
         var infohash2 = Hashing.sha256().hashBytes(BENCODE.encode(info));
 
-        boolean v1Found = info.containsKey("files");
-        boolean v2Found = info.containsKey("meta version") && "2".equals(info.get("meta version"));
+        boolean v1Found = info.containsKey("pieces");
+        boolean v2Found = info.containsKey("meta version");
 
         if (!v1Found && !v2Found) {
+            log.error("种子文件特征识别失败: {}", info.keySet());
             throw new IllegalArgumentException("种子文件特征识别失败");
         }
 
@@ -55,10 +53,8 @@ public class TorrentParser {
                 (String) torrentMap.get("comment"),
                 v2Found ? 2 : 1,
                 v1Found && v2Found,
-                v1Found ? infohash.toString() : null,
-                v2Found ? infohash2.toString() : null,
-                v1Found ? infohash.asBytes() : null,
-                v2Found ? infohash2.asBytes() : null,
+                v1Found ? HexFormat.of().formatHex(infohash.asBytes()) : null,
+                v2Found ? HexFormat.of().formatHex(infohash2.asBytes()) : null,
                 bfsResult.getKey(),
                 bfsResult.getValue()
         );
@@ -156,8 +152,14 @@ public class TorrentParser {
             // 文件节点
             node.setDirectory(false);
             node.setFileSize((Long) nodeMap.get("length"));
-            node.setHash((String) nodeMap.get("pieces root"));
-            node.setEd2kHash((String) nodeMap.get("ed2k"));
+            var hash8859 = ((String) nodeMap.get("hash"));
+            var ed2k8859 = ((String) nodeMap.get("ed2k"));
+            if (hash8859 != null) {
+                node.setHashHex(HexFormat.of().formatHex(hash8859.getBytes(StandardCharsets.ISO_8859_1)));
+            }
+            if (ed2k8859 != null) {
+                node.setEd2kHashHex(HexFormat.of().formatHex(ed2k8859.getBytes(StandardCharsets.ISO_8859_1)));
+            }
         } else {
             // 目录节点
             node.setDirectory(true);
@@ -223,66 +225,4 @@ public class TorrentParser {
         return new String(bytes, charset);
     }
 
-    // 数据结构定义
-    public record TorrentInfo(List<String> trackers, String createdBy, OffsetDateTime creationDate, String encoding,
-                              TorrentNode fileTree, boolean isPrivate, String publisher, String comment,
-                              int metaVersion, boolean hybrid,
-                              String infoHashV1, String infoHashV2, byte[] infoHashV1Bytes, byte[] infoHashV2Bytes,
-                              long totalSize,
-                              long files) {
-        // 构造函数、getter省略
-    }
-
-    @AllArgsConstructor
-    @Data
-    @NoArgsConstructor
-    public static class TorrentNode {
-        private String name;
-        private boolean isDirectory;
-        private List<TorrentNode> children;
-        private String hash;
-        private String ed2kHash;
-        private Long fileSize;
-
-        // getter/setter省略
-        // 重写 toString() 方法，生成可爱的 ASCII 树状结构喵～
-        @Override
-        public String toString() {
-            return buildAsciiTree("", true);
-        }
-
-        // 辅助方法，递归构建树形结构喵～
-        private String buildAsciiTree(String prefix, boolean isTail) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(prefix)
-                    .append(isTail ? "└── " : "├── ")
-                    .append(name)
-                    .append(" (dir=")
-                    .append(isDirectory)
-                    .append(", hash=")
-                    .append(hash == null ? null : HexFormat.of().formatHex(hash.getBytes(StandardCharsets.ISO_8859_1)))
-                    .append(", ed2kHash=")
-                    .append(ed2kHash == null ? null : HexFormat.of().formatHex(ed2kHash.getBytes(StandardCharsets.ISO_8859_1)))
-                    .append(", fileSize=")
-                    .append(fileSize)
-                    .append(")\n");
-            if (children != null && !children.isEmpty()) {
-                for (int i = 0; i < children.size() - 1; i++) {
-                    sb.append(children.get(i).buildAsciiTree(prefix + (isTail ? "    " : "│   "), false));
-                }
-                sb.append(children.getLast()
-                        .buildAsciiTree(prefix + (isTail ? "    " : "│   "), true));
-            }
-            return sb.toString();
-        }
-
-        // 使用 Jackson 生成 JSON 字符串喵～
-        public String toJson() {
-            try {
-                return new ObjectMapper().writeValueAsString(this);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
 }

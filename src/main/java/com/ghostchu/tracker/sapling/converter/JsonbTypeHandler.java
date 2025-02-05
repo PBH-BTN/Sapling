@@ -1,6 +1,12 @@
 package com.ghostchu.tracker.sapling.converter;
 
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.ghostchu.tracker.sapling.config.JacksonConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedTypes;
@@ -13,7 +19,6 @@ import java.sql.SQLException;
 @Slf4j
 @MappedTypes({Object.class})
 public class JsonbTypeHandler extends JacksonTypeHandler {
-
     public JsonbTypeHandler(Class<?> type) {
         super(type);
     }
@@ -22,6 +27,30 @@ public class JsonbTypeHandler extends JacksonTypeHandler {
     public JsonbTypeHandler(Class<?> type, Field field) {
         super(type, field);
     }
+
+    @Override
+    public Object parse(String json) {
+        ObjectMapper objectMapper = JacksonConfig.objectMapper;
+        TypeFactory typeFactory = objectMapper.getTypeFactory();
+        JavaType javaType = typeFactory.constructType(getFieldType());
+        try {
+            return objectMapper.readValue(json, javaType);
+        } catch (JacksonException e) {
+            log.error("deserialize json: " + json + " to " + javaType + " error ", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public String toJson(Object obj) {
+        try {
+            return JacksonConfig.objectMapper.writeValueAsString(obj);
+        } catch (JsonProcessingException e) {
+            log.error("serialize " + obj + " to json error ", e);
+            throw new RuntimeException(e);
+        }
+    }
+
 
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i, Object parameter, JdbcType jdbcType) throws SQLException {

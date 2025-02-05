@@ -14,9 +14,9 @@ import java.net.InetAddress;
 
 @Configuration
 public class JacksonConfig {
-    @Bean
-    @Primary
-    public ObjectMapper objectMapper() {
+    public static final ObjectMapper objectMapper;
+
+    static {
         ObjectMapper mapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();
         module.addDeserializer(InetAddress.class, new InetAddressDeserializer());
@@ -25,6 +25,12 @@ public class JacksonConfig {
         mapper.registerModule(new Jdk8Module());
         mapper.registerModule(new JavaTimeModule());
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        return mapper;
+        objectMapper = mapper;
+    }
+
+    @Bean
+    @Primary
+    public ObjectMapper objectMapper() {
+        return objectMapper;
     }
 }

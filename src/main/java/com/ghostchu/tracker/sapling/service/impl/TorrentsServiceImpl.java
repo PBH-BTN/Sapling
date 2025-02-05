@@ -94,6 +94,7 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
         vo.setNumFiles(torrent.getNumFiles());
         vo.setCreatedAt(torrent.getCreatedAt());
         vo.setAnonymous(torrent.isAnonymous());
+        vo.setInfo(torrent.getInfo());
         return vo;
     }
 

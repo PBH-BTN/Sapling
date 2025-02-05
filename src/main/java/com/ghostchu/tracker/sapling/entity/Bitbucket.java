@@ -3,6 +3,7 @@ package com.ghostchu.tracker.sapling.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.ghostchu.tracker.sapling.converter.JsonbTypeHandler;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,6 +24,7 @@ import java.util.Map;
 @Getter
 @Setter
 @ToString
+@TableName(autoResultMap = true)
 public class Bitbucket implements Serializable {
 
     private static final long serialVersionUID = 1L;
