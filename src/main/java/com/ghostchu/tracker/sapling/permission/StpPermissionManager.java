@@ -30,8 +30,8 @@ public class StpPermissionManager implements StpInterface {
     public List<String> getPermissionList(Object loginId, String loginType) {
         Users users = usersService.getById(Long.parseLong((String) loginId));
         List<Permissions> permissions = new ArrayList<>();
-        permissions.addAll(permissionsService.getGroupPermissions(users.getPrimaryPermissionGroup()));
-        permissions.addAll(permissionsService.getGroupPermissions(users.getLevelPermissionGroup()));
+        permissions.addAll(permissionsService.getGroupPermissions(users.getPrimaryPermissionGroup(), false));
+        permissions.addAll(permissionsService.getGroupPermissions(users.getLevelPermissionGroup(), true));
         return permissions.stream().map(Permissions::getNode).distinct().toList();
     }
 

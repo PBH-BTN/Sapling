@@ -5,8 +5,9 @@ import cn.dev33.satoken.exception.NotPermissionException;
 import cn.dev33.satoken.stp.StpUtil;
 import com.ghostchu.tracker.sapling.entity.Users;
 import com.ghostchu.tracker.sapling.exception.BusinessException;
+import com.ghostchu.tracker.sapling.gvar.Setting;
+import com.ghostchu.tracker.sapling.service.ISettingsService;
 import com.ghostchu.tracker.sapling.service.IUsersService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +22,13 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 public class SaplingControllerAdvice {
     @Autowired
     private IUsersService usersService;
+    @Autowired
+    private ISettingsService settingsService;
 
     @ExceptionHandler(NotLoginException.class)
     public String handlerNotLoginException(NotLoginException e, Model model, HttpServletResponse response) {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        addModelAttributesForExceptionHandler(model);
         model.addAttribute("err", "您还未登录，请先登录！");
         return "error";
     }
@@ -32,6 +36,7 @@ public class SaplingControllerAdvice {
     @ExceptionHandler(NotPermissionException.class)
     public String handlerNotLoginException(NotPermissionException e, Model model, HttpServletResponse response) {
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        addModelAttributesForExceptionHandler(model);
         model.addAttribute("err", "您没有足够的权限访问此模块的内容：" + e.getMessage());
         return "error";
     }
@@ -40,6 +45,7 @@ public class SaplingControllerAdvice {
     @ExceptionHandler(BusinessException.class)
     public String handlerException(BusinessException e, Model model, HttpServletResponse response) {
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        addModelAttributesForExceptionHandler(model);
         model.addAttribute("err", e.getMessage());
         return "error";
     }
@@ -48,6 +54,7 @@ public class SaplingControllerAdvice {
     @ExceptionHandler(NoResourceFoundException.class)
     public String handlerException(NoResourceFoundException e, Model model, HttpServletResponse response) {
         model.addAttribute("err", "请求的资源 “" + e.getResourcePath() + "” 不存在");
+        addModelAttributesForExceptionHandler(model);
         response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         return "error";
     }
@@ -58,17 +65,28 @@ public class SaplingControllerAdvice {
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         model.addAttribute("errTitle", "内部服务器错误");
         model.addAttribute("err", e.getMessage() + "<br><br>请稍后再试。如果此错误持续出现，请与站点管理员联系。");
+        addModelAttributesForExceptionHandler(model);
         log.error("未处理的全局异常: {}", e.getMessage(), e);
         return "error";
     }
 
+    private void addModelAttributesForExceptionHandler(Model model) {
+        model.addAttribute("siteName", settingsService.getValue(Setting.SITE_NAME));
+        model.addAttribute("user", addUserToModel());
+    }
+
     @ModelAttribute("user")
-    public Users addUserToModel(HttpServletRequest request) {
+    public Users addUserToModel() {
         if (!StpUtil.isLogin()) return null;
         try {
             return usersService.getById(StpUtil.getLoginIdAsLong());
         } catch (NotLoginException e) {
             return null;
         }
+    }
+
+    @ModelAttribute("siteName")
+    public String addSiteName() {
+        return settingsService.getValue(Setting.SITE_NAME);
     }
 }

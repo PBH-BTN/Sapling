@@ -233,6 +233,21 @@
 			<artifactId>p6spy-spring-boot-starter</artifactId>
 			<version>1.10.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.commonmark</groupId>
+			<artifactId>commonmark</artifactId>
+			<version>0.24.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.commonmark</groupId>
+			<artifactId>commonmark-ext-gfm-tables</artifactId>
+			<version>0.24.0</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.brouillard.oss</groupId>
+			<artifactId>commonmark-ext-notifications</artifactId>
+			<version>1.1.0</version>
+		</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>

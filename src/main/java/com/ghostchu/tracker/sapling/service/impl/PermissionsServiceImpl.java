@@ -22,8 +22,8 @@ import java.util.List;
 public class PermissionsServiceImpl extends MPJBaseServiceImpl<PermissionsMapper, Permissions> implements IPermissionsService {
     //更改权限的时候需要刷新这两个缓存
     @Override
-    @Cacheable(value = "permissions", key = "'id:' + #id", unless = "#result == null")
-    public List<Permissions> getGroupPermissions(long id) {
-        return list(new QueryWrapper<Permissions>().eq("target_group", id));
+    @Cacheable(value = "permissions", key = "'target_group:' + #id", unless = "#result == null")
+    public List<Permissions> getGroupPermissions(long id, boolean isLevelGroup) {
+        return list(new QueryWrapper<Permissions>().eq("target_group", id).eq("target_is_level_group", isLevelGroup));
     }
 }

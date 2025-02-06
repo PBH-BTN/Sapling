@@ -1,0 +1,33 @@
+<!-- src/main/resources/templates/torrents/upload.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/import :: import(title=${pageTitle})}">
+
+</head>
+
+<body>
+<div th:if="${user} != null" th:replace="~{fragments/header :: header(${user})}"></div>
+
+<main class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-12">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0" th:text="${pages.title}"></h3>
+                </div>
+                <div class="card-body">
+                    <p th:utext="${pages.htmlContent}"></p>
+                </div>
+                <div class="card-footer">
+                    <p>创建于: <span th:text="${pages.createdAt}"></span> <span
+                            th:if="${pages.editedAt != null}">最后编辑于: </span><span
+                            th:text="${pages.editedAt}"></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

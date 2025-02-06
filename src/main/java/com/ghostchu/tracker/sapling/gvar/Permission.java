@@ -94,4 +94,5 @@ public class Permission {
 
     public static final String ADMIN_PANEL = "admin"; // 访问站点后台设置
 
+    public static final String PAGES_VIEW = "pages.view";
 }

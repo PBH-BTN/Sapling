@@ -15,6 +15,5 @@ import java.util.List;
  */
 public interface IPermissionsService extends MPJBaseService<Permissions> {
 
-    List<Permissions> getGroupPermissions(long groupId);
-
+    List<Permissions> getGroupPermissions(long id, boolean isLevelGroup);
 }
