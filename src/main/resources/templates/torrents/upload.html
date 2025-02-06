@@ -49,7 +49,7 @@
 
                 <div class="card-body">
                     <form th:action="@{/torrents/upload}" method="post" enctype="multipart/form-data"
-                          th:object="${form}">
+                          th:object="${torrent}">
                         <!-- .torrent 文件上传 -->
                         <div class="form-group">
                             <label class="font-weight-bold">种子文件<span class="text-danger">*</span></label>
