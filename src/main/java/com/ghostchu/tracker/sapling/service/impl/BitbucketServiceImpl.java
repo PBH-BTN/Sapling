@@ -1,10 +1,12 @@
 package com.ghostchu.tracker.sapling.service.impl;
 
 import com.ghostchu.tracker.sapling.entity.Bitbucket;
+import com.ghostchu.tracker.sapling.gvar.Setting;
 import com.ghostchu.tracker.sapling.mapper.BitbucketMapper;
 import com.ghostchu.tracker.sapling.service.IBitbucketService;
+import com.ghostchu.tracker.sapling.service.ISettingsService;
 import com.github.yulichang.base.MPJBaseServiceImpl;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,13 +28,17 @@ import java.util.UUID;
  */
 @Service
 public class BitbucketServiceImpl extends MPJBaseServiceImpl<BitbucketMapper, Bitbucket> implements IBitbucketService {
-    @Value("${sapling.bitbucket.path}")
-    private String bitbucketPath;
+    @Autowired
+    private ISettingsService settingsService;
+
+    private String getBitbucketPath() {
+        return settingsService.getValue(Setting.BITBUCKET_PATH);
+    }
 
     @Override
     public Bitbucket uploadToBitbucket(MultipartFile file, Long owner, boolean directAccess) throws IOException {
         String filePath = UUID.randomUUID().toString();
-        File dest = new File(bitbucketPath, filePath);
+        File dest = new File(getBitbucketPath(), filePath);
         file.transferTo(dest);
         Bitbucket bitbucket = new Bitbucket();
         bitbucket.setDisplayName(file.getOriginalFilename());
@@ -49,7 +55,7 @@ public class BitbucketServiceImpl extends MPJBaseServiceImpl<BitbucketMapper, Bi
     @Override
     public Bitbucket uploadToBitbucket(byte[] bytes, String fileName, Long owner, boolean directAccess) throws IOException {
         String filePath = UUID.randomUUID().toString();
-        File dest = new File(bitbucketPath, filePath);
+        File dest = new File(getBitbucketPath(), filePath);
         Files.write(dest.toPath(), bytes);
         Bitbucket bitbucket = new Bitbucket();
         bitbucket.setDisplayName(fileName);
@@ -66,7 +72,7 @@ public class BitbucketServiceImpl extends MPJBaseServiceImpl<BitbucketMapper, Bi
     @Override
     public Bitbucket uploadToBitbucket(File file, Long owner, boolean directAccess) throws IOException {
         String filePath = UUID.randomUUID().toString();
-        File dest = new File(bitbucketPath, filePath);
+        File dest = new File(getBitbucketPath(), filePath);
         Files.copy(file.toPath(), dest.toPath());
         Bitbucket bitbucket = new Bitbucket();
         bitbucket.setDisplayName(file.getName());
@@ -87,7 +93,7 @@ public class BitbucketServiceImpl extends MPJBaseServiceImpl<BitbucketMapper, Bi
             throw new IOException("Given BitBucket not exists.");
         }
         String path = bitbucket.getFilePath();
-        File fsFile = new File(bitbucketPath, path);
+        File fsFile = new File(getBitbucketPath(), path);
         if (!fsFile.exists()) {
             throw new IOException("Given BitBucket exists but the file is missing.");
         }

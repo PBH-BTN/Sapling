@@ -1,4 +1,4 @@
-package com.ghostchu.tracker.sapling.permission;
+package com.ghostchu.tracker.sapling.gvar;
 
 public class Permission {
     public static final String NEWS_VIEW = "news:view"; // 查看站点公告

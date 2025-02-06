@@ -23,15 +23,18 @@ public class SettingsServiceImpl extends MPJBaseServiceImpl<SettingsMapper, Sett
         return getOne(new QueryWrapper<Settings>().eq("name", key));
     }
 
+    @Override
     public String getValue(String key, String defaultValue) {
         Settings value = getSetting(key);
         return value == null ? defaultValue : value.getValue();
     }
 
+    @Override
     public String getValue(String key) {
         return getValue(key, null);
     }
 
+    @Override
     public boolean setValue(String key, String value) {
         Settings setting = getSetting(key);
         if (setting == null) {
@@ -45,6 +48,7 @@ public class SettingsServiceImpl extends MPJBaseServiceImpl<SettingsMapper, Sett
         }
     }
 
+    @Override
     public boolean removeValue(String key) {
         return remove(new QueryWrapper<Settings>().eq("name", key));
     }

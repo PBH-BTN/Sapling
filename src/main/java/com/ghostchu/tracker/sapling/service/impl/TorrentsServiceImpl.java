@@ -8,18 +8,15 @@ import com.dampcake.bencode.Type;
 import com.ghostchu.tracker.sapling.entity.Bitbucket;
 import com.ghostchu.tracker.sapling.entity.Torrents;
 import com.ghostchu.tracker.sapling.entity.Users;
+import com.ghostchu.tracker.sapling.gvar.Setting;
 import com.ghostchu.tracker.sapling.mapper.TorrentsMapper;
-import com.ghostchu.tracker.sapling.service.IBitbucketService;
-import com.ghostchu.tracker.sapling.service.ICategoriesService;
-import com.ghostchu.tracker.sapling.service.ITorrentsService;
-import com.ghostchu.tracker.sapling.service.IUsersService;
+import com.ghostchu.tracker.sapling.service.*;
 import com.ghostchu.tracker.sapling.util.TorrentParser;
 import com.ghostchu.tracker.sapling.vo.TorrentDetailsVO;
 import com.ghostchu.tracker.sapling.vo.TorrentVO;
 import com.github.yulichang.base.MPJBaseServiceImpl;
 import lombok.Cleanup;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -44,12 +41,8 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
     private IUsersService usersService;
     @Autowired
     private ICategoriesService categoriesService;
-    @Value("${sapling.site.name}")
-    private String siteName;
-    @Value("${sapling.site.url}")
-    private String siteUrl;
-    @Value("${sapling.tracker.announce}")
-    private String announceUrl;
+    @Autowired
+    private ISettingsService settingsService;
 
     @Override
     public Torrents getTorrentById(Long id) {
@@ -111,7 +104,7 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
         Map<String, Object> decoded = bencode.decode(content, Type.DICTIONARY);
         decoded.remove("announce");
         decoded.remove("announce-list");
-        decoded.put("announce", announceUrl + "?passkey=" + user.getPasskey());
+        decoded.put("announce", settingsService.getValue(Setting.TRACKER_ANNOUNCE_URL) + "?passkey=" + user.getPasskey());
         return bencode.encode(decoded);
     }
 
@@ -124,7 +117,7 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
         decoded.remove("nodes");
         Map<String, Object> infoMap = (Map<String, Object>) decoded.get("info");
         infoMap.put("private", 1);
-        infoMap.put("source", "[" + siteName + "]" + siteUrl);
+        infoMap.put("source", "[" + settingsService.getValue(Setting.SITE_NAME) + "]" + settingsService.getValue(Setting.SITE_URL));
         byte[] processed = bencode.encode(decoded);
         /* 数据库检查是否有重复种子 */
         var torrentInfo = TorrentParser.parse(processed);

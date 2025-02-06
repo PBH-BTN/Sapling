@@ -14,4 +14,12 @@ import com.github.yulichang.base.MPJBaseService;
 public interface ISettingsService extends MPJBaseService<Settings> {
 
     Settings getSetting(String key);
+
+    String getValue(String key, String defaultValue);
+
+    String getValue(String key);
+
+    boolean setValue(String key, String value);
+
+    boolean removeValue(String key);
 }

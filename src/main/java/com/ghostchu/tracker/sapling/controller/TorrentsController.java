@@ -9,7 +9,7 @@ import com.ghostchu.tracker.sapling.dto.TorrentUploadFormDTO;
 import com.ghostchu.tracker.sapling.entity.Torrents;
 import com.ghostchu.tracker.sapling.entity.Users;
 import com.ghostchu.tracker.sapling.exception.TorrentNotExistsException;
-import com.ghostchu.tracker.sapling.permission.Permission;
+import com.ghostchu.tracker.sapling.gvar.Permission;
 import com.ghostchu.tracker.sapling.service.*;
 import com.ghostchu.tracker.sapling.vo.CategoryVO;
 import com.ghostchu.tracker.sapling.vo.ThanksVO;
