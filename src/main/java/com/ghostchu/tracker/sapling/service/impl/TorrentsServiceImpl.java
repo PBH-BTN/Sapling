@@ -157,5 +157,21 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
         return torrents;
     }
 
+    @Override
+    public void updateTorrent(Long id, Long userId, Long categoryId, String title, String subtitle, String description) {
+        if (categoriesService.getCategoryById(categoryId) == null) {
+            throw new IllegalArgumentException("指定的分类不存在");
+        }
+        Torrents torrents = baseMapper.selectById(id);
+        if (torrents.getOwner() != userId) {
+            throw new IllegalArgumentException("只有种子的所有者才能编辑种子");
+        }
+        torrents.setCategory(categoryId);
+        torrents.setTitle(title);
+        torrents.setSubtitle(subtitle);
+        torrents.setDescription(description);
+        baseMapper.updateById(torrents);
+    }
+
 
 }

@@ -136,34 +136,34 @@ public class TorrentsController {
         if (StpUtil.getLoginIdAsLong() != torrent.getOwner().getId()) {
             return "redirect:/torrents/" + id; // 权限不足
         }
+        var form = new TorrentEditFormDTO();
+        form.setCategoryId(torrent.getCategory().getId());
+        form.setTitle(torrent.getTitle());
+        form.setSubtitle(torrent.getSubtitle());
+        form.setDescription(torrent.getDescription());
+        form.setAnonymous(torrent.isAnonymous());
         // 获取分类列表
         List<CategoryVO> categories = categoriesService.getAllCategories().stream().map(categoriesService::toVO).toList();
         model.addAttribute("torrent", torrent);
         model.addAttribute("categories", categories);
+        model.addAttribute("form", form);
         return "torrents/edit";
     }
 
     // 处理编辑提交
-    @PutMapping("/{id}/edit")
+    @PostMapping("/{id}/edit")
     public String handleEdit(
             @PathVariable Long id,
-            @ModelAttribute("torrent") @Valid TorrentEditFormDTO form,
+            @ModelAttribute("form") @Valid TorrentEditFormDTO form,
             BindingResult result,
             Model model) {
 
         if (result.hasErrors()) {
             // 重新加载分类数据
             model.addAttribute("categories", categoriesService.getAllCategories());
-            return "torrents/edit";
+            return "redirect:/torrents/" + id + "/edit";
         }
-
-        try {
-            // 更新数据库逻辑（示例）
-            torrentService.updateTorrent(id, form);
-            return "redirect:/torrents/" + id;
-        } catch (TorrentNotFoundException e) {
-            result.reject("torrent.notfound", "种子不存在");
-            return "torrents/edit";
-        }
+        torrentsService.updateTorrent(id, StpUtil.getLoginIdAsLong(), form.getCategoryId(), form.getTitle(), form.getSubtitle(), form.getDescription());
+        return "redirect:/torrents/" + id;
     }
 }

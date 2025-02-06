@@ -2,8 +2,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/import :: import(title='上传种子')}">
-    <!-- TinyMCE Markdown 编辑器 -->
+
 </head>
+<!-- TinyMCE Markdown 编辑器 -->
 <script th:src="@{/js/tinymce/tinymce.min.js}"></script>
 <script>
     tinymce.init({
@@ -34,6 +35,7 @@
         }
     });
 </script>
+
 <body>
 <div th:replace="~{fragments/header :: header(${user})}"></div>
 
@@ -47,7 +49,7 @@
 
                 <div class="card-body">
                     <form th:action="@{/torrents/upload}" method="post" enctype="multipart/form-data"
-                          th:object="${torrent}">
+                          th:object="${form}">
                         <!-- .torrent 文件上传 -->
                         <div class="form-group">
                             <label class="font-weight-bold">种子文件<span class="text-danger">*</span></label>
@@ -101,7 +103,7 @@
                         <!-- 匿名发布 -->
                         <div class="form-group form-check">
                             <input type="checkbox" class="form-check-input"
-                                   id="anonymous" th:field="*{anonymous}">
+                                   id="anonymous" th:field="*{anonymous}" th:checked="${anonymous}">
                             <label class="form-check-label" for="anonymous">
                                 匿名发布（隐藏我的用户名）
                             </label>

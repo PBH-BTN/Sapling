@@ -3,23 +3,38 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/import :: import(title='编辑种子')}">
     <!-- TinyMCE 编辑器配置 -->
-    <script th:src="@{/js/tinymce/tinymce.min.js}"></script>
-    <script>
-        tinymce.init({
-            selector: '#descriptionEditor',
-            // 保持与上传页面相同的配置
-            plugins: 'preview importcss searchreplace autolink autosave save code visualblocks visualchars fullscreen image link media codesample table charmap anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons accordion',
-            toolbar: "undo redo | accordion accordionremove | blocks fontfamily fontsize | bold italic underline strikethrough | align numlist bullist | link image | table media | lineheight outdent indent| forecolor backcolor removeformat | charmap emoticons | code fullscreen preview | save | anchor codesample",
-            height: 500,
-            setup: function (editor) {
-                editor.on('init', function () {
-                    // 设置编辑器初始内容
-                    editor.setContent(document.getElementById('descriptionEditor').value);
-                });
-            }
-        });
-    </script>
+
 </head>
+<script th:src="@{/js/tinymce/tinymce.min.js}"></script>
+<script>
+    tinymce.init({
+        selector: '#descriptionEditor',
+        plugins: 'preview importcss searchreplace autolink autosave save code visualblocks visualchars fullscreen image link media codesample table charmap anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons accordion',
+        menubar: 'file edit view insert format tools table help',
+        toolbar: "undo redo | accordion accordionremove | blocks fontfamily fontsize | bold italic underline strikethrough | align numlist bullist | link image | table media | lineheight outdent indent| forecolor backcolor removeformat | charmap emoticons | code fullscreen preview | save | anchor codesample",
+        autosave_ask_before_unload: true,
+        autosave_interval: '30s',
+        autosave_prefix: '{path}{query}-{id}-',
+        autosave_restore_when_empty: false,
+        autosave_retention: '2m',
+        image_advtab: true,
+        height: 500,
+        forced_root_block: false,
+        image_caption: true,
+        quickbars_selection_toolbar: 'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
+        noneditable_class: 'mceNonEditable',
+        toolbar_mode: 'sliding',
+        contextmenu: 'link image table',
+        convert_urls: false,
+        // Markdown 配置
+        extended_valid_elements: 'pre[class]',
+        setup: function (editor) {
+            editor.on('init', function () {
+                this.getBody().style.fontSize = '14px';
+            });
+        }
+    });
+</script>
 <body>
 <div th:replace="~{fragments/header :: header(${user})}"></div>
 
@@ -34,27 +49,12 @@
                 <div class="card-body">
                     <form th:action="@{/torrents/{id}/edit(id=${torrent.id})}"
                           method="post"
-                          th:object="${torrent}">
-                        <input type="hidden" name="_method" value="put"/>
-                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-
-                        <!-- 不可修改的种子信息 -->
-                        <div class="form-group">
-                            <label class="font-weight-bold">种子文件</label>
-                            <div class="alert alert-secondary">
-                                <i class="fas fa-file-archive mr-2"></i>
-                                <span th:text="${torrent.title} + '.torrent'"></span>
-                                <small class="text-muted ml-2">
-                                    （大小：<span
-                                        th:text="${#numbers.formatDecimal(torrent.size, 1, 'COMMA', 2, 'B')}"></span>）
-                                </small>
-                            </div>
-                        </div>
+                          th:object="${form}">
 
                         <!-- 分类选择 -->
                         <div class="form-group">
                             <label class="font-weight-bold">分类<span class="text-danger">*</span></label>
-                            <select class="custom-select" th:field="*{category.id}" required>
+                            <select class="custom-select" th:field="*{categoryId}" required>
                                 <option th:each="cat : ${categories}"
                                         th:value="${cat.id}"
                                         th:selected="${cat.id == torrent.category.id}"
