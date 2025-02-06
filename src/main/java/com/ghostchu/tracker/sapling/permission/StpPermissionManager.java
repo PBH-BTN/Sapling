@@ -1,0 +1,41 @@
+package com.ghostchu.tracker.sapling.permission;
+
+import cn.dev33.satoken.stp.StpInterface;
+import com.ghostchu.tracker.sapling.entity.PermissionGroups;
+import com.ghostchu.tracker.sapling.entity.Permissions;
+import com.ghostchu.tracker.sapling.entity.Users;
+import com.ghostchu.tracker.sapling.service.IPermissionGroupsService;
+import com.ghostchu.tracker.sapling.service.IPermissionsService;
+import com.ghostchu.tracker.sapling.service.IUsersService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Component
+public class StpPermissionManager implements StpInterface {
+    @Autowired
+    private IPermissionsService permissionsService;
+    @Autowired
+    private IPermissionGroupsService permissionGroupsService;
+    @Autowired
+    private IUsersService usersService;
+
+    @Override
+    public List<String> getPermissionList(Object loginId, String loginType) {
+        Users users = usersService.getById((long) loginId);
+        List<Permissions> permissions = new ArrayList<>();
+        permissions.addAll(permissionsService.getGroupPermissions(users.getPrimaryPermissionGroup()));
+        permissions.addAll(permissionsService.getGroupPermissions(users.getLevelPermissionGroup()));
+        return permissions.stream().map(Permissions::getNode).distinct().toList();
+    }
+
+    @Override
+    public List<String> getRoleList(Object loginId, String loginType) {
+        Users users = usersService.getById((long) loginId);
+        PermissionGroups primary = permissionGroupsService.getById(users.getPrimaryPermissionGroup());
+        PermissionGroups level = permissionGroupsService.getById(users.getLevelPermissionGroup());
+        return List.of(primary.getName(), level.getName());
+    }
+}

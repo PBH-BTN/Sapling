@@ -1,0 +1,28 @@
+<!-- src/main/resources/templates/torrents/upload.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/import :: import(title='出错了')}">
+
+</head>
+
+<body>
+<div th:if="${user} != null" th:replace="~{fragments/header :: header(${user})}"></div>
+
+<main class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="mb-0"><i class="fas fa-xmark mr-2"></i>出错了！</h3>
+                </div>
+                <div class="card-body">
+                    <p th:utext="${err}"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

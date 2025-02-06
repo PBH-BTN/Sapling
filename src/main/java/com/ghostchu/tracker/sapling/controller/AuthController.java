@@ -33,6 +33,9 @@ public class AuthController {
 
     @GetMapping("/login")
     public String login(Model model) {
+        if (StpUtil.isLogin()) {
+            return "redirect:/";
+        }
         model.addAttribute("username", "");
         model.addAttribute("password", "");
         return "login";
