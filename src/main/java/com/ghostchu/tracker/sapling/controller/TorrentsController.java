@@ -11,6 +11,7 @@ import com.ghostchu.tracker.sapling.entity.Users;
 import com.ghostchu.tracker.sapling.exception.TorrentNotExistsException;
 import com.ghostchu.tracker.sapling.gvar.Permission;
 import com.ghostchu.tracker.sapling.service.*;
+import com.ghostchu.tracker.sapling.util.HtmlSanitizer;
 import com.ghostchu.tracker.sapling.vo.CategoryVO;
 import com.ghostchu.tracker.sapling.vo.ThanksVO;
 import com.ghostchu.tracker.sapling.vo.TorrentDetailsVO;
@@ -126,11 +127,11 @@ public class TorrentsController {
         if (StpUtil.hasPermission(Permission.TORRENT_SUBMIT)) {
             newTorrent = torrentsService.createTorrent(StpUtil.getLoginIdAsLong(), file,
                     form.getCategoryId(), form.getTitle(), form.getSubtitle(),
-                    form.getDescription(), form.isAnonymous(), true);
+                    HtmlSanitizer.sanitize(form.getDescription()), form.isAnonymous(), true);
         } else {
             newTorrent = torrentsService.createTorrent(StpUtil.getLoginIdAsLong(), file,
                     form.getCategoryId(), form.getTitle(), form.getSubtitle(),
-                    form.getDescription(), form.isAnonymous(), false);
+                    HtmlSanitizer.sanitize(form.getDescription()), form.isAnonymous(), false);
             torrentReviewQueueService.queueTorrent(newTorrent.getId());
         }
         return "redirect:/torrents/" + newTorrent.getId();
@@ -187,7 +188,7 @@ public class TorrentsController {
             model.addAttribute("categories", categoriesService.getAllCategories());
             return "redirect:/torrents/" + id + "/edit";
         }
-        torrentsService.updateTorrent(id, StpUtil.getLoginIdAsLong(), form.getCategoryId(), form.getTitle(), form.getSubtitle(), form.getDescription());
+        torrentsService.updateTorrent(id, StpUtil.getLoginIdAsLong(), form.getCategoryId(), form.getTitle(), form.getSubtitle(), HtmlSanitizer.sanitize(form.getDescription()));
         return "redirect:/torrents/" + id;
     }
 }

@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @ControllerAdvice
 @Slf4j
@@ -33,9 +34,16 @@ public class SaplingControllerAdvice {
     }
 
     // 业务异常拦截
-    @ExceptionHandler
+    @ExceptionHandler(BusinessException.class)
     public String handlerException(BusinessException e, Model model) {
         model.addAttribute("err", e.getMessage());
+        return "error";
+    }
+
+    // 业务异常拦截
+    @ExceptionHandler(NoResourceFoundException.class)
+    public String handlerException(NoResourceFoundException e, Model model) {
+        model.addAttribute("err", "请求的资源 “" + e.getResourcePath() + "” 不存在");
         return "error";
     }
 
