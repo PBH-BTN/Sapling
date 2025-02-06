@@ -1,9 +1,11 @@
 package com.ghostchu.tracker.sapling.permission;
 
 import cn.dev33.satoken.stp.StpInterface;
+import com.ghostchu.tracker.sapling.entity.LevelPermissionGroups;
 import com.ghostchu.tracker.sapling.entity.PermissionGroups;
 import com.ghostchu.tracker.sapling.entity.Permissions;
 import com.ghostchu.tracker.sapling.entity.Users;
+import com.ghostchu.tracker.sapling.service.ILevelPermissionGroupsService;
 import com.ghostchu.tracker.sapling.service.IPermissionGroupsService;
 import com.ghostchu.tracker.sapling.service.IPermissionsService;
 import com.ghostchu.tracker.sapling.service.IUsersService;
@@ -20,6 +22,8 @@ public class StpPermissionManager implements StpInterface {
     @Autowired
     private IPermissionGroupsService permissionGroupsService;
     @Autowired
+    private ILevelPermissionGroupsService levelPermissionGroupsService;
+    @Autowired
     private IUsersService usersService;
 
     @Override
@@ -35,7 +39,7 @@ public class StpPermissionManager implements StpInterface {
     public List<String> getRoleList(Object loginId, String loginType) {
         Users users = usersService.getById(Long.parseLong((String) loginId));
         PermissionGroups primary = permissionGroupsService.getById(users.getPrimaryPermissionGroup());
-        PermissionGroups level = permissionGroupsService.getById(users.getLevelPermissionGroup());
+        LevelPermissionGroups level = levelPermissionGroupsService.getById(users.getLevelPermissionGroup());
         return List.of(primary.getName(), level.getName());
     }
 }

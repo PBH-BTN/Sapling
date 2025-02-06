@@ -111,5 +111,5 @@ public class UserVO implements Serializable {
     /**
      * 晋级权限组
      */
-    private PermissionGroupVO levelPermissionGroup;
+    private LevelPermissionGroupVO levelPermissionGroup;
 }

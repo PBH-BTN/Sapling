@@ -1,0 +1,171 @@
+<!-- src/main/resources/templates/user/profile.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/import :: import(title=${user.name + ' - 个人资料'})}">
+    <!-- Markdown 渲染 -->
+    <script th:src="@{/assets/js/commonmark.min.js}"></script>
+    <style>
+        .profile-stats .card {
+            transition: transform 0.2s;
+        }
+
+        .profile-stats .card:hover {
+            transform: translateY(-3px);
+        }
+
+        .bandwidth-meter {
+            height: 8px;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/header :: header(${user})}"></div>
+
+<main class="container my-4">
+    <!-- 面包屑导航 -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb bg-light">
+            <li class="breadcrumb-item"><a th:href="@{/static}">首页</a></li>
+            <li class="breadcrumb-item active" th:text="${user.name}"></li>
+        </ol>
+    </nav>
+
+    <!-- 用户信息卡片 -->
+    <div class="card shadow-lg mb-4">
+        <div class="card-body">
+            <!-- 基本信息 -->
+            <div class="row align-items-center">
+                <!-- 头像 -->
+                <div class="col-md-3 text-center">
+                    <img th:src="@{${user.avatar}}"
+                         class="rounded-circle mb-3"
+                         width="150"
+                         alt="用户头像">
+                    <div th:if="${user.banned}" class="alert alert-danger">
+                        <i class="fas fa-ban"></i> 账号已封禁
+                    </div>
+                </div>
+
+                <!-- 详细信息 -->
+                <div class="col-md-9">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h2 class="mb-1" th:text="${user.name}"></h2>
+                            <div class="mb-2">
+                                <span class="badge text-contrast"
+                                      th:style="'background-color:' + ${user.primaryPermissionGroup.color}"
+                                      th:data-bg-color="${user.primaryPermissionGroup.color}"
+                                      th:text="${user.primaryPermissionGroup.name}"></span>
+                                <span th:if="${user.levelPermissionGroup}"
+                                      class="badge ml-2 text-contrast"
+                                      th:style="'background-color:' + ${user.levelPermissionGroup.color}"
+                                      th:data-bg-color="${user.levelPermissionGroup.color}"
+                                      th:text="${user.levelPermissionGroup.name}"></span>
+                            </div>
+                            <p class="text-muted" th:text="${user.title}"></p>
+                        </div>
+                        <div th:if="${isCurrentUser}" class="btn-group">
+                            <a th:href="@{/user/settings}"
+                               class="btn btn-outline-primary">
+                                <i class="fas fa-cog mr-2"></i>编辑资料
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- 统计信息 -->
+                    <div class="row profile-stats mt-3">
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-arrow-up text-success"></i>
+                                        <span th:text="${T(com.ghostchu.tracker.sapling.util.UnitConverter).autoUnit(user.uploaded)}"></span>
+                                    </h5>
+                                    <p class="card-text text-muted small">上传量</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-arrow-down text-danger"></i>
+                                        <span th:text="${T(com.ghostchu.tracker.sapling.util.UnitConverter).autoUnit(user.downloaded)}"></span>
+                                    </h5>
+                                    <p class="card-text text-muted small">下载量</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-seedling text-primary"></i>
+                                        <!--                                        <span th:text="${#dates.format(user.seedTime, 'd 天 H 小时')}"></span>-->
+                                    </h5>
+                                    <p class="card-text text-muted small">总做种时间</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 带宽信息 -->
+                    <!--                    <div class="row mt-3">-->
+                    <!--                        <div class="col-md-6">-->
+                    <!--                            <div class="d-flex justify-content-between small">-->
+                    <!--                                <span>上传带宽</span>-->
+                    <!--                                <span th:text="${user.myBandwidthUpload} + ' Mbps'"></span>-->
+                    <!--                            </div>-->
+                    <!--                            <div class="progress bandwidth-meter">-->
+                    <!--                                <div class="progress-bar bg-success"-->
+                    <!--                                     role="progressbar"-->
+                    <!--                                     th:style="'width:' + ${user.myBandwidthUpload / 1000 * 100} + '%'"></div>-->
+                    <!--                            </div>-->
+                    <!--                        </div>-->
+                    <!--                        <div class="col-md-6">-->
+                    <!--                            <div class="d-flex justify-content-between small">-->
+                    <!--                                <span>下载带宽</span>-->
+                    <!--                                <span th:text="${user.myBandwidthDownload} + ' Mbps'"></span>-->
+                    <!--                            </div>-->
+                    <!--                            <div class="progress bandwidth-meter">-->
+                    <!--                                <div class="progress-bar bg-danger"-->
+                    <!--                                     role="progressbar"-->
+                    <!--                                     th:style="'width:' + ${user.myBandwidthDownload / 1000 * 100} + '%'"></div>-->
+                    <!--                            </div>-->
+                    <!--                        </div>-->
+                    <!--                    </div>-->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 签名档 -->
+    <div class="card shadow-lg mb-4" th:if="${user.signature}">
+        <div class="card-body">
+            <h5 class="card-title mb-3"><i class="fas fa-pen-fancy mr-2"></i>签名档</h5>
+            <div id="signatureContent" th:text="${user.signature}"></div>
+        </div>
+    </div>
+
+    <!-- 其他操作 -->
+    <div class="text-center mt-4" th:unless="${isCurrentUser}">
+        <button class="btn btn-outline-primary mr-2">
+            <i class="fas fa-envelope mr-2"></i>发送消息
+        </button>
+        <button class="btn btn-outline-danger">
+            <i class="fas fa-flag mr-2"></i>举报用户
+        </button>
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<!-- Markdown 渲染脚本 -->
+<script>
+    const reader = new commonmark.Parser();
+    const writer = new commonmark.HtmlRenderer();
+    const parsed = reader.parse(document.getElementById('signatureContent').textContent);
+    document.getElementById('signatureContent').innerHTML = writer.render(parsed);
+</script>
+</body>
+</html>

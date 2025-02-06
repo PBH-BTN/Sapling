@@ -3,6 +3,7 @@ package com.ghostchu.tracker.sapling.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ghostchu.tracker.sapling.entity.Users;
 import com.ghostchu.tracker.sapling.mapper.UsersMapper;
+import com.ghostchu.tracker.sapling.service.ILevelPermissionGroupsService;
 import com.ghostchu.tracker.sapling.service.IPermissionGroupsService;
 import com.ghostchu.tracker.sapling.service.IUsersService;
 import com.ghostchu.tracker.sapling.vo.UserVO;
@@ -29,6 +30,8 @@ import java.util.UUID;
 public class UsersServiceImpl extends MPJBaseServiceImpl<UsersMapper, Users> implements IUsersService {
     @Autowired
     private IPermissionGroupsService permissionGroupsService;
+    @Autowired
+    private ILevelPermissionGroupsService levelPermissionGroupsService;
 
     @Override
     public Users getUserByUsernameAndPasswordHash(String username, String passhash) {
@@ -106,7 +109,7 @@ public class UsersServiceImpl extends MPJBaseServiceImpl<UsersMapper, Users> imp
         vo.setBanned(user.getBannedId() != null);
         vo.setWarned(user.getWarnedId() != null);
         vo.setSystemAccount(user.isSystemAccount());
-        vo.setLevelPermissionGroup(permissionGroupsService.toVO(permissionGroupsService.getPermissionGroupById(user.getLevelPermissionGroup())));
+        vo.setLevelPermissionGroup(levelPermissionGroupsService.toVO(levelPermissionGroupsService.getLevelPermissionGroupById(user.getLevelPermissionGroup())));
         return vo;
     }
 

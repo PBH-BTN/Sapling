@@ -7,6 +7,7 @@ import com.ghostchu.tracker.sapling.entity.Users;
 import com.ghostchu.tracker.sapling.exception.BusinessException;
 import com.ghostchu.tracker.sapling.service.IUsersService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -22,39 +23,44 @@ public class SaplingControllerAdvice {
     private IUsersService usersService;
 
     @ExceptionHandler(NotLoginException.class)
-    public String handlerNotLoginException(NotLoginException e, Model model) {
+    public String handlerNotLoginException(NotLoginException e, Model model, HttpServletResponse response) {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         model.addAttribute("err", "您还未登录，请先登录！");
         return "error";
     }
 
     @ExceptionHandler(NotPermissionException.class)
-    public String handlerNotLoginException(NotPermissionException e, Model model) {
+    public String handlerNotLoginException(NotPermissionException e, Model model, HttpServletResponse response) {
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         model.addAttribute("err", "您没有足够的权限访问此模块的内容：" + e.getMessage());
         return "error";
     }
 
     // 业务异常拦截
     @ExceptionHandler(BusinessException.class)
-    public String handlerException(BusinessException e, Model model) {
+    public String handlerException(BusinessException e, Model model, HttpServletResponse response) {
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         model.addAttribute("err", e.getMessage());
         return "error";
     }
 
     // 业务异常拦截
     @ExceptionHandler(NoResourceFoundException.class)
-    public String handlerException(NoResourceFoundException e, Model model) {
+    public String handlerException(NoResourceFoundException e, Model model, HttpServletResponse response) {
         model.addAttribute("err", "请求的资源 “" + e.getResourcePath() + "” 不存在");
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         return "error";
     }
 
     // 全局异常拦截
     @ExceptionHandler
-    public String handlerException(Exception e, Model model) {
-        model.addAttribute("err", e.getMessage());
+    public String handlerException(Exception e, Model model, HttpServletResponse response) {
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        model.addAttribute("errTitle", "内部服务器错误");
+        model.addAttribute("err", e.getMessage() + "<br><br>请稍后再试。如果此错误持续出现，请与站点管理员联系。");
         log.error("未处理的全局异常: {}", e.getMessage(), e);
         return "error";
     }
-
 
     @ModelAttribute("user")
     public Users addUserToModel(HttpServletRequest request) {
