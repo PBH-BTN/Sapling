@@ -33,7 +33,7 @@ public class ThanksServiceImpl extends MPJBaseServiceImpl<ThanksMapper, Thanks> 
         ThanksVO thanksVO = new ThanksVO();
         thanksVO.setId(thanks.getId());
         thanksVO.setOwner(usersService.toVO(usersService.getUserById(thanks.getOwner())));
-        thanksVO.setTorrent(torrentsService.toVO(torrentsService.getTorrentById(thanks.getTorrent())));
+        thanksVO.setTorrent(torrentsService.toVO(torrentsService.getTorrentById(thanks.getTorrent(), true, true)));
         thanksVO.setCreateAt(thanks.getCreateAt());
         return thanksVO;
     }

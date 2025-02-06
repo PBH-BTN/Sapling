@@ -31,8 +31,9 @@ public class Permission {
     public static final String TORRENT_QUEUE = "torrent.queue"; // 提交种子到待审队列
     public static final String TORRENT_DOWNLOAD = "torrent.download"; // 下载种子
 
-    public static final String TORRENT_DELETE = "torrent.delete.self"; // 删除种子
+    public static final String TORRENT_DELETE = "torrent.delete"; // 删除种子
     public static final String TORRENT_DELETE_OTHER = "torrent.delete.other"; // 删除他人的种子
+    public static final String TORRENT_UNDELETE = "torrent.undelete"; // 恢复已删除种子
 
     public static final String TORRENT_EDIT = "torrent.edit"; // 编辑种子
     public static final String TORRENT_EDIT_OTHER = "torrent.edit.other"; // 编辑他人种子
@@ -92,4 +93,5 @@ public class Permission {
     public static final String PERMISSION_GROUP_EDIT = "permission.group.edit"; // 编辑权限组设定
 
     public static final String ADMIN_PANEL = "admin"; // 访问站点后台设置
+
 }

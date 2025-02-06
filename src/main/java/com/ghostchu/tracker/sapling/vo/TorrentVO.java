@@ -55,4 +55,7 @@ public class TorrentVO implements Serializable {
     private OffsetDateTime createdAt;
 
     private boolean anonymous;
+
+    private boolean visible;
+    private boolean deleted;
 }

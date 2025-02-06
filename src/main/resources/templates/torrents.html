@@ -97,6 +97,8 @@
                                            th:href="@{/torrents/{id}(id=${torrent.id})}"
                                            th:text="${torrent.title}"
                                            style="font-size:1rem; min-width: 0;"></a>
+                                        <small class="text-muted" th:if="${torrent.deleted}">[已删除]</small>
+                                        <small class="text-muted" th:unless="${torrent.visible}">[不可见]</small>
                                     </h6>
                                     <small class="text-muted text-truncate d-block"
                                            th:text="${torrent.subtitle}"

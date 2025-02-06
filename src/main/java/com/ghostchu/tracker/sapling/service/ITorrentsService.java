@@ -19,7 +19,7 @@ import java.io.IOException;
  * @since 2025-02-04
  */
 public interface ITorrentsService extends MPJBaseService<Torrents> {
-    Torrents getTorrentById(Long id);
+    Torrents getTorrentById(Long id, boolean includeInvisible, boolean includeDeleted);
 
     IPage<Torrents> getTorrentsByPage(long page, int size, boolean includeInvisible, boolean includeDeleted);
 
@@ -35,5 +35,9 @@ public interface ITorrentsService extends MPJBaseService<Torrents> {
 
     void updateTorrent(Long id, Long userId, Long categoryId, String title, String subtitle, String description);
 
-    Torrents getTorrentByInfoHash(byte[] infoHash);
+    Torrents getTorrentByInfoHash(byte[] infoHash, boolean includeInvisible, boolean includeDeleted);
+
+    int deleteTorrent(long id, long deleteBy);
+
+    int unDeleteTorrent(long id);
 }

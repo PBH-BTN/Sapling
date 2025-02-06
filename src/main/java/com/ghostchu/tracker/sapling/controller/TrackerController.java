@@ -138,7 +138,7 @@ public class TrackerController {
         Validate.isTrue(infoHashes.size() == 1, "[非法请求] 单个 announce 请求中最多只能包含 1 个 info_hash 参数");
         byte[] infoHash = infoHashes.getFirst();
         Validate.isTrue(infoHash.length == 20);
-        Torrents torrents = torrentsService.getTorrentByInfoHash(infoHash);
+        Torrents torrents = torrentsService.getTorrentByInfoHash(infoHash, false, false);
         Validate.notNull(torrents, "torrent not registered with this tracker"); // 有些客户端会识别这个，所以不要改成背的
         // 截取peerid
         var peerIds = extractPeerId(req.getQueryString());
@@ -280,7 +280,7 @@ public class TrackerController {
         var map = new HashMap<>();
         var files = new HashMap<>();
         for (byte[] infoHash : infoHashes) {
-            Torrents torrents = torrentsService.getTorrentByInfoHash(infoHash);
+            Torrents torrents = torrentsService.getTorrentByInfoHash(infoHash, false, false);
             if (torrents != null) {
                 files.put(new String(infoHash, StandardCharsets.ISO_8859_1), new HashMap<>() {{
                     var peers = peersService.scrape(torrents.getId());

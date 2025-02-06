@@ -45,8 +45,11 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
     private ISettingsService settingsService;
 
     @Override
-    public Torrents getTorrentById(Long id) {
-        return baseMapper.selectById(id);
+    public Torrents getTorrentById(Long id, boolean includeInvisible, boolean includeDeleted) {
+        return getOne(new QueryWrapper<Torrents>()
+                .eq("id", id)
+                .eq(!includeInvisible, "visible", true)
+                .isNull(!includeDeleted, "deleted_at"));
     }
 
     @Override
@@ -70,6 +73,8 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
         vo.setNumFiles(torrent.getNumFiles());
         vo.setCreatedAt(torrent.getCreatedAt());
         vo.setAnonymous(torrent.isAnonymous());
+        vo.setVisible(torrent.isVisible());
+        vo.setDeleted(torrent.getDeletedAt() != null);
         return vo;
     }
 
@@ -87,6 +92,8 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
         vo.setCreatedAt(torrent.getCreatedAt());
         vo.setAnonymous(torrent.isAnonymous());
         vo.setInfo(torrent.getInfo());
+        vo.setVisible(torrent.isVisible());
+        vo.setDeleted(torrent.getDeletedAt() != null);
         return vo;
     }
 
@@ -166,9 +173,35 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
     }
 
     @Override
-    public Torrents getTorrentByInfoHash(byte[] infoHash) {
-        return getOne(new QueryWrapper<Torrents>().eq("hash_v1", infoHash).or().eq("hash_v2_short", infoHash));
+    public Torrents getTorrentByInfoHash(byte[] infoHash, boolean includeInvisible, boolean includeDeleted) {
+        Torrents torrents = getOne(new QueryWrapper<Torrents>()
+                .eq("hash_v1", infoHash)
+                .or()
+                .eq("hash_v2_short", infoHash));
+        if (torrents == null) {
+            return null;
+        }
+        if (!includeInvisible && !torrents.isVisible()) {
+            return null;
+        }
+        if (!includeDeleted && torrents.getDeletedAt() != null) {
+            return null;
+        }
+        return torrents;
     }
 
+    @Override
+    public int deleteTorrent(long id, long deleteBy) {
+        Torrents torrents = baseMapper.selectById(id);
+        torrents.setDeletedAt(OffsetDateTime.now());
+        torrents.setDeletedBy(deleteBy);
+        return baseMapper.updateById(torrents);
+    }
 
+    @Override
+    public int unDeleteTorrent(long id) {
+        Torrents torrents = baseMapper.selectById(id);
+        torrents.setDeletedAt(null);
+        return baseMapper.updateById(torrents);
+    }
 }
