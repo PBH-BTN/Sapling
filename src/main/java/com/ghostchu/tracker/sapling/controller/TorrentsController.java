@@ -57,6 +57,8 @@ public class TorrentsController {
     private IThanksService thanksService;
     @Autowired
     private ITorrentReviewQueueService torrentReviewQueueService;
+    @Autowired
+    private ICommentsService commentsService;
 
     @GetMapping
     @SaCheckPermission(value = {Permission.TORRENT_VIEW})
@@ -89,6 +91,7 @@ public class TorrentsController {
         List<ThanksVO> thanksVOList = recentThanks.getRecords().stream().map(thanksService::toVO).toList();
         model.addAttribute("thanks", thanksVOList);
         model.addAttribute("thankedTorrent", thanksService.isUserThankedTorrent(StpUtil.getLoginIdAsLong(), id));
+        model.addAttribute("comments", commentsService.getComments(id, 1, 20));
         return "torrents/detail";
     }
 

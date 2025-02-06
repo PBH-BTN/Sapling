@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.ghostchu.tracker.sapling.converter.JsonbTypeHandler;
-import com.ghostchu.tracker.sapling.util.TorrentInfo;
+import com.ghostchu.tracker.sapling.util.bean.TorrentInfo;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

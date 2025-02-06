@@ -1,4 +1,4 @@
-package com.ghostchu.tracker.sapling.util;
+package com.ghostchu.tracker.sapling.util.bean;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ghostchu.tracker.sapling.config.JacksonConfig;
@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @NoArgsConstructor
-public class TorrentNode implements Serializable {
+public final class TorrentNode implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String name;

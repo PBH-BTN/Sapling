@@ -1,5 +1,6 @@
 package com.ghostchu.tracker.sapling.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ghostchu.tracker.sapling.entity.Comments;
 import com.github.yulichang.base.MPJBaseService;
 
@@ -13,4 +14,5 @@ import com.github.yulichang.base.MPJBaseService;
  */
 public interface ICommentsService extends MPJBaseService<Comments> {
 
+    IPage<Comments> getComments(long torrent, int page, int size);
 }

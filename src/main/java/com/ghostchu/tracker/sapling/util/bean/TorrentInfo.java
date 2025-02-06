@@ -1,4 +1,4 @@
-package com.ghostchu.tracker.sapling.util;
+package com.ghostchu.tracker.sapling.util.bean;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;

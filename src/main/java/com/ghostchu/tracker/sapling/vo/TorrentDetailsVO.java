@@ -1,6 +1,6 @@
 package com.ghostchu.tracker.sapling.vo;
 
-import com.ghostchu.tracker.sapling.util.TorrentInfo;
+import com.ghostchu.tracker.sapling.util.bean.TorrentInfo;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

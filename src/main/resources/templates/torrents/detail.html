@@ -95,16 +95,16 @@
                 </div>
                 <!-- 显示感谢列表 -->
                 <div class="card-body">
-            <span th:each="thank : ${thanks}">
-                <a th:href="@{/profile/{id}(id=${thank.owner.id})}"
-                   class="badge badge-pill"
-                   th:style="'background-color:' + ${thank.owner.primaryPermissionGroup.color} + ';color:white'"
-                   th:text="${thank.owner.name}">
-                </a>
-            </span>
+                    <span th:each="thank : ${thanks}">
+                        <a th:href="@{/profile/{id}(id=${thank.owner.id})}"
+                           class="badge badge-pill"
+                           th:style="'background-color:' + ${thank.owner.primaryPermissionGroup.color} + ';color:white'"
+                           th:text="${thank.owner.name}">
+                        </a>
+                    </span>
                     <span th:if="${thanksTotalSize > #lists.size(thanks)}"
-                          class="badge badge-pill badge-secondary">
-                +<span th:text="${thanksTotalSize - #lists.size(thanks)}"></span> 位用户
+                          class="badge badge-pill badge-secondary">+<span
+                            th:text="${thanksTotalSize - #lists.size(thanks)}"></span> 位用户
             </span>
                 </div>
             </div>
@@ -155,48 +155,8 @@
                             <div id="btInfoCollapse" class="collapse" aria-labelledby="headingTwo"
                                  data-parent="#torrentInfos">
                                 <div class="card-body">
-                                    <form>
-                                        <table class="table table-sm">
-                                            <tbody>
-                                            <tr>
-                                                <th scope="row">BT Meta 版本:</th>
-                                                <td th:text="${torrent.info.metaVersion()}"></td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">混合种子:</th>
-                                                <td th:text="${torrent.info.hybrid()}"></td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">信息哈希值(info hash) (v1):</th>
-                                                <td th:text="${torrent.info.infoHashV1()}"></td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">信息哈希值(info hash) (v2):</th>
-                                                <td th:text="${torrent.info.infoHashV2()}"></td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">文件内容总大小:</th>
-                                                <td th:text="${torrent.info.totalSize() + ' bytes'}"></td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">文件内容数量:</th>
-                                                <td th:text="${torrent.info.files()}"></td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">种子创建工具:</th>
-                                                <td th:text="${torrent.info.createdBy()}"></td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">种子创建时间:</th>
-                                                <td th:text="${torrent.info.creationDate()}"></td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">种子创建人:</th>
-                                                <td th:text="${torrent.info.publisher()}"></td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </form>
+                                    <table class="table table-sm"
+                                           th:replace="~{fragments/torrentinfo :: torrentInfo(torrent = ${torrent})}"></table>
                                 </div>
                             </div>
                         </div>
@@ -206,7 +166,6 @@
         </div>
     </div>
 </main>
-
 
 <!-- 操作脚本 -->
 <script th:inline="javascript">

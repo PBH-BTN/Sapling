@@ -2,6 +2,8 @@ package com.ghostchu.tracker.sapling.util;
 
 import com.dampcake.bencode.Bencode;
 import com.dampcake.bencode.Type;
+import com.ghostchu.tracker.sapling.util.bean.TorrentInfo;
+import com.ghostchu.tracker.sapling.util.bean.TorrentNode;
 import com.google.common.hash.Hashing;
 import lombok.extern.slf4j.Slf4j;
 
