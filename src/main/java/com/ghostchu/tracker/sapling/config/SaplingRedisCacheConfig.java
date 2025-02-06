@@ -16,7 +16,7 @@ public class SaplingRedisCacheConfig {
     @Bean
     public CacheManager cacheManager(LettuceConnectionFactory redisConnectionFactory) {
         RedisCacheConfiguration defaultCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofMillis(5));
+                .entryTtl(Duration.ofMinutes(5));
 
         return new SaplingRedisCacheManager(RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory), defaultCacheConfig);
     }

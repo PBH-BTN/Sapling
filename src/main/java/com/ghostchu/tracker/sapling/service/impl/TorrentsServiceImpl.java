@@ -17,6 +17,9 @@ import com.ghostchu.tracker.sapling.vo.TorrentVO;
 import com.github.yulichang.base.MPJBaseServiceImpl;
 import lombok.Cleanup;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -45,20 +48,17 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
     private ISettingsService settingsService;
 
     @Override
-    public Torrents getTorrentById(Long id, boolean includeInvisible, boolean includeDeleted) {
+    @Cacheable(value = "torrents", key = "'id:' + #id")
+    public Torrents getTorrentById(Long id) {
         return getOne(new QueryWrapper<Torrents>()
-                .eq("id", id)
-                .eq(!includeInvisible, "visible", true)
-                .isNull(!includeDeleted, "deleted_at"));
+                .eq("id", id));
     }
 
     @Override
     public IPage<Torrents> getTorrentsByPage(long page, int size, boolean includeInvisible, boolean includeDeleted) {
         IPage<Torrents> iPage = new Page<>(page, size);
         return baseMapper.selectPage(iPage, new QueryWrapper<Torrents>()
-                .orderBy(true, false, "created_at")
-                .eq(!includeInvisible, "visible", true)
-                .isNull(!includeDeleted, "deleted_at"));
+                .orderBy(true, false, "created_at"));
     }
 
     @Override
@@ -116,6 +116,11 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "torrents", key = "'id:' + #id"),
+            @CacheEvict(value = "torrents", key = "'infoHash:' + #result.hashV1"),
+            @CacheEvict(value = "torrents", key = "'infoHash:' + #result.hashV2"),
+    })
     public Torrents createTorrent(Long owner, MultipartFile file, Long categoryId, String title, String subtitle, String description, boolean anonymous, boolean visible) throws IOException {
         byte[] content = file.getInputStream().readAllBytes();
         /* 使种子私有化，去除缓存信息 */
@@ -157,6 +162,11 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "torrents", key = "'id:' + #id"),
+            @CacheEvict(value = "torrents", key = "'infoHash:' + #result.hashV1"),
+            @CacheEvict(value = "torrents", key = "'infoHash:' + #result.hashV2"),
+    })
     public void updateTorrent(Long id, Long userId, Long categoryId, String title, String subtitle, String description) {
         if (categoriesService.getCategoryById(categoryId) == null) {
             throw new IllegalArgumentException("指定的分类不存在");
@@ -173,35 +183,38 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
     }
 
     @Override
-    public Torrents getTorrentByInfoHash(byte[] infoHash, boolean includeInvisible, boolean includeDeleted) {
-        Torrents torrents = getOne(new QueryWrapper<Torrents>()
+    @Cacheable(value = "torrents", key = "'infoHash:' + #infoHash")
+    public Torrents getTorrentByInfoHash(byte[] infoHash) {
+        return getOne(new QueryWrapper<Torrents>()
                 .eq("hash_v1", infoHash)
                 .or()
                 .eq("hash_v2_short", infoHash));
-        if (torrents == null) {
-            return null;
-        }
-        if (!includeInvisible && !torrents.isVisible()) {
-            return null;
-        }
-        if (!includeDeleted && torrents.getDeletedAt() != null) {
-            return null;
-        }
+    }
+
+    @Override
+    @Caching(evict = {
+            @CacheEvict(value = "torrents", key = "'id:' + #id"),
+            @CacheEvict(value = "torrents", key = "'infoHash:' + #result.hashV1"),
+            @CacheEvict(value = "torrents", key = "'infoHash:' + #result.hashV2"),
+    })
+    public Torrents deleteTorrent(long id, long deleteBy) {
+        Torrents torrents = baseMapper.selectById(id);
+        torrents.setDeletedAt(OffsetDateTime.now());
+        torrents.setDeletedBy(deleteBy);
+        baseMapper.updateById(torrents);
         return torrents;
     }
 
     @Override
-    public int deleteTorrent(long id, long deleteBy) {
-        Torrents torrents = baseMapper.selectById(id);
-        torrents.setDeletedAt(OffsetDateTime.now());
-        torrents.setDeletedBy(deleteBy);
-        return baseMapper.updateById(torrents);
-    }
-
-    @Override
-    public int unDeleteTorrent(long id) {
+    @Caching(evict = {
+            @CacheEvict(value = "torrents", key = "'id:' + #id"),
+            @CacheEvict(value = "torrents", key = "'infoHash:' + #result.hashV1"),
+            @CacheEvict(value = "torrents", key = "'infoHash:' + #result.hashV2"),
+    })
+    public Torrents unDeleteTorrent(long id) {
         Torrents torrents = baseMapper.selectById(id);
         torrents.setDeletedAt(null);
-        return baseMapper.updateById(torrents);
+        baseMapper.updateById(torrents);
+        return torrents;
     }
 }

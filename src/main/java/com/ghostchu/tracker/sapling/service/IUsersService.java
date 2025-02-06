@@ -29,4 +29,6 @@ public interface IUsersService extends MPJBaseService<Users> {
     UserVO toVO(Users userById);
 
     Users getUserByPasskey(String passkey);
+
+    boolean updateUser(Users user);
 }

@@ -21,4 +21,6 @@ public interface ICategoriesService extends MPJBaseService<Categories> {
     Categories getCategoryById(long category);
 
     CategoryVO toVO(Categories categoryById);
+
+    Categories createCategory(String name, String icon, String color);
 }

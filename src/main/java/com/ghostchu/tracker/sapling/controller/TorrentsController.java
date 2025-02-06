@@ -13,9 +13,11 @@ import com.ghostchu.tracker.sapling.exception.TorrentNotExistsException;
 import com.ghostchu.tracker.sapling.gvar.Permission;
 import com.ghostchu.tracker.sapling.service.*;
 import com.ghostchu.tracker.sapling.util.HtmlSanitizer;
+import com.ghostchu.tracker.sapling.util.MsgUtil;
 import com.ghostchu.tracker.sapling.vo.CategoryVO;
 import com.ghostchu.tracker.sapling.vo.ThanksVO;
 import com.ghostchu.tracker.sapling.vo.TorrentDetailsVO;
+import com.google.common.html.HtmlEscapers;
 import jakarta.validation.Valid;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,10 +65,7 @@ public class TorrentsController {
             @RequestParam(defaultValue = "50") int size,
             Model model) {
         // 获取分页数据
-        IPage<Torrents> pageResult = torrentsService.getTorrentsByPage(page,
-                size,
-                StpUtil.hasPermission(Permission.TORRENT_VIEW_INVISIBLE),
-                StpUtil.hasPermission(Permission.TORRENT_VIEW_DELETED));
+        IPage<Torrents> pageResult = torrentsService.getTorrentsByPage(page, size, StpUtil.hasPermission(Permission.TORRENT_VIEW_INVISIBLE), StpUtil.hasPermission(Permission.TORRENT_VIEW_DELETED));
         // 准备模型数据
         model.addAttribute("torrents", pageResult.getRecords().stream().map(torrentsService::toVO).toList());
         model.addAttribute("pagination", pageResult);
@@ -77,10 +76,10 @@ public class TorrentsController {
     @SaCheckPermission(value = {Permission.TORRENT_VIEW})
     public String torrentDetail(@PathVariable long id, Model model) {
         // 获取种子详情
-        Torrents torrent = torrentsService.getTorrentById(id, StpUtil.hasPermission(Permission.TORRENT_VIEW_INVISIBLE), StpUtil.hasPermission(Permission.TORRENT_VIEW_DELETED));
+        Torrents torrent = torrentsService.getTorrentById(id);
         if (torrent == null
                 || (!torrent.isVisible() && !StpUtil.hasPermission(Permission.TORRENT_VIEW_INVISIBLE))  // 处于不可见状态
-                || (torrent.getDeletedAt() != null && !StpUtil.hasPermission(Permission.TORRENT_VIEW_DELETED))) { // 已被删除
+                || (torrent.isDeleted() && !StpUtil.hasPermission(Permission.TORRENT_VIEW_DELETED))) { // 已被删除
             throw new TorrentNotExistsException(null, id, "种子不存在或已被删除");
         }
         // 准备模型数据
@@ -141,9 +140,11 @@ public class TorrentsController {
     @GetMapping("/{id}/download")
     @SaCheckPermission(value = {Permission.TORRENT_VIEW, Permission.TORRENT_DOWNLOAD})
     public ResponseEntity<InputStreamResource> downloadTorrent(@PathVariable long id) throws IOException {
-        Torrents torrent = torrentsService.getTorrentById(id, StpUtil.hasPermission(Permission.TORRENT_VIEW_INVISIBLE), StpUtil.hasPermission(Permission.TORRENT_VIEW_DELETED));
-        if (torrent == null) {
-            return ResponseEntity.notFound().build();
+        Torrents torrent = torrentsService.getTorrentById(id);
+        if (torrent == null
+                || (!torrent.isVisible() && !StpUtil.hasPermission(Permission.TORRENT_VIEW_INVISIBLE))  // 处于不可见状态
+                || (torrent.isDeleted() && !StpUtil.hasPermission(Permission.TORRENT_VIEW_DELETED))) { // 已被删除
+            throw new TorrentNotExistsException(null, id, "种子不存在或已被删除");
         }
         Users user = usersService.getUserById(StpUtil.getLoginIdAsLong());
         return ResponseEntity.ok()
@@ -156,7 +157,12 @@ public class TorrentsController {
     @SaCheckPermission(value = {Permission.TORRENT_EDIT, Permission.TORRENT_EDIT_OTHER}, mode = SaMode.OR)
     public String showEditForm(@PathVariable Long id, Model model) {
         // 获取种子详细信息（示例代码）
-        TorrentDetailsVO torrent = torrentsService.toDetailsVO(torrentsService.getTorrentById(id, StpUtil.hasPermission(Permission.TORRENT_VIEW_INVISIBLE), StpUtil.hasPermission(Permission.TORRENT_VIEW_DELETED)));
+        TorrentDetailsVO torrent = torrentsService.toDetailsVO(torrentsService.getTorrentById(id));
+        if (torrent == null
+                || (!torrent.isVisible() && !StpUtil.hasPermission(Permission.TORRENT_VIEW_INVISIBLE))  // 处于不可见状态
+                || (torrent.isDeleted() && !StpUtil.hasPermission(Permission.TORRENT_VIEW_DELETED))) { // 已被删除
+            throw new TorrentNotExistsException(null, id, "种子不存在或已被删除");
+        }
         if (StpUtil.getLoginIdAsLong() != torrent.getOwner().getId()) {
             return "redirect:/torrents/" + id; // 权限不足
         }
@@ -195,15 +201,23 @@ public class TorrentsController {
     @GetMapping("/{id}/delete")
     @SaCheckPermission(value = {Permission.TORRENT_DELETE, Permission.TORRENT_DELETE_OTHER}, mode = SaMode.OR)
     public String deleteTorrent(@PathVariable Long id, Model model) {
-        Torrents torrents = torrentsService.getTorrentById(id, StpUtil.hasPermission(Permission.TORRENT_VIEW_INVISIBLE), false);
-        if (torrents == null) {
+        Torrents torrents = torrentsService.getTorrentById(id);
+        if (torrents == null || (!torrents.isVisible() && !StpUtil.hasPermission(Permission.TORRENT_VIEW_INVISIBLE))) {
             throw new TorrentNotExistsException(null, id, "种子不存在或已被删除");
         }
         if (StpUtil.getLoginIdAsLong() != torrents.getOwner()) {
             StpUtil.checkPermission(Permission.TORRENT_DELETE_OTHER);
         }
+        var template = """
+                您正在删除种子: <b>{}</b>。
+                <br>
+                确定要继续吗？
+                """;
         ConfirmFormDTO form = new ConfirmFormDTO();
         form.setActionUrl("/torrents/" + id + "/delete");
+        form.setTitle("删除种子");
+        form.setHeaderClass("bg-danger text-white");
+        form.setDescription(MsgUtil.fillArgs(template, HtmlEscapers.htmlEscaper().escape(torrents.getTitle())));
         form.setConfirmButtonText("删除");
         model.addAttribute("form", form);
         return "confirm";
@@ -212,13 +226,14 @@ public class TorrentsController {
     @PostMapping("/{id}/delete")
     @SaCheckPermission(value = {Permission.TORRENT_DELETE, Permission.TORRENT_DELETE_OTHER}, mode = SaMode.OR)
     public String deleteTorrent(@PathVariable Long id) {
-        Torrents torrents = torrentsService.getTorrentById(id, StpUtil.hasPermission(Permission.TORRENT_VIEW_INVISIBLE), false);
-        if (torrents == null) {
+        Torrents torrents = torrentsService.getTorrentById(id);
+        if (torrents == null || (!torrents.isVisible() && !StpUtil.hasPermission(Permission.TORRENT_VIEW_INVISIBLE))) {
             throw new TorrentNotExistsException(null, id, "种子不存在或已被删除");
         }
         if (StpUtil.getLoginIdAsLong() != torrents.getOwner()) {
             StpUtil.checkPermission(Permission.TORRENT_DELETE_OTHER);
         }
+
         torrentsService.deleteTorrent(id, StpUtil.getLoginIdAsLong());
         return "redirect:/torrents";
     }
@@ -226,16 +241,27 @@ public class TorrentsController {
     @GetMapping("/{id}/undelete")
     @SaCheckPermission(value = {Permission.TORRENT_VIEW_DELETED, Permission.TORRENT_UNDELETE})
     public String unDeleteTorrent(@PathVariable Long id, Model model) {
-        Torrents torrents = torrentsService.getTorrentById(id, StpUtil.hasPermission(Permission.TORRENT_VIEW_INVISIBLE), true);
-        if (torrents == null) {
+        Torrents torrents = torrentsService.getTorrentById(id);
+        if (torrents == null || (!torrents.isVisible() && !StpUtil.hasPermission(Permission.TORRENT_VIEW_INVISIBLE))) {
             throw new TorrentNotExistsException(null, id, "种子不存在");
         }
-        if (torrents.getDeletedAt() == null) {
+        if (!torrents.isDeleted()) {
             throw new IllegalStateException("种子未被删除，不能执行反删除");
         }
+        Users users = usersService.getUserById(torrents.getDeletedBy());
+        var template = """
+                您正在反删除种子: <b>{}</b>。
+                <br>
+                该种子的删除时间：{}<br>
+                删除操作人：{}<br>
+                <br>
+                确定要继续吗？
+                """;
         ConfirmFormDTO form = new ConfirmFormDTO();
         form.setActionUrl("/torrents/" + id + "/undelete");
+        form.setTitle("种子反删除");
         form.setConfirmButtonText("还原");
+        form.setDescription(MsgUtil.fillArgs(template, HtmlEscapers.htmlEscaper().escape(torrents.getTitle()), torrents.getDeletedAt().toString(), users.getName()));
         model.addAttribute("form", form);
         return "confirm";
     }
@@ -243,8 +269,8 @@ public class TorrentsController {
     @PostMapping("/{id}/undelete")
     @SaCheckPermission(value = {Permission.TORRENT_VIEW_DELETED, Permission.TORRENT_UNDELETE})
     public String unDeleteTorrent(@PathVariable Long id) {
-        Torrents torrents = torrentsService.getTorrentById(id, StpUtil.hasPermission(Permission.TORRENT_VIEW_INVISIBLE), true);
-        if (torrents == null) {
+        Torrents torrents = torrentsService.getTorrentById(id);
+        if (torrents == null || (!torrents.isVisible() && !StpUtil.hasPermission(Permission.TORRENT_VIEW_INVISIBLE))) {
             throw new TorrentNotExistsException(null, id, "种子不存在");
         }
         if (torrents.getDeletedAt() == null) {

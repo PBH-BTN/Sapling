@@ -6,12 +6,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.List;
 
 @AllArgsConstructor
 @Data
 @NoArgsConstructor
-public class TorrentNode {
+public class TorrentNode implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String name;
     private boolean isDirectory;
     private List<TorrentNode> children;

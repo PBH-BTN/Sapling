@@ -127,4 +127,8 @@ public class Torrents implements Serializable {
      */
     @TableField(typeHandler = JsonbTypeHandler.class)
     private Map<String, Object> extra;
+
+    public boolean isDeleted() {
+        return deletedAt != null;
+    }
 }

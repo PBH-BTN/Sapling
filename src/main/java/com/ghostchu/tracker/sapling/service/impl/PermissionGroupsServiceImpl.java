@@ -5,6 +5,7 @@ import com.ghostchu.tracker.sapling.mapper.PermissionGroupsMapper;
 import com.ghostchu.tracker.sapling.service.IPermissionGroupsService;
 import com.ghostchu.tracker.sapling.vo.PermissionGroupVO;
 import com.github.yulichang.base.MPJBaseServiceImpl;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 /**
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class PermissionGroupsServiceImpl extends MPJBaseServiceImpl<PermissionGroupsMapper, PermissionGroups> implements IPermissionGroupsService {
     @Override
+    @Cacheable(value = "permissions_group", key = "'id:' + #id", unless = "#result == null")
     public PermissionGroups getPermissionGroupById(Long id) {
         return baseMapper.selectById(id);
     }

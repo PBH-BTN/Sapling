@@ -1,5 +1,6 @@
 package com.ghostchu.tracker.sapling.util;
 
+import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.HexFormat;
 import java.util.List;
@@ -10,7 +11,9 @@ public record TorrentInfo(List<String> trackers, String createdBy, OffsetDateTim
                           int metaVersion, boolean hybrid,
                           String infoHashV1, String infoHashV2,
                           long totalSize,
-                          long files) {
+                          long files) implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     public byte[] infoHashV1Bytes() {
         return infoHashV1 != null ? HexFormat.of().parseHex(infoHashV1) : null;

@@ -8,6 +8,9 @@ import com.ghostchu.tracker.sapling.service.IUsersService;
 import com.ghostchu.tracker.sapling.vo.UserVO;
 import com.github.yulichang.base.MPJBaseServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.net.InetAddress;
@@ -35,6 +38,7 @@ public class UsersServiceImpl extends MPJBaseServiceImpl<UsersMapper, Users> imp
     }
 
     @Override
+    @Cacheable(value = "users", key = "'id:' + #id", unless = "#result == null")
     public Users getUserById(long id) {
         return baseMapper.selectById(id);
     }
@@ -67,12 +71,14 @@ public class UsersServiceImpl extends MPJBaseServiceImpl<UsersMapper, Users> imp
     }
 
     @Override
+    @Cacheable(value = "users", key = "'username:' + #username", unless = "#result == null")
     public boolean userNameExists(String username) {
         return getOne(new QueryWrapper<Users>()
                 .eq("name", username)) != null;
     }
 
     @Override
+    @Cacheable(value = "users", key = "'email:' + #email", unless = "#result == null")
     public boolean userEmailExists(String email) {
         return getOne(new QueryWrapper<Users>()
                 .eq("email", email)) != null;
@@ -105,8 +111,22 @@ public class UsersServiceImpl extends MPJBaseServiceImpl<UsersMapper, Users> imp
     }
 
     @Override
+    @Cacheable(value = "users", key = "'passkey:' + #passkey")
     public Users getUserByPasskey(String passkey) {
         return getOne(new QueryWrapper<Users>().eq("passkey", passkey));
+    }
+
+    @Override
+    @Caching(evict = {
+            @CacheEvict(value = "users", key = "'id:' + #user.id"),
+            @CacheEvict(value = "users", key = "'username:' + #user.name"),
+            @CacheEvict(value = "users", key = "'email:' + #user.email"),
+            @CacheEvict(value = "users", key = "'passkey:' + #user.passkey"),
+            @CacheEvict(value = "stp.permissions", key = "'id:' + #user.id"),
+            @CacheEvict(value = "stp.roles", key = "'id:' + #user.id")
+    })
+    public boolean updateUser(Users user) {
+        return updateById(user);
     }
 
 }

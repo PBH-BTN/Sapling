@@ -5,6 +5,9 @@ import com.ghostchu.tracker.sapling.mapper.CategoriesMapper;
 import com.ghostchu.tracker.sapling.service.ICategoriesService;
 import com.ghostchu.tracker.sapling.vo.CategoryVO;
 import com.github.yulichang.base.MPJBaseServiceImpl;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,13 +24,15 @@ import java.util.List;
 public class CategoriesServiceImpl extends MPJBaseServiceImpl<CategoriesMapper, Categories> implements ICategoriesService {
 
     @Override
+    @Cacheable(value = "categories", key = "'all'")
     public List<Categories> getAllCategories() {
         return baseMapper.selectList(null);
     }
 
     @Override
-    public Categories getCategoryById(long categoryId) {
-        return baseMapper.selectById(categoryId);
+    @Cacheable(value = "users", key = "'id:' + #id")
+    public Categories getCategoryById(long id) {
+        return baseMapper.selectById(id);
     }
 
     @Override
@@ -38,5 +43,19 @@ public class CategoriesServiceImpl extends MPJBaseServiceImpl<CategoriesMapper, 
         vo.setIcon(categoryById.getIcon());
         vo.setColor(categoryById.getColor());
         return vo;
+    }
+
+    @Override
+    @Caching(evict = {
+            @CacheEvict(value = "categories", key = "'all'"),
+            @CacheEvict(value = "categories", key = "'id:' + #result.getId()")
+    })
+    public Categories createCategory(String name, String icon, String color) {
+        Categories category = new Categories();
+        category.setName(name);
+        category.setIcon(icon);
+        category.setColor(color);
+        save(category);
+        return category;
     }
 }
