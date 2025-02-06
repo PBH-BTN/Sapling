@@ -104,4 +104,9 @@ public class UsersServiceImpl extends MPJBaseServiceImpl<UsersMapper, Users> imp
         return vo;
     }
 
+    @Override
+    public Users getUserByPasskey(String passkey) {
+        return getOne(new QueryWrapper<Users>().eq("passkey", passkey));
+    }
+
 }

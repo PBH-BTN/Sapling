@@ -20,8 +20,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,15 +32,12 @@ import java.math.BigInteger;
 import java.net.*;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.util.*;
-import java.util.concurrent.Semaphore;
 
 @Controller
 @Slf4j
 public class TrackerController {
     private static final Random random = new Random();
-    private final Semaphore parallelAnnounceSemaphore;
     @Autowired
     private HttpServletRequest req;
     @Autowired
@@ -56,18 +51,6 @@ public class TrackerController {
     @Autowired
     @Qualifier("bencodeUTF8")
     private Bencode bencodeUTF8;
-    @Value("${service.tracker.announce-retry}")
-    private long announceBusyRetryInterval;
-    @Value("${service.tracker.announce-retry-random}")
-    private long announceBusyRetryRandomInterval;
-    @Autowired
-    private StringRedisTemplate redisStringTemplate;
-
-    public TrackerController(@Value("${sapling.tracker.announce.max-parallel}")
-                             int maxParallelAnnounceServiceRequests) {
-        this.parallelAnnounceSemaphore = new Semaphore(maxParallelAnnounceServiceRequests);
-        // this.announceRequestMaxWait = announceRequestMaxWait;
-    }
 
     public static String compactPeers(List<Peers> peers, boolean isV6) throws IllegalStateException {
         ByteBuffer buffer = ByteBuffer.allocate((isV6 ? 18 : 6) * peers.size());
@@ -254,32 +237,12 @@ public class TrackerController {
         return bencodeUTF8.encode(map);
     }
 
-    private long getWaitMillsUntilAnnounceWindow(String peerId, String torrentInfoHash) {
-        var waitUntil = redisStringTemplate.opsForValue().get("interval-" + peerId + "-" + torrentInfoHash);
-        if (waitUntil == null) {
-            return 0;
-        }
-        return Long.parseLong(waitUntil);
-    }
-
-    private void setNextAnnounceWindow(String peerId, String torrentInfoHash, long windowLength) {
-        redisStringTemplate.opsForValue().set("interval-" + peerId + "-" + torrentInfoHash, String.valueOf(System.currentTimeMillis() + windowLength), Duration.ofMillis(System.currentTimeMillis() + windowLength));
-    }
-
     private long generateInterval() {
         var offset = random.nextLong(Long.parseLong(settingsService.getValue(Setting.TRACKER_ANNOUNCE_INTERVAL_RANDOM_OFFSET)));
         if (random.nextBoolean()) {
             offset = -offset;
         }
         return Long.parseLong(settingsService.getValue(Setting.TRACKER_ANNOUNCE_INTERVAL)) + offset;
-    }
-
-    private long generateRetryInterval() {
-        var offset = random.nextLong(announceBusyRetryRandomInterval);
-        if (random.nextBoolean()) {
-            offset = -offset;
-        }
-        return announceBusyRetryInterval + offset;
     }
 
     public ResponseEntity<?> redirectTo(String url) throws URISyntaxException {
@@ -290,7 +253,7 @@ public class TrackerController {
 
     @GetMapping("/scrape")
     @ResponseBody
-    public ResponseEntity<?> scrape() throws InterruptedException, URISyntaxException {
+    public ResponseEntity<?> scrape() throws URISyntaxException {
         if (Boolean.parseBoolean(settingsService.getValue(Setting.TRACKER_MAINTENANCE))) {
             return ResponseEntity
                     .status(HttpStatus.SERVICE_UNAVAILABLE)
