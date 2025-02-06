@@ -165,5 +165,10 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
         baseMapper.updateById(torrents);
     }
 
+    @Override
+    public Torrents getTorrentByInfoHash(byte[] infoHash) {
+        return getOne(new QueryWrapper<Torrents>().eq("hash_v1", infoHash).or().eq("hash_v2_short", infoHash));
+    }
+
 
 }

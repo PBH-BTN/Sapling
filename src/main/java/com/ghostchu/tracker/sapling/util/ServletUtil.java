@@ -35,4 +35,8 @@ public class ServletUtil {
     public static InetAddress inet(HttpServletRequest request) {
         return InetAddress.getByName(ip(request));
     }
+
+    public static String ua(HttpServletRequest request) {
+        return request.getHeader("User-Agent");
+    }
 }

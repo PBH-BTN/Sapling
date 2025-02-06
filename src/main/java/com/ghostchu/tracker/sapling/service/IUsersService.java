@@ -27,4 +27,6 @@ public interface IUsersService extends MPJBaseService<Users> {
     boolean userEmailExists(String email);
 
     UserVO toVO(Users userById);
+
+    Users getUserByPasskey(String passkey);
 }

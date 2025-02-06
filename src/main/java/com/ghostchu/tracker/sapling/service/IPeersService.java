@@ -1,7 +1,12 @@
 package com.ghostchu.tracker.sapling.service;
 
 import com.ghostchu.tracker.sapling.entity.Peers;
+import com.ghostchu.tracker.sapling.model.AnnounceRequest;
+import com.ghostchu.tracker.sapling.model.ScrapePeers;
 import com.github.yulichang.base.MPJBaseService;
+import jakarta.annotation.Nullable;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +18,9 @@ import com.github.yulichang.base.MPJBaseService;
  */
 public interface IPeersService extends MPJBaseService<Peers> {
 
+    List<Peers> fetchPeers(long userId, long torrentId, int limit, @Nullable Integer specificIpProtocolVersion);
+
+    ScrapePeers scrape(long torrentId);
+
+    void announce(List<AnnounceRequest> requests);
 }
