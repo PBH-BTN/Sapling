@@ -42,7 +42,10 @@
                          width="150"
                          alt="用户头像">
                     <div th:if="${user.banned}" class="alert alert-danger">
-                        <i class="fas fa-ban"></i> 账号已封禁
+                        <i class="fas fa-ban"></i> 此用户当前处于封禁状态
+                    </div>
+                    <div th:if="${user.warned}" class="alert alert-warning">
+                        <i class="fas fa-ban"></i> 此用户因违规处于警告状态
                     </div>
                 </div>
 

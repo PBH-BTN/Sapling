@@ -116,7 +116,12 @@
                                             </span>
                                             <span class="mr-2">
                                                 <i class="fas fa-user"></i>
-                                                <span th:text="${torrent.anonymous ? '匿名' : torrent.owner.name}"></span>
+                                                <!--                                                <span th:text="${torrent.anonymous ? '匿名' : torrent.owner.name}"></span>-->
+                                                <span th:if="${torrent.anonymous}">匿名用户</span><a
+                                                    th:unless="${torrent.anonymous}"
+                                                    th:styleappend="'color:' + ${torrent.anonymous ? 'black' : torrent.owner.primaryPermissionGroup.color}"
+                                                    th:text="${torrent.owner.name}"
+                                                    th:href="@{/users/profile/{id}(id=${torrent.owner.id})}"></a>
                                             </span>
                                             <span class="mr-2">
                                                 <i class="fas fa-database"></i>

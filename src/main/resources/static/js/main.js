@@ -1,3 +1,4 @@
+// 改进文字对比度
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.text-contrast').forEach(badge => {
         const bgColor = badge.dataset.bgColor;

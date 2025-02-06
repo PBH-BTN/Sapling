@@ -27,9 +27,9 @@
                                     th:text="${#temporals.format(torrent.createdAt, 'yyyy-MM-dd')}"></span>
                             <b>发布者:</b> <span th:if="${torrent.anonymous}">匿名用户</span><a
                                     th:unless="${torrent.anonymous}"
-                                    th:styleappend="'color:' + ${torrent.anonymous ? 'black' : torrent.owner.primaryPermissionGroup.color}"
+                                    th:styleappend="'color:' + ${torrent.anonymous ? 'black' : torrent.owner.levelPermissionGroup.color}"
                                     th:text="${torrent.owner.name}"
-                                    th:href="@{/profile/{id}(id=${torrent.owner.id})}"></a>
+                                    th:href="@{/users/profile/{id}(id=${torrent.owner.id})}"></a>
                         </td>
                     </tr>
                     <tr>
@@ -70,7 +70,7 @@
                     </tbody>
                 </table>
                 <div id="content" th:utext="${torrent.description}">
-            </div>
+                </div>
             </div>
         </div>
         <div class="container my-4">
@@ -106,7 +106,7 @@
                           class="badge badge-pill badge-secondary">
                 +<span th:text="${thanksTotalSize - #lists.size(thanks)}"></span> 位用户
             </span>
-            </div>
+                </div>
             </div>
         </div>
         <div class="container my-4">
@@ -133,7 +133,7 @@
                                         文件列表
                                     </button>
                                 </h2>
-                        </div>
+                            </div>
                             <div id="fileListCollapse" class="collapse show" aria-labelledby="headingFileList"
                                  data-parent="#torrentInfos">
                                 <div class="card-body">
@@ -198,12 +198,13 @@
                                         </table>
                                     </form>
                                 </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            </div>
         </div>
+    </div>
 </main>
 
 
@@ -248,10 +249,8 @@
     <!--                    </button>-->
     <!--                </div>-->
 </div>
-</div>
-</div>
-</main>
 
+<!-- 这里是评论区代码 -->
 <div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>
