@@ -42,7 +42,7 @@
                 </ul>
 
                 <!-- 用户控制区 -->
-                <ul class="navbar-nav">
+                <ul class="navbar-nav" th:if="${user != null}">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
                             <img th:src="${user.avatar}" width="30" height="30" class="rounded-circle mr-2">
@@ -81,7 +81,7 @@
     </nav>
 
     <!-- 统计信息栏 -->
-    <div class="bg-light py-2 border-bottom">
+    <div class="bg-light py-2 border-bottom" th:if="${user != null}">
         <div class="container d-flex justify-content-between">
             <div>
                     <span class="text-muted small">
