@@ -13,4 +13,6 @@ import com.github.yulichang.base.MPJBaseService;
  */
 public interface ITorrentReviewQueueService extends MPJBaseService<TorrentReviewQueue> {
 
+    void queueTorrent(long torrentId);
+
 }

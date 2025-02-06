@@ -6,6 +6,8 @@ import com.ghostchu.tracker.sapling.service.ITorrentReviewQueueService;
 import com.github.yulichang.base.MPJBaseServiceImpl;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
+
 /**
  * <p>
  *  服务实现类
@@ -17,4 +19,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class TorrentReviewQueueServiceImpl extends MPJBaseServiceImpl<TorrentReviewQueueMapper, TorrentReviewQueue> implements ITorrentReviewQueueService {
 
+    @Override
+    public void queueTorrent(long torrentId) {
+        TorrentReviewQueue queue = new TorrentReviewQueue();
+        queue.setTorrent(torrentId);
+        queue.setSubmitAt(OffsetDateTime.now());
+        save(queue);
+    }
 }

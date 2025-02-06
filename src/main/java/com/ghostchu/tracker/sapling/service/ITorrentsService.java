@@ -31,7 +31,7 @@ public interface ITorrentsService extends MPJBaseService<Torrents> {
 
     byte[] downloadTorrentForUser(Torrents torrents, Users user) throws IOException;
 
-    Torrents createTorrent(Long owner, MultipartFile file, Long categoryId, String title, String subtitle, String description, boolean anonymous) throws IOException;
+    Torrents createTorrent(Long owner, MultipartFile file, Long categoryId, String title, String subtitle, String description, boolean anonymous, boolean visible) throws IOException;
 
     void updateTorrent(Long id, Long userId, Long categoryId, String title, String subtitle, String description);
 }

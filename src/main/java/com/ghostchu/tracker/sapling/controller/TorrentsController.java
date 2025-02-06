@@ -1,15 +1,16 @@
 package com.ghostchu.tracker.sapling.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.dev33.satoken.annotation.SaMode;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ghostchu.tracker.sapling.dto.TorrentEditFormDTO;
 import com.ghostchu.tracker.sapling.dto.TorrentUploadFormDTO;
 import com.ghostchu.tracker.sapling.entity.Torrents;
 import com.ghostchu.tracker.sapling.entity.Users;
-import com.ghostchu.tracker.sapling.service.ICategoriesService;
-import com.ghostchu.tracker.sapling.service.IThanksService;
-import com.ghostchu.tracker.sapling.service.ITorrentsService;
-import com.ghostchu.tracker.sapling.service.IUsersService;
+import com.ghostchu.tracker.sapling.exception.TorrentNotExistsException;
+import com.ghostchu.tracker.sapling.permission.Permission;
+import com.ghostchu.tracker.sapling.service.*;
 import com.ghostchu.tracker.sapling.vo.CategoryVO;
 import com.ghostchu.tracker.sapling.vo.ThanksVO;
 import com.ghostchu.tracker.sapling.vo.TorrentDetailsVO;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -49,28 +51,35 @@ public class TorrentsController {
     private IUsersService usersService;
     @Autowired
     private IThanksService thanksService;
+    @Autowired
+    private ITorrentReviewQueueService torrentReviewQueueService;
 
     @GetMapping
+    @SaCheckPermission(value = {Permission.TORRENT_VIEW})
     public String torrentList(
             @RequestParam(defaultValue = "1") long page,
             @RequestParam(defaultValue = "50") int size,
             Model model) {
         // 获取分页数据
-        IPage<Torrents> pageResult = torrentsService.getTorrentsByPage(page, size, false, false);
-
+        IPage<Torrents> pageResult = torrentsService.getTorrentsByPage(page,
+                size,
+                StpUtil.hasPermission(Permission.TORRENT_VIEW_INVISIBLE),
+                StpUtil.hasPermission(Permission.TORRENT_VIEW_DELETED));
         // 准备模型数据
         model.addAttribute("torrents", pageResult.getRecords().stream().map(torrentsService::toVO).toList());
         model.addAttribute("pagination", pageResult);
-
         return "torrents";
     }
 
     @GetMapping("/{id}")
+    @SaCheckPermission(value = {Permission.TORRENT_VIEW})
     public String torrentDetail(@PathVariable long id, Model model) {
         // 获取种子详情
         Torrents torrent = torrentsService.getTorrentById(id);
-        if (torrent == null) {
-            return "redirect:/torrents";
+        if (torrent == null
+                || (!torrent.isVisible() && !StpUtil.hasPermission(Permission.TORRENT_VIEW_INVISIBLE))  // 处于不可见状态
+                || (torrent.getDeletedAt() != null && !StpUtil.hasPermission(Permission.TORRENT_VIEW_DELETED))) { // 已被删除
+            throw new TorrentNotExistsException(null, id, "种子不存在或已被删除");
         }
         // 准备模型数据
         model.addAttribute("torrent", torrentsService.toDetailsVO(torrent));
@@ -84,6 +93,7 @@ public class TorrentsController {
 
 
     @GetMapping("/upload")
+    @SaCheckPermission(value = {Permission.TORRENT_SUBMIT, Permission.TORRENT_QUEUE}, mode = SaMode.OR)
     public String uploadForm(Model model) {
         // 初始化表单对象
         model.addAttribute("torrent", new TorrentUploadFormDTO());
@@ -93,6 +103,8 @@ public class TorrentsController {
     }
 
     @PostMapping("/upload")
+    @SaCheckPermission(value = {Permission.TORRENT_SUBMIT, Permission.TORRENT_QUEUE}, mode = SaMode.OR)
+    @Transactional
     public String handleUpload(
             @ModelAttribute("torrent") @Valid TorrentUploadFormDTO form,
             BindingResult result,
@@ -109,13 +121,23 @@ public class TorrentsController {
             model.addAttribute("categories", categoriesService.getAllCategories());
             return "torrents/upload";
         }
-
-        // 处理文件上传
-        Torrents newTorrent = torrentsService.createTorrent(StpUtil.getLoginIdAsLong(), file, form.getCategoryId(), form.getTitle(), form.getSubtitle(), form.getDescription(), form.isAnonymous());
+        Torrents newTorrent;
+        // 根据权限节点决定是提交到种子列表还是种子待审队列
+        if (StpUtil.hasPermission(Permission.TORRENT_SUBMIT)) {
+            newTorrent = torrentsService.createTorrent(StpUtil.getLoginIdAsLong(), file,
+                    form.getCategoryId(), form.getTitle(), form.getSubtitle(),
+                    form.getDescription(), form.isAnonymous(), true);
+        } else {
+            newTorrent = torrentsService.createTorrent(StpUtil.getLoginIdAsLong(), file,
+                    form.getCategoryId(), form.getTitle(), form.getSubtitle(),
+                    form.getDescription(), form.isAnonymous(), false);
+            torrentReviewQueueService.queueTorrent(newTorrent.getId());
+        }
         return "redirect:/torrents/" + newTorrent.getId();
     }
 
     @GetMapping("/{id}/download")
+    @SaCheckPermission(value = {Permission.TORRENT_VIEW, Permission.TORRENT_DOWNLOAD})
     public ResponseEntity<InputStreamResource> downloadTorrent(@PathVariable long id) throws IOException {
         Torrents torrent = torrentsService.getTorrentById(id);
         if (torrent == null) {
@@ -130,6 +152,7 @@ public class TorrentsController {
 
     // 显示编辑页面
     @GetMapping("/{id}/edit")
+    @SaCheckPermission(value = {Permission.TORRENT_EDIT, Permission.TORRENT_EDIT_OTHER}, mode = SaMode.OR)
     public String showEditForm(@PathVariable Long id, Model model) {
         // 获取种子详细信息（示例代码）
         TorrentDetailsVO torrent = torrentsService.toDetailsVO(torrentsService.getTorrentById(id));
@@ -152,6 +175,7 @@ public class TorrentsController {
 
     // 处理编辑提交
     @PostMapping("/{id}/edit")
+    @SaCheckPermission(value = {Permission.TORRENT_EDIT, Permission.TORRENT_EDIT_OTHER}, mode = SaMode.OR)
     public String handleEdit(
             @PathVariable Long id,
             @ModelAttribute("form") @Valid TorrentEditFormDTO form,

@@ -1,64 +1,94 @@
 package com.ghostchu.tracker.sapling.permission;
 
-public enum Permission {
-    NEWS_VIEW("news:view"), // 查看站点公告
-    NEWS_CREATE("news:create"), // 创建站点公告
-    NEWS_DELETE("news:delete"), // 删除站点公告
-    INBOX_VIEW("inbox:view"), // 查看站内信
-    INBOX_CREATE("inbox:create"), // 创建站内信
-    INBOX_DELETE("inbox:delete"), // 删除站内信
-    INBOX_SAVE("inbox:save"), // 保存站内信
-    BITBUCKET_VIEW("bitbucket:view"), // 查看上传的文件
-    BITBUCKET_UPLOAD("bitbucket:upload"), // 上传文件
-    BITBUCKET_DELETE("bitbucket:delete.self"), // 删除自己上传的文件
-    TORRENT_VIEW("torrent:view"), // 查看种子
-    TORRENT_PUBLISH("torrent:submit"), // 发布种子
-    TORRENT_QUEUE("torrent:queue"), // 提交种子到待审队列
-    TORRENT_DELETE_SELF("torrent:delete.self"), // 删除自己的种子
-    TORRENT_EDIT_SELF("torrent:edit.self"), // 编辑种子
-    TORRENT_EDIT("torrent:edit"), // 编辑所有人的种子
-    TORRENT_COMMENT("torrent:comment"), // 评论种子
-    TORRENT_RESEED_REQUEST("torrent:reseed.request"), // 请求补种
-    TORRENT_BYPASS_ANONYMOUS("torrent:bypass.anonymous"), // 免除匿名
-    TAG_VIEW("tag:view"), // 查看标签
-    TAG_CREATE("tag:create"), // 创建标签
-    TAG_DELETE("tag:delete"), // 删除标签
-    TAG_EDIT("tag:edit"), // 编辑标签
-    REPORT_VIEW("report:view"), // 查看举报列表
-    REPORT_CREATE("report:create"), // 创建举报
-    REPORT_RESOLVE("report:resolve"), // 处理举报
-    REPORT_DELETE("report:delete"), // 删除举报
-    THANKS_VIEW("thanks:view"), // 查看感谢列表
-    THANKS_CREATE("thanks:create"), // 说谢谢
-    USER_VIEW_SELF("user:view.self"), // 查看自己的用户信息
-    USER_VIEW("user:view"), // 查看所有人的用户信息
-    USER_VIEW_BYPASS("user:view.bypass"), // 绕过隐私限制
-    USER_VIEW_SECRET("user:view.secret"), // 查看用户隐私信息（如 IP 地址等）
-    USER_EDIT_SELF("user:edit.self"), // 编辑自己的用户信息
-    USER_EDIT("user:edit"), // 编辑所有人的用户信息
-    USER_WARNING("user:warning"), // 给用户警告
-    USER_BAN("user:ban"), // 封禁用户
-    PEERS_VIEW("peers:view"), // 查看种子的peer列表
-    RANKS_VIEW("ranks:view"), // 查看排行榜
-    LOGS_VIEW("logs:view"), // 查看日志
-    SECRET_LOGS_VIEW("logs:view.secret"), // 查看隐私日志
-    PERMISSION_GROUP_DOWNGRADE("permission.group.downgrade.bypass"), // 免除降级
-    PERMISSION_GROUP_EDIT("permission.group.edit"), // 编辑权限组设定
-    ADMIN_PANEL("admin") // 访问站点后台设置
+public class Permission {
+    public static final String NEWS_VIEW = "news:view"; // 查看站点公告
 
-    ;
+    public static final String NEWS_CREATE = "news:create"; // 创建站点公告
 
-    private final String node;
+    public static final String NEWS_DELETE = "news:delete"; // 删除站点公告
 
-    Permission(String node) {
-        this.node = node;
-    }
+    public static final String INBOX_VIEW = "inbox:view"; // 查看站内信
 
-    public String node() {
-        return node;
-    }
+    public static final String INBOX_CREATE = "inbox:create"; // 创建站内信
 
-    public String getNode() {
-        return node;
-    }
+    public static final String INBOX_DELETE = "inbox:delete"; // 删除站内信
+
+    public static final String INBOX_SAVE = "inbox:save"; // 保存站内信
+
+    public static final String BITBUCKET_VIEW = "bitbucket:view"; // 查看上传的文件
+
+    public static final String BITBUCKET_UPLOAD = "bitbucket:upload"; // 上传文件
+
+    public static final String BITBUCKET_DELETE = "bitbucket:delete.self"; // 删除自己上传的文件
+
+    public static final String TORRENT_VIEW = "torrent:view"; // 查看种子
+    public static final String TORRENT_VIEW_INVISIBLE = "torrent:view.invisible"; // 查看未公开种子
+    public static final String TORRENT_VIEW_DELETED = "torrent:view.deleted"; // 查看已删除种子
+
+    public static final String TORRENT_SUBMIT = "torrent:submit"; // 发布种子
+
+    public static final String TORRENT_QUEUE = "torrent:queue"; // 提交种子到待审队列
+    public static final String TORRENT_DOWNLOAD = "torrent:download"; // 下载种子
+
+    public static final String TORRENT_DELETE = "torrent:delete.self"; // 删除种子
+    public static final String TORRENT_DELETE_OTHER = "torrent:delete.other"; // 删除他人的种子
+
+    public static final String TORRENT_EDIT = "torrent:edit"; // 编辑种子
+    public static final String TORRENT_EDIT_OTHER = "torrent:edit.other"; // 编辑他人种子
+
+    public static final String TORRENT_COMMENT = "torrent:comment"; // 评论种子
+
+    public static final String TORRENT_RESEED_REQUEST = "torrent:reseed.request"; // 请求补种
+
+    public static final String TORRENT_BYPASS_ANONYMOUS = "torrent:bypass.anonymous"; // 免除匿名
+
+    public static final String TAG_VIEW = "tag:view"; // 查看标签
+
+    public static final String TAG_CREATE = "tag:create"; // 创建标签
+
+    public static final String TAG_DELETE = "tag:delete"; // 删除标签
+
+    public static final String TAG_EDIT = "tag:edit"; // 编辑标签
+
+    public static final String REPORT_VIEW = "report:view"; // 查看举报列表
+
+    public static final String REPORT_CREATE = "report:create"; // 创建举报
+
+    public static final String REPORT_RESOLVE = "report:resolve"; // 处理举报
+
+    public static final String REPORT_DELETE = "report:delete"; // 删除举报
+
+    public static final String THANKS_VIEW = "thanks:view"; // 查看感谢列表
+
+    public static final String THANKS_CREATE = "thanks:create"; // 说谢谢
+
+    public static final String USER_VIEW_SELF = "user:view.self"; // 查看自己的用户信息
+
+    public static final String USER_VIEW = "user:view"; // 查看所有人的用户信息
+
+    public static final String USER_VIEW_BYPASS = "user:view.bypass"; // 绕过隐私限制
+
+    public static final String USER_VIEW_SECRET = "user:view.secret"; // 查看用户隐私信息（如 IP 地址等）
+
+    public static final String USER_EDIT_SELF = "user:edit.self"; // 编辑自己的用户信息
+
+    public static final String USER_EDIT = "user:edit"; // 编辑所有人的用户信息
+
+    public static final String USER_WARNING = "user:warning"; // 给用户警告
+
+    public static final String USER_BAN = "user:ban"; // 封禁用户
+
+    public static final String PEERS_VIEW = "peers:view"; // 查看种子的peer列表
+
+    public static final String RANKS_VIEW = "ranks:view"; // 查看排行榜
+
+    public static final String LOGS_VIEW = "logs:view"; // 查看日志
+
+    public static final String SECRET_LOGS_VIEW = "logs:view.secret"; // 查看隐私日志
+
+    public static final String PERMISSION_GROUP_DOWNGRADE = "permission.group.downgrade.bypass"; // 免除降级
+
+    public static final String PERMISSION_GROUP_EDIT = "permission.group.edit"; // 编辑权限组设定
+
+    public static final String ADMIN_PANEL = "admin"; // 访问站点后台设置
 }

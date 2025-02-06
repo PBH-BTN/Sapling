@@ -63,7 +63,6 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
                 .orderBy(true, false, "created_at")
                 .eq(!includeInvisible, "visible", true)
                 .isNull(!includeDeleted, "deleted_at"));
-
     }
 
     @Override
@@ -117,7 +116,7 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
     }
 
     @Override
-    public Torrents createTorrent(Long owner, MultipartFile file, Long categoryId, String title, String subtitle, String description, boolean anonymous) throws IOException {
+    public Torrents createTorrent(Long owner, MultipartFile file, Long categoryId, String title, String subtitle, String description, boolean anonymous, boolean visible) throws IOException {
         byte[] content = file.getInputStream().readAllBytes();
         /* 使种子私有化，去除缓存信息 */
         Bencode bencode = new Bencode(StandardCharsets.ISO_8859_1);
@@ -151,7 +150,7 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
         torrents.setCategory(categoryId);
         torrents.setNumFiles(torrentInfo.files());
         torrents.setCreatedAt(OffsetDateTime.now());
-        torrents.setVisible(true); // 默认不审核
+        torrents.setVisible(visible); // 默认不审核
         torrents.setInfo(torrentInfo);
         this.save(torrents);
         return torrents;
