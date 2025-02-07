@@ -204,29 +204,6 @@
     });
     /*]]>*/
 </script>
-<script th:inline="javascript">
-    /*<![CDATA[*/
-    function deleteTag(tagId) {
-        fetch([[@{/torrentTags/
-    }]]
-        +tagId, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }
-    ).
-        then(response => {
-            if (response.ok) {
-                window.location.reload();
-            } else {
-                alert('删除失败，请检查权限');
-            }
-        }).catch(error => console.error('Error:', error));
-    }
-
-    /*]]>*/
-</script>
 
 <!-- 操作按钮 -->
 <div class="text-center">

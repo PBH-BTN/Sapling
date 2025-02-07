@@ -57,5 +57,6 @@ public class TorrentVO implements Serializable {
     private boolean anonymous;
 
     private boolean visible;
+
     private boolean deleted;
 }

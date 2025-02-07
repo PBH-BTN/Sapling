@@ -167,7 +167,7 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
             @CacheEvict(value = "torrents", key = "'infoHash:' + #result.hashV1"),
             @CacheEvict(value = "torrents", key = "'infoHash:' + #result.hashV2"),
     })
-    public void updateTorrent(Long id, Long userId, Long categoryId, String title, String subtitle, String description) {
+    public Torrents updateTorrent(Long id, Long userId, Long categoryId, String title, String subtitle, String description) {
         if (categoriesService.getCategoryById(categoryId) == null) {
             throw new IllegalArgumentException("指定的分类不存在");
         }
@@ -180,6 +180,7 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
         torrents.setSubtitle(subtitle);
         torrents.setDescription(description);
         baseMapper.updateById(torrents);
+        return torrents;
     }
 
     @Override

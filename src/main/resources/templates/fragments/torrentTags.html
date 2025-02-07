@@ -1,6 +1,6 @@
 <!-- fragments/torrentTags.html -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sa="http://www.thymeleaf.org/extras/sa-token">
+<html xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="tags(torrentTags)">
     <div class="mb-3">
         <table class="table table-borderless" style="display: inline-block; float: left;">
@@ -18,127 +18,21 @@
             </tr>
         </table>
         <div th:if="${#lists.isEmpty(torrentTags)}" class="text-muted">
-            暂无标签。
+            这个种子没有添加任何标签。
         </div>
-    </div>
-
-    <!-- 标签操作栏 -->
-    <div id="tagActions" class="card my-4" style="display: none;">
-        <div class="card-body">
-            <div class="d-flex flex-wrap gap-2 align-items-center" id="selectedTagsContainer">
-                <!-- 动态生成的选中标签 -->
-            </div>
-            <button class="btn btn-primary btn-sm mt-2" id="searchWithTags">搜索选中的标签</button>
-        </div>
-    </div>
-
-    <!-- 添加标签表单 -->
-    <div sa:hasPermission="torrent.tag">
-        <form id="addTagsForm" class="form-inline">
-            <div class="form-group mr-2 mb-2">
-                <input type="text" class="form-control" id="tagsInput"
-                       placeholder="输入标签，如：namespace1:tag1, namespace2:tag2" style="min-width: 300px;">
-            </div>
-            <button type="submit" class="btn btn-success btn-sm mb-2">添加标签</button>
-            <small class="form-text text-muted w-100">多个标签用逗号分隔，格式为命名空间:标签名</small>
-        </form>
     </div>
 
     <script th:inline="javascript">
         /*<![CDATA[*/
         document.addEventListener('DOMContentLoaded', function () {
             let selectedTags = [];
-
             // 标签点击处理
             document.querySelectorAll('.tag-link').forEach(link => {
                 link.addEventListener('click', function (e) {
                     e.preventDefault();
                     const namespace = this.dataset.namespace;
                     const tagname = this.dataset.tagname;
-                    if (!selectedTags.some(t => t.namespace === namespace && t.tagname === tagname)) {
-                        selectedTags.push({namespace, tagname});
-                        updateTagActions();
-                    }
-                });
-            });
 
-            // 更新标签操作栏
-            function updateTagActions() {
-                const container = document.getElementById('selectedTagsContainer');
-                container.innerHTML = '';
-                selectedTags.forEach(tag => {
-                    const tagElement = document.createElement('div');
-                    tagElement.className = 'badge badge-primary d-flex align-items-center';
-                    tagElement.innerHTML = `
-                        ${tag.namespace}:${tag.tagname}
-                        <button type="button" class="btn btn-link btn-sm text-danger ml-1"
-                            data-namespace="${tag.namespace}"
-                            data-tagname="${tag.tagname}">×</button>
-                    `;
-                    container.appendChild(tagElement);
-                });
-                document.getElementById('tagActions').style.display = selectedTags.length ? 'block' : 'none';
-            }
-
-            // 删除标签处理
-            document.getElementById('selectedTagsContainer').addEventListener('click', function (e) {
-                if (e.target.tagName === 'BUTTON') {
-                    const namespace = e.target.dataset.namespace;
-                    const tagname = e.target.dataset.tagname;
-                    selectedTags = selectedTags.filter(t =>
-                        !(t.namespace === namespace && t.tagname === tagname));
-                    updateTagActions();
-                }
-            });
-
-            // 搜索按钮处理
-            document.getElementById('searchWithTags').addEventListener('click', function () {
-                const query = selectedTags.map(t =>
-                    encodeURIComponent(t.namespace) + ':' + encodeURIComponent(t.tagname)).join(',');
-                window.location.href = '/torrents?tags=' + query;
-            });
-
-            // 添加标签表单处理
-            document.getElementById('addTagsForm').addEventListener('submit', function (e) {
-                e.preventDefault();
-                const tagsInput = document.getElementById('tagsInput').value;
-                const tagsArray = tagsInput.split(',').map(t => t.trim()).filter(t => t);
-                const parsedTags = tagsArray.map(tagStr => {
-                    const [namespace, ...tagnameParts] = tagStr.split(':');
-                    const tagname = tagnameParts.join(':').trim();
-                    return namespace && tagname ? {
-                        namespace: namespace.trim(),
-                        tagname: tagname
-                    } : null;
-                }).filter(t => t !== null);
-
-                if (parsedTags.length === 0) {
-                    alert('请输入有效的标签格式，例如：namespace1:tag1');
-                    return;
-                }
-
-                const torrentId = [[${torrent.id}]];
-                fetch('/torrentTags/' + torrentId + '/tag', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: JSON.stringify(parsedTags),
-                    credentials: 'same-origin'
-                }).then(response => {
-                    if (response.ok) {
-                        window.location.reload();
-                    } else {
-                        response.json().then(data => {
-                            alert(data.message || '添加标签失败');
-                        }).catch(() => {
-                            alert('添加标签失败');
-                        });
-                    }
-                }).catch(error => {
-                    console.error('Error:', error);
-                    alert('请求失败，请检查网络连接');
                 });
             });
         });

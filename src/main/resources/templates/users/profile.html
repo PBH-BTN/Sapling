@@ -71,7 +71,6 @@
                                       th:data-bg-color="${user.levelPermissionGroup.color}"
                                       th:text="${user.levelPermissionGroup.name}"></span>
                             </div>
-                            <p class="text-muted" th:text="${user.title}"></p>
                         </div>
                         <div th:if="${isCurrentUser}" class="btn-group">
                             <a th:href="@{/users/profile/edit}"
@@ -138,34 +137,7 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
-
-                    <!-- 带宽信息 -->
-                    <!--                    <div class="row mt-3">-->
-                    <!--                        <div class="col-md-6">-->
-                    <!--                            <div class="d-flex justify-content-between small">-->
-                    <!--                                <span>上传带宽</span>-->
-                    <!--                                <span th:text="${user.myBandwidthUpload} + ' Mbps'"></span>-->
-                    <!--                            </div>-->
-                    <!--                            <div class="progress bandwidth-meter">-->
-                    <!--                                <div class="progress-bar bg-success"-->
-                    <!--                                     role="progressbar"-->
-                    <!--                                     th:style="'width:' + ${user.myBandwidthUpload / 1000 * 100} + '%'"></div>-->
-                    <!--                            </div>-->
-                    <!--                        </div>-->
-                    <!--                        <div class="col-md-6">-->
-                    <!--                            <div class="d-flex justify-content-between small">-->
-                    <!--                                <span>下载带宽</span>-->
-                    <!--                                <span th:text="${user.myBandwidthDownload} + ' Mbps'"></span>-->
-                    <!--                            </div>-->
-                    <!--                            <div class="progress bandwidth-meter">-->
-                    <!--                                <div class="progress-bar bg-danger"-->
-                    <!--                                     role="progressbar"-->
-                    <!--                                     th:style="'width:' + ${user.myBandwidthDownload / 1000 * 100} + '%'"></div>-->
-                    <!--                            </div>-->
-                    <!--                        </div>-->
-                    <!--                    </div>-->
                 </div>
             </div>
         </div>
@@ -206,13 +178,5 @@
 </main>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
-
-<!-- Markdown 渲染脚本 -->
-<script>
-    const reader = new commonmark.Parser();
-    const writer = new commonmark.HtmlRenderer();
-    const parsed = reader.parse(document.getElementById('signatureContent').textContent);
-    document.getElementById('signatureContent').innerHTML = writer.render(parsed);
-</script>
 </body>
 </html>
