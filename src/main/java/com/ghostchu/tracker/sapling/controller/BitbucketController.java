@@ -26,8 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.StringJoiner;
 
@@ -100,7 +98,7 @@ public class BitbucketController {
                 mimeType = MediaType.APPLICATION_OCTET_STREAM;
             }
         }
-        String fileName = URLEncoder.encode(bitbucket.getDisplayName(), StandardCharsets.UTF_8);
+        String fileName = bitbucket.getDisplayName();
         for (String s : safeMime) {
             if (mimeType.getType().equals(s)) {
                 return ResponseEntity.ok()
