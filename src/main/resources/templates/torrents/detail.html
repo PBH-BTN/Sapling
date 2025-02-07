@@ -170,18 +170,18 @@
 <!-- 操作脚本 -->
 <script th:inline="javascript">
     /*<![CDATA[*/
-    document.getElementById('thankButton').addEventListener('click', function () {
-        fetch([[@{/thanks/
+    const url = [[@{/thanks/
     }]]
-        +[[${torrent.id}]], {
+    +[[${torrent.id}]];
+    /*]]>*/
+    document.getElementById('thankButton').addEventListener('click', function () {
+        fetch(url, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             }
         }
-    )
-    .
-        then(response => {
+        ).then(response => {
             if (response.ok) {
                 window.location.reload();
             } else {

@@ -32,6 +32,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 
@@ -150,8 +152,9 @@ public class TorrentsController {
             throw new TorrentNotExistsException(null, id, "种子不存在或已被删除");
         }
         Users user = usersService.getUserById(StpUtil.getLoginIdAsLong());
+        String fileName = URLEncoder.encode(torrent.getTitle() + ".torrent", StandardCharsets.UTF_8);
         return ResponseEntity.ok()
-                .header("Content-Disposition", "attachment; filename=\"" + torrent.getTitle() + ".torrent\"")
+                .header("Content-Disposition", "attachment;filename=" + fileName + ";filename*=UTF-8" + fileName)
                 .body(new InputStreamResource(new ByteArrayInputStream(torrentsService.downloadTorrentForUser(torrent, user))));
     }
 

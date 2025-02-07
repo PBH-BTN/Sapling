@@ -11,4 +11,5 @@ public class Setting {
     public static final String TRACKER_MAINTENANCE_MESSAGE = "tracker.maintenance.message";
     public static final String TRACKER_ANNOUNCE_MAX_RETURNS = "tracker.announce.max-returns";
     public static final String TRACKER_ID = "tracker.id";
+    public static final String BITBUCKET_ALLOWED_FILE_EXTENSION = "bitbucket.allowed-file-extensions";
 }
