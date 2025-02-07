@@ -1,28 +1,31 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/import :: import(title='种子列表')}">
-    <style>
-        .torrent-card:hover {
-            transform: translateY(-3px);
-            transition: transform 0.2s ease;
-        }
-        .seed-leech-badge {
-            min-width: 70px; /* 缩小徽章宽度 */
-            padding: 0.25rem 0.5rem; /* 减少内边距 */
-            font-size: 0.85rem; /* 缩小字体 */
-        }
+<head th:replace="~{fragments/import :: import(title='种子列表', headContent=~{::#pageHead})}">
+    <th:block id="pageHead">
+        <style>
+            .torrent-card:hover {
+                transform: translateY(-3px);
+                transition: transform 0.2s ease;
+            }
 
-        /* 新增紧凑布局样式 */
-        .compact-card .card-body {
-            padding: 1rem; /* 减少卡片内边距 */
-        }
+            .seed-leech-badge {
+                min-width: 70px; /* 缩小徽章宽度 */
+                padding: 0.25rem 0.5rem; /* 减少内边距 */
+                font-size: 0.85rem; /* 缩小字体 */
+            }
 
-        .compact-card img {
-            width: 64px;
-            height: 64px;
-            object-fit: cover; /* 保持图片比例 */
-        }
-    </style>
+            /* 新增紧凑布局样式 */
+            .compact-card .card-body {
+                padding: 1rem; /* 减少卡片内边距 */
+            }
+
+            .compact-card img {
+                width: 64px;
+                height: 64px;
+                object-fit: cover; /* 保持图片比例 */
+            }
+        </style>
+    </th:block>
 </head>
 <body>
 <div th:replace="~{fragments/header :: header(${user})}"></div>

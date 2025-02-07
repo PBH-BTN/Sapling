@@ -1,24 +1,26 @@
 <!-- src/main/resources/templates/user/profile.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/import :: import(title=${user.name + ' - 个人资料'})}">
-    <!-- Markdown 渲染 -->
-    <script th:src="@{/assets/js/commonmark.min.js}"></script>
+<head th:replace="~{fragments/import :: import(title=${user.name + ' - 个人资料'}, headContent=~{::#pageHead})}">
+    <th:block id="pageHead">
+        <!-- Markdown 渲染 -->
+        <script th:src="@{/assets/js/commonmark.min.js}"></script>
+        <style>
+            .profile-stats .card {
+                transition: transform 0.2s;
+            }
 
+            .profile-stats .card:hover {
+                transform: translateY(-3px);
+            }
+
+            .bandwidth-meter {
+                height: 8px;
+            }
+        </style>
+    </th:block>
 </head>
-<style>
-    .profile-stats .card {
-        transition: transform 0.2s;
-    }
 
-    .profile-stats .card:hover {
-        transform: translateY(-3px);
-    }
-
-    .bandwidth-meter {
-        height: 8px;
-    }
-</style>
 <body>
 <div th:replace="~{fragments/header :: header(${user})}"></div>
 

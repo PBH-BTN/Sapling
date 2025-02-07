@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:fragment="import(title)">
+<head th:fragment="import(title, headContent)">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Sapling - 高性能 Private Tracker 系统">
@@ -15,6 +15,6 @@
     <link href="https://use.fontawesome.com/releases/v6.1.1/css/all.css" rel="stylesheet">
     <script th:src="@{/js/main.js}" crossorigin="anonymous"></script>
 
-    <th:block th:insert="~{${headContent}} ?: _"></th:block>
+    <th:block th:replace="${headContent} ?: _"></th:block>
 </head>
 </html>

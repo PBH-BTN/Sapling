@@ -1,9 +1,7 @@
 <!-- src/main/resources/templates/torrents/upload.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/import :: import(title=${pageTitle})}">
-
-</head>
+<head th:insert="~{fragments/import :: import(title=${pageTitle}, headContent=~{::#pageHead})}">
 
 <body>
 <div th:if="${user} != null" th:replace="~{fragments/header :: header(${user})}"></div>

@@ -1,14 +1,16 @@
 <!-- src/main/resources/templates/user/edit-profile.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/import :: import(title='编辑个人资料')}">
-
+<head th:replace="~{fragments/import :: import(title='编辑个人资料', headContent=~{::#pageHead})}">
+    <th:block id="pageHead">
+        <style>
+            .bandwidth-input {
+                position: relative;
+            }
+        </style>
+    </th:block>
 </head>
-<style>
-    .bandwidth-input {
-        position: relative;
-    }
-</style>
+
 <script th:src="@{/js/tinymce/tinymce.min.js}"></script>
 <script>
     tinymce.init({

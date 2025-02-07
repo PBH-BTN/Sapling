@@ -1,40 +1,41 @@
 <!-- src/main/resources/templates/torrents/upload.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/import :: import(title='上传种子')}">
-
+<head th:replace="~{fragments/import :: import(title='上传种子', headContent=~{::#pageHead})}">
+    <th:block id="pageHead">
+        <script th:src="@{/js/tinymce/tinymce.min.js}"></script>
+        <script>
+            tinymce.init({
+                selector: '#descriptionEditor',
+                plugins: 'preview importcss searchreplace autolink autosave save code visualblocks visualchars fullscreen image link media codesample table charmap anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons accordion',
+                menubar: 'file edit view insert format tools table help',
+                toolbar: "undo redo | accordion accordionremove | blocks fontfamily fontsize | bold italic underline strikethrough | align numlist bullist | link image | table media | lineheight outdent indent| forecolor backcolor removeformat | charmap emoticons | code fullscreen preview | save | anchor codesample",
+                autosave_ask_before_unload: true,
+                autosave_interval: '30s',
+                autosave_prefix: '{path}{query}-{id}-',
+                autosave_restore_when_empty: false,
+                autosave_retention: '2m',
+                image_advtab: true,
+                height: 500,
+                forced_root_block: false,
+                image_caption: true,
+                quickbars_selection_toolbar: 'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
+                noneditable_class: 'mceNonEditable',
+                toolbar_mode: 'sliding',
+                contextmenu: 'link image table',
+                convert_urls: false,
+                // Markdown 配置
+                extended_valid_elements: 'pre[class]',
+                setup: function (editor) {
+                    editor.on('init', function () {
+                        this.getBody().style.fontSize = '14px';
+                    });
+                }
+            });
+        </script>
+    </th:block>
 </head>
 <!-- TinyMCE Markdown 编辑器 -->
-<script th:src="@{/js/tinymce/tinymce.min.js}"></script>
-<script>
-    tinymce.init({
-        selector: '#descriptionEditor',
-        plugins: 'preview importcss searchreplace autolink autosave save code visualblocks visualchars fullscreen image link media codesample table charmap anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons accordion',
-        menubar: 'file edit view insert format tools table help',
-        toolbar: "undo redo | accordion accordionremove | blocks fontfamily fontsize | bold italic underline strikethrough | align numlist bullist | link image | table media | lineheight outdent indent| forecolor backcolor removeformat | charmap emoticons | code fullscreen preview | save | anchor codesample",
-        autosave_ask_before_unload: true,
-        autosave_interval: '30s',
-        autosave_prefix: '{path}{query}-{id}-',
-        autosave_restore_when_empty: false,
-        autosave_retention: '2m',
-        image_advtab: true,
-        height: 500,
-        forced_root_block: false,
-        image_caption: true,
-        quickbars_selection_toolbar: 'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
-        noneditable_class: 'mceNonEditable',
-        toolbar_mode: 'sliding',
-        contextmenu: 'link image table',
-        convert_urls: false,
-        // Markdown 配置
-        extended_valid_elements: 'pre[class]',
-        setup: function (editor) {
-            editor.on('init', function () {
-                this.getBody().style.fontSize = '14px';
-            });
-        }
-    });
-</script>
 
 <body>
 <div th:replace="~{fragments/header :: header(${user})}"></div>

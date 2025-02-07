@@ -1,7 +1,7 @@
 <!-- src/main/resources/templates/torrents/upload.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/import :: import(title=' 操作确认')}"></head>
+<head th:replace="~{fragments/import :: import(title=' 操作确认', headContent=~{::#pageHead})}"></head>
 
 <body>
 <div th:if="${user} != null" th:replace="~{fragments/header :: header(${user})}"></div>

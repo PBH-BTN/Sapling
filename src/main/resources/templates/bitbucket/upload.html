@@ -1,15 +1,12 @@
 <!-- src/main/resources/templates/torrents/upload.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/import :: import(title='上传文件')}">
-
-</head>
-
+<head th:replace="~{fragments/import :: import(title='上传文件', headContent=~{::#pageHead})}">
+    <th:block id="pageHead">
+        <link href="https://releases.transloadit.com/uppy/v4.13.2/uppy.min.css" rel="stylesheet"/>
+    </th:block>
 <body>
-<link
-        href="https://releases.transloadit.com/uppy/v4.13.2/uppy.min.css"
-        rel="stylesheet"
-/>
+
 
 <div th:replace="~{fragments/header :: header(${user})}"></div>
 

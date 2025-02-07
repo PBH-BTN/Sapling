@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sa="http://www.thymeleaf.org/extras/sa-token">
-<head th:replace="~{fragments/import :: import(title=${torrent.title})}">
+<head th:replace="~{fragments/import :: import(title=${torrent.title}, headContent=~{::#pageHead})}">
+    <th:block id="pageHead">
+        <style>
+            .centered-td {
+                align-items: center;
+            }
+        </style>
+    </th:block>
 </head>
-<style>
-    .centered-td {
-        align-items: center;
-    }
-</style>
+
 <body>
 <!-- 头部保留不变 -->
 
@@ -27,7 +30,7 @@
                     <tr>
                         <th class="centered-td" scope="row">基本信息</th>
                         <td class="centered-td"><b>分类:</b> <span th:styleappend="'color:' + ${torrent.category.color}"
-                                               th:text="${torrent.category.name}"></span>
+                                                                   th:text="${torrent.category.name}"></span>
                             <b>发布时间:</b> <span
                                     th:text="${#temporals.format(torrent.createdAt, 'yyyy-MM-dd')}"></span>
                             <b>发布者:</b> <span th:if="${torrent.anonymous}">匿名用户</span><a
@@ -188,11 +191,11 @@
     /*]]>*/
     document.getElementById('thankButton').addEventListener('click', function () {
         fetch(url, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             }
-        }
         ).then(response => {
             if (response.ok) {
                 window.location.reload();
