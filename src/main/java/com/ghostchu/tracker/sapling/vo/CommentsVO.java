@@ -20,22 +20,22 @@ import java.time.OffsetDateTime;
 @Getter
 @Setter
 @ToString
-public class CommentVO implements Serializable {
+public class CommentsVO implements Serializable {
 
     @TableId(type = IdType.AUTO)
     private Long id;
 
-    private long owner;
+    private UserVO owner;
 
-    private long torrent;
+    private TorrentVO torrent;
 
-    private CommentVO parentComment; // 楼中楼
+    private String content;
+
+    private CommentsVO parentComment; // 楼中楼
 
     private OffsetDateTime createdAt;
 
     private OffsetDateTime editedAt;
 
     private OffsetDateTime deletedAt;
-
-    private UserVO deletedBy;
 }

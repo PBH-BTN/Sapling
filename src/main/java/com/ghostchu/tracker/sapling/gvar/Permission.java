@@ -94,5 +94,8 @@ public class Permission {
 
     public static final String ADMIN_PANEL = "admin"; // 访问站点后台设置
 
-    public static final String PAGES_VIEW = "pages.view";
+    public static final String PAGES_VIEW = "page.view";
+    public static final String COMMENT_CREATE = "comment.create"; // 发表评论
+    public static final String COMMENT_DELETE = "comment.delete"; // 删除评论
+    public static final String COMMENT_DELETE_OTHER = "comment.delete.other"; // 删除他人评论
 }

@@ -1,6 +1,7 @@
 package com.ghostchu.tracker.sapling.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.OrderBy;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,8 +32,11 @@ public class Comments implements Serializable {
 
     private long torrent;
 
+    private String content;
+
     private Long parentComment;
 
+    @OrderBy
     private OffsetDateTime createdAt;
 
     private OffsetDateTime editedAt;

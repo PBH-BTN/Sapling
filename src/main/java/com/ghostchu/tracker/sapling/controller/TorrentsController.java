@@ -4,6 +4,7 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaMode;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.PageDTO;
 import com.ghostchu.tracker.sapling.dto.ConfirmFormDTO;
 import com.ghostchu.tracker.sapling.dto.TorrentEditFormDTO;
 import com.ghostchu.tracker.sapling.dto.TorrentUploadFormDTO;
@@ -14,10 +15,7 @@ import com.ghostchu.tracker.sapling.gvar.Permission;
 import com.ghostchu.tracker.sapling.service.*;
 import com.ghostchu.tracker.sapling.util.HtmlSanitizer;
 import com.ghostchu.tracker.sapling.util.MsgUtil;
-import com.ghostchu.tracker.sapling.vo.CategoryVO;
-import com.ghostchu.tracker.sapling.vo.ThanksVO;
-import com.ghostchu.tracker.sapling.vo.TorrentDetailsVO;
-import com.ghostchu.tracker.sapling.vo.TorrentTagsVO;
+import com.ghostchu.tracker.sapling.vo.*;
 import com.google.common.html.HtmlEscapers;
 import jakarta.validation.Valid;
 import lombok.Data;
@@ -83,7 +81,7 @@ public class TorrentsController {
 
     @GetMapping("/{id}")
     @SaCheckPermission(value = {Permission.TORRENT_VIEW})
-    public String torrentDetail(@PathVariable long id, Model model) {
+    public String torrentDetail(@PathVariable long id, Model model, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "50") int size) {
         // 获取种子详情
         Torrents torrent = torrentsService.getTorrentById(id);
         if (torrent == null
@@ -98,7 +96,10 @@ public class TorrentsController {
         List<ThanksVO> thanksVOList = recentThanks.getRecords().stream().map(thanksService::toVO).filter(Objects::nonNull).toList();
         model.addAttribute("thanks", thanksVOList);
         model.addAttribute("thankedTorrent", thanksService.isUserThankedTorrent(StpUtil.getLoginIdAsLong(), id));
-        model.addAttribute("comments", commentsService.getComments(id, 1, 20));
+        var comments = commentsService.getComments(id, page, size);
+        IPage<CommentsVO> commentsPaged = new PageDTO<>(page, size, comments.getTotal(), comments.searchCount());
+        commentsPaged.setRecords(comments.getRecords().stream().map(c -> commentsService.toVO(c, false)).toList());
+        model.addAttribute("comments", commentsPaged);
         var torrentTags = torrentTagsService.getTorrentTags(torrent.getId()).stream().map(t -> torrentTagsService.toVO(t)).toList();
         Map<String, List<TorrentTagsVO>> groupedTags = torrentTags.stream()
                 .collect(Collectors.groupingBy(t -> t.getTag().getNamespace()));
