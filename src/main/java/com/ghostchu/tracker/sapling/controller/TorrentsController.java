@@ -17,6 +17,7 @@ import com.ghostchu.tracker.sapling.util.MsgUtil;
 import com.ghostchu.tracker.sapling.vo.CategoryVO;
 import com.ghostchu.tracker.sapling.vo.ThanksVO;
 import com.ghostchu.tracker.sapling.vo.TorrentDetailsVO;
+import com.ghostchu.tracker.sapling.vo.TorrentTagsVO;
 import com.google.common.html.HtmlEscapers;
 import jakarta.validation.Valid;
 import lombok.Data;
@@ -35,7 +36,9 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -61,6 +64,8 @@ public class TorrentsController {
     private ITorrentReviewQueueService torrentReviewQueueService;
     @Autowired
     private ICommentsService commentsService;
+    @Autowired
+    private ITorrentTagsService torrentTagsService;
 
     @GetMapping
     @SaCheckPermission(value = {Permission.TORRENT_VIEW})
@@ -94,6 +99,10 @@ public class TorrentsController {
         model.addAttribute("thanks", thanksVOList);
         model.addAttribute("thankedTorrent", thanksService.isUserThankedTorrent(StpUtil.getLoginIdAsLong(), id));
         model.addAttribute("comments", commentsService.getComments(id, 1, 20));
+        var torrentTags = torrentTagsService.getTorrentTags(torrent.getId()).stream().map(t -> torrentTagsService.toVO(t)).toList();
+        Map<String, List<TorrentTagsVO>> groupedTags = torrentTags.stream()
+                .collect(Collectors.groupingBy(t -> t.getTag().getNamespace()));
+        model.addAttribute("torrentTags", groupedTags);
         return "torrents/detail";
     }
 

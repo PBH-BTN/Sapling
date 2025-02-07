@@ -76,7 +76,7 @@ public class BitbucketController {
     @ResponseBody
     @SaCheckPermission(Permission.BITBUCKET_UPLOAD)
     public Map<String, String> upload(@RequestParam MultipartFile file, @RequestParam String name, @RequestParam String type) throws IOException {
-        Bitbucket bitbucket = bitbucketService.uploadToBitbucket(file, StpUtil.getLoginIdAsLong(), type, true);
+        Bitbucket bitbucket = bitbucketService.uploadToBitbucket(file, StpUtil.getLoginIdAsLong(), type, true, false);
         return Map.of("url", request.getContextPath() + "/bitbucket/file/" + bitbucket.getId());
     }
 

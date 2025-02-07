@@ -4,20 +4,21 @@
 <head th:replace="~{fragments/import :: import(title=${user.name + ' - 个人资料'})}">
     <!-- Markdown 渲染 -->
     <script th:src="@{/assets/js/commonmark.min.js}"></script>
-    <style>
-        .profile-stats .card {
-            transition: transform 0.2s;
-        }
 
-        .profile-stats .card:hover {
-            transform: translateY(-3px);
-        }
-
-        .bandwidth-meter {
-            height: 8px;
-        }
-    </style>
 </head>
+<style>
+    .profile-stats .card {
+        transition: transform 0.2s;
+    }
+
+    .profile-stats .card:hover {
+        transform: translateY(-3px);
+    }
+
+    .bandwidth-meter {
+        height: 8px;
+    }
+</style>
 <body>
 <div th:replace="~{fragments/header :: header(${user})}"></div>
 
@@ -38,8 +39,9 @@
                 <!-- 头像 -->
                 <div class="col-md-3 text-center">
                     <img th:src="@{${user.avatar}}"
-                         class="rounded-circle mb-3"
-                         width="150"
+                         width="200px"
+                         height="200px"
+                         class="rounded-circle mb-3 avatar-preview"
                          alt="用户头像">
                     <div th:if="${user.banned}" class="alert alert-danger">
                         <i class="fas fa-ban"></i> 此用户当前处于封禁状态
@@ -53,7 +55,11 @@
                 <div class="col-md-9">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <h2 class="mb-1" th:text="${user.name}"></h2>
+                            <h2 class="mb-1">
+                                <span class="mr-2" th:text="${user.name}"></span><small th:if="${user.title}"
+                                                                                        class="text-muted"
+                                                                                        th:text="${user.title}"></small>
+                            </h2>
                             <div class="mb-2">
                                 <span class="badge text-contrast"
                                       th:style="'background-color:' + ${user.primaryPermissionGroup.color}"
@@ -68,7 +74,7 @@
                             <p class="text-muted" th:text="${user.title}"></p>
                         </div>
                         <div th:if="${isCurrentUser}" class="btn-group">
-                            <a th:href="@{/user/settings}"
+                            <a th:href="@{/users/profile/edit}"
                                class="btn btn-outline-primary">
                                 <i class="fas fa-cog mr-2"></i>编辑资料
                             </a>
@@ -103,13 +109,36 @@
                             <div class="card">
                                 <div class="card-body">
                                     <h5 class="card-title">
-                                        <i class="fas fa-seedling text-primary"></i>
+                                        <i class="fas fa-percentage text-primary"></i>
+                                        <span th:text="${user.downloaded != 0 ? #numbers.formatDecimal(user.uploaded / user.downloaded, 2, 'COMMA', 2, 'POINT') : 'Inf'}"></span>
+                                    </h5>
+                                    <p class="card-text text-muted small">分享率</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-seedling text-success"></i>
                                         <!--                                        <span th:text="${#dates.format(user.seedTime, 'd 天 H 小时')}"></span>-->
                                     </h5>
                                     <p class="card-text text-muted small">总做种时间</p>
                                 </div>
                             </div>
                         </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-download text-info"></i>
+                                        <!--                                        <span th:text="${#dates.format(user.seedTime, 'd 天 H 小时')}"></span>-->
+                                    </h5>
+                                    <p class="card-text text-muted small">总下载时间</p>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
                     <!-- 带宽信息 -->
@@ -146,7 +175,22 @@
     <div class="card shadow-lg mb-4" th:if="${user.signature}">
         <div class="card-body">
             <h5 class="card-title mb-3"><i class="fas fa-pen-fancy mr-2"></i>签名档</h5>
-            <div id="signatureContent" th:text="${user.signature}"></div>
+            <div id="signatureContent" th:utext="${user.signature}"></div>
+        </div>
+    </div>
+
+    <!-- 签名档 -->
+    <div class="card shadow-lg mb-4">
+        <div class="card-body">
+            <h5 class="card-title mb-3"><i class="fas fa-network-wired mr-2"></i>网络配置</h5>
+            <div class="d-flex flex-column">
+                <span><i class="fas fa-arrow-up text-success"></i>上传带宽：<span
+                        th:text="${user.myBandwidthUpload}"></span> Mbps</span>
+                <span><i class="fas fa-arrow-down text-danger"></i>下载带宽：<span
+                        th:text="${user.myBandwidthDownload}"></span> Mbps</span>
+                <span>网络提供商：<span th:text="${user.myIsp}"></span></span>
+            </div>
+
         </div>
     </div>
 

@@ -87,6 +87,8 @@ public class Bitbucket implements Serializable {
 
     private String mime;
 
+    private boolean managed;
+
     /**
      * 扩展信息
      */

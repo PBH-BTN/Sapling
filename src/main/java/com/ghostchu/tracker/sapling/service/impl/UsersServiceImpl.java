@@ -74,14 +74,14 @@ public class UsersServiceImpl extends MPJBaseServiceImpl<UsersMapper, Users> imp
     }
 
     @Override
-    @Cacheable(value = "users", key = "'username:' + #username", unless = "#result == null")
+    @Cacheable(value = "users.exists", key = "'username:' + #username", unless = "#result == null")
     public boolean userNameExists(String username) {
         return getOne(new QueryWrapper<Users>()
                 .eq("name", username)) != null;
     }
 
     @Override
-    @Cacheable(value = "users", key = "'email:' + #email", unless = "#result == null")
+    @Cacheable(value = "users.exists", key = "'email:' + #email", unless = "#result == null")
     public boolean userEmailExists(String email) {
         return getOne(new QueryWrapper<Users>()
                 .eq("email", email)) != null;
@@ -122,8 +122,8 @@ public class UsersServiceImpl extends MPJBaseServiceImpl<UsersMapper, Users> imp
     @Override
     @Caching(evict = {
             @CacheEvict(value = "users", key = "'id:' + #user.id"),
-            @CacheEvict(value = "users", key = "'username:' + #user.name"),
-            @CacheEvict(value = "users", key = "'email:' + #user.email"),
+            @CacheEvict(value = "users.exists", key = "'username:' + #user.name"),
+            @CacheEvict(value = "users.exists", key = "'email:' + #user.email"),
             @CacheEvict(value = "users", key = "'passkey:' + #user.passkey"),
             @CacheEvict(value = "stp.permissions", key = "'id:' + #user.id"),
             @CacheEvict(value = "stp.roles", key = "'id:' + #user.id")

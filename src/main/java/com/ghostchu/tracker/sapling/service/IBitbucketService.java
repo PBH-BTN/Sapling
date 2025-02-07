@@ -17,11 +17,11 @@ import java.io.InputStream;
  * @since 2025-02-04
  */
 public interface IBitbucketService extends MPJBaseService<Bitbucket> {
-    Bitbucket uploadToBitbucket(MultipartFile file, Long owner, String mime, boolean directAccess) throws IOException;
+    Bitbucket uploadToBitbucket(MultipartFile file, Long owner, String mime, boolean directAccess, boolean managed) throws IOException;
 
-    Bitbucket uploadToBitbucket(byte[] bytes, String fileName, Long owner, String mime, boolean directAccess) throws IOException;
+    Bitbucket uploadToBitbucket(byte[] bytes, String fileName, Long owner, String mime, boolean directAccess, boolean managed) throws IOException;
 
-    Bitbucket uploadToBitbucket(File file, Long owner, String mime, boolean directAccess) throws IOException;
+    Bitbucket uploadToBitbucket(File file, Long owner, String mime, boolean directAccess, boolean managed) throws IOException;
 
     InputStream readBitBucket(Long bitbucketId) throws IOException;
 

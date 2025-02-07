@@ -45,7 +45,8 @@
                 <ul class="navbar-nav" th:if="${user != null}">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
-                            <img th:src="${user.avatar}" width="30" height="30" class="rounded-circle mr-2">
+                            <img th:src="${user.avatar}" width="30" height="30"
+                                 class="rounded-circle avatar-preview mr-2">
                             <span th:text="${user.name}"></span>
                             <span class="badge badge-success ml-2" ></span>
                         </a>

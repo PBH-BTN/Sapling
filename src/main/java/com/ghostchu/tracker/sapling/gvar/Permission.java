@@ -72,9 +72,9 @@ public class Permission {
 
     public static final String USER_VIEW_SECRET = "user.view.secret"; // 查看用户隐私信息（如 IP 地址等）
 
-    public static final String USER_EDIT_SELF = "user.edit.self"; // 编辑自己的用户信息
+    public static final String USER_EDIT = "user.edit"; // 编辑自己的用户信息
 
-    public static final String USER_EDIT = "user.edit"; // 编辑所有人的用户信息
+    public static final String USER_EDIT_SELF = "user.edit.other"; // 编辑所有人的用户信息
 
     public static final String USER_WARNING = "user.warning"; // 给用户警告
 

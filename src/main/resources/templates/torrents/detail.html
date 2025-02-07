@@ -2,6 +2,11 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sa="http://www.thymeleaf.org/extras/sa-token">
 <head th:replace="~{fragments/import :: import(title=${torrent.title})}">
 </head>
+<style>
+    .centered-td {
+        align-items: center;
+    }
+</style>
 <body>
 <!-- 头部保留不变 -->
 
@@ -17,11 +22,11 @@
                     <h1 class="mb-1" th:text="${torrent.title}"></h1>
                     <h2 class="text-muted" th:text="${torrent.subtitle}"></h2>
                 </div>
-                <table class="table table-sm table-bordered">
+                <table class="table table-sm table-borderless">
                     <tbody>
                     <tr>
-                        <th scope="row">基本信息</th>
-                        <td><b>分类:</b> <span th:styleappend="'color:' + ${torrent.category.color}"
+                        <th class="centered-td" scope="row">基本信息</th>
+                        <td class="centered-td"><b>分类:</b> <span th:styleappend="'color:' + ${torrent.category.color}"
                                                th:text="${torrent.category.name}"></span>
                             <b>发布时间:</b> <span
                                     th:text="${#temporals.format(torrent.createdAt, 'yyyy-MM-dd')}"></span>
@@ -33,8 +38,8 @@
                         </td>
                     </tr>
                     <tr>
-                        <th scope="row">文件</th>
-                        <td>
+                        <th class="centered-td" scope="row">文件</th>
+                        <td class="centered-td">
                             <b>大小:</b> <span
                                 th:text="${T(com.ghostchu.tracker.sapling.util.UnitConverter).autoUnit(torrent.size)}"></span>
                             <b>文件数:</b> <span th:text="${torrent.info.files}"></span>
@@ -42,8 +47,8 @@
                         </td>
                     </tr>
                     <tr>
-                        <th scope="row">操作</th>
-                        <td>
+                        <th class="centered-td" scope="row">操作</th>
+                        <td class="centered-td">
                             <div class="d-flex flex-row gap-2 align-items-center">
                                 <div sa:hasPermissionOr="torrent.edit, torrent.edit.other" class="pe-2">
                                     <a th:href="@{/torrents/{id}/edit(id=${torrent.id})}" class="text-nowrap">
@@ -67,8 +72,15 @@
                             </div>
                         </td>
                     </tr>
+                    <tr>
+                        <th class="centered-td" scope="row">标签</th>
+                        <td class="centered-td">
+                            <div th:replace="~{fragments/torrentTags :: tags(torrentTags=${torrentTags})}"></div>
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
+
                 <div id="content" th:utext="${torrent.description}">
                 </div>
             </div>
@@ -156,7 +168,7 @@
                                  data-parent="#torrentInfos">
                                 <div class="card-body">
                                     <table class="table table-sm"
-                                           th:replace="~{fragments/torrentinfo :: torrentInfo(torrent = ${torrent})}"></table>
+                                           th:replace="~{fragments/torrentInfo :: torrentInfo(torrent = ${torrent})}"></table>
                                 </div>
                             </div>
                         </div>
@@ -190,6 +202,29 @@
         })
             .catch(error => console.error('Error:', error));
     });
+    /*]]>*/
+</script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    function deleteTag(tagId) {
+        fetch([[@{/torrentTags/
+    }]]
+        +tagId, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+    ).
+        then(response => {
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                alert('删除失败，请检查权限');
+            }
+        }).catch(error => console.error('Error:', error));
+    }
+
     /*]]>*/
 </script>
 

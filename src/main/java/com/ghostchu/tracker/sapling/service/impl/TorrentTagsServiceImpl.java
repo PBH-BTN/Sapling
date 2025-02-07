@@ -1,5 +1,6 @@
 package com.ghostchu.tracker.sapling.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ghostchu.tracker.sapling.entity.TorrentTags;
@@ -38,7 +39,7 @@ public class TorrentTagsServiceImpl extends MPJBaseServiceImpl<TorrentTagsMapper
     @Override
     @Cacheable(value = "torrentTags", key = "'torrentId:' + #torrentId")
     public List<TorrentTags> getTorrentTags(long torrentId) {
-        return list(query().eq("torrent", torrentId));
+        return list(new QueryWrapper<TorrentTags>().eq("torrent", torrentId));
     }
 
     @Override
@@ -56,7 +57,7 @@ public class TorrentTagsServiceImpl extends MPJBaseServiceImpl<TorrentTagsMapper
 
     @Override
     public IPage<TorrentTags> getTorrentTagsByPage(long torrentId, long page, int size) {
-        return page(new Page<>(page, size), query().eq("torrent", torrentId));
+        return page(new Page<>(page, size), new QueryWrapper<TorrentTags>().eq("torrent", torrentId));
     }
 
     @Override
@@ -78,7 +79,7 @@ public class TorrentTagsServiceImpl extends MPJBaseServiceImpl<TorrentTagsMapper
             @CacheEvict(value = "torrentTags", key = "'torrentId:' + #torrentId")
     })
     public boolean removeTag(long torrentId, long tagId) {
-        return remove(query().eq("torrent", torrentId).eq("tag", tagId));
+        return remove(new QueryWrapper<TorrentTags>().eq("torrent", torrentId).eq("tag", tagId));
     }
 
 }

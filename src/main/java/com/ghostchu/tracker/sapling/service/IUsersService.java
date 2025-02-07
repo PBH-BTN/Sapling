@@ -31,4 +31,5 @@ public interface IUsersService extends MPJBaseService<Users> {
     Users getUserByPasskey(String passkey);
 
     boolean updateUser(Users user);
+
 }

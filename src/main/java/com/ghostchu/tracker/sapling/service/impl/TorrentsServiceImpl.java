@@ -136,7 +136,7 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
         if (isTorrentExists(torrentInfo.infoHashV1Bytes()) || isTorrentExists(torrentInfo.infoHashV2Bytes())) {
             throw new IllegalArgumentException("要上传的种子已经存在");
         }
-        Bitbucket uploadedFile = bitbucketService.uploadToBitbucket(processed, file.getOriginalFilename(), owner, "application/x-bittorrent", false);
+        Bitbucket uploadedFile = bitbucketService.uploadToBitbucket(processed, file.getOriginalFilename(), owner, "application/x-bittorrent", false, true);
         Torrents torrents = new Torrents();
         torrents.setOwner(owner);
         torrents.setHashV1(torrentInfo.infoHashV1Bytes());

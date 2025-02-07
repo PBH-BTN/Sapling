@@ -1,11 +1,13 @@
 package com.ghostchu.tracker.sapling.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ghostchu.tracker.sapling.entity.Bitbucket;
 import com.ghostchu.tracker.sapling.gvar.Setting;
 import com.ghostchu.tracker.sapling.mapper.BitbucketMapper;
 import com.ghostchu.tracker.sapling.service.IBitbucketService;
 import com.ghostchu.tracker.sapling.service.ISettingsService;
 import com.github.yulichang.base.MPJBaseServiceImpl;
+import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -39,11 +41,15 @@ public class BitbucketServiceImpl extends MPJBaseServiceImpl<BitbucketMapper, Bi
     @Override
     @Cacheable(value = "bitbucket", key = "#bitbucketId")
     public Bitbucket getBitBucket(Long bitbucketId) {
-        return this.getById(bitbucketId);
+        QueryWrapper<Bitbucket> queryWrapper = new QueryWrapper<>();
+        queryWrapper = queryWrapper.eq("id", bitbucketId).isNull("deleted_at");
+        return getOne(queryWrapper);
     }
 
     @Override
-    public Bitbucket uploadToBitbucket(MultipartFile file, Long owner, String mime, boolean directAccess) throws IOException {
+    public Bitbucket uploadToBitbucket(MultipartFile file, Long owner, String mime, boolean directAccess, boolean managed) throws IOException {
+        Validate.notBlank(mime, "BitBucket 的 MIME 参数不能为空");
+        Validate.notNull(file, "BitBucket 的 MultipartFile 不能为空");
         String filePath = UUID.randomUUID().toString();
         File dest = new File(getBitbucketPath(), filePath);
         file.transferTo(dest);
@@ -56,12 +62,15 @@ public class BitbucketServiceImpl extends MPJBaseServiceImpl<BitbucketMapper, Bi
         bitbucket.setDirectAccess(directAccess);
         bitbucket.setFileSize(file.getSize());
         bitbucket.setMime(mime);
+        bitbucket.setManaged(managed);
         this.save(bitbucket);
         return bitbucket;
     }
 
     @Override
-    public Bitbucket uploadToBitbucket(byte[] bytes, String fileName, Long owner, String mime, boolean directAccess) throws IOException {
+    public Bitbucket uploadToBitbucket(byte[] bytes, String fileName, Long owner, String mime, boolean directAccess, boolean managed) throws IOException {
+        Validate.notBlank(mime, "BitBucket 的 MIME 参数不能为空");
+        Validate.notNull(bytes, "BitBucket 的 bytes 不能为空");
         String filePath = UUID.randomUUID().toString();
         File dest = new File(getBitbucketPath(), filePath);
         Files.write(dest.toPath(), bytes);
@@ -74,12 +83,16 @@ public class BitbucketServiceImpl extends MPJBaseServiceImpl<BitbucketMapper, Bi
         bitbucket.setDirectAccess(directAccess);
         bitbucket.setFileSize(bytes.length);
         bitbucket.setMime(mime);
+        bitbucket.setManaged(managed);
         this.save(bitbucket);
         return bitbucket;
     }
 
     @Override
-    public Bitbucket uploadToBitbucket(File file, Long owner, String mime, boolean directAccess) throws IOException {
+    public Bitbucket uploadToBitbucket(File file, Long owner, String mime, boolean directAccess, boolean managed) throws IOException {
+        Validate.notBlank(mime, "BitBucket 的 MIME 参数不能为空");
+        Validate.notNull(file, "BitBucket 的 File 不能为空");
+        Validate.isTrue(file.exists(), "BitBucket 的 File 的文件不存在");
         String filePath = UUID.randomUUID().toString();
         File dest = new File(getBitbucketPath(), filePath);
         Files.copy(file.toPath(), dest.toPath());
@@ -92,6 +105,7 @@ public class BitbucketServiceImpl extends MPJBaseServiceImpl<BitbucketMapper, Bi
         bitbucket.setDirectAccess(directAccess);
         bitbucket.setFileSize(file.length());
         bitbucket.setMime(mime);
+        bitbucket.setManaged(managed);
         this.save(bitbucket);
         return bitbucket;
     }
@@ -99,7 +113,9 @@ public class BitbucketServiceImpl extends MPJBaseServiceImpl<BitbucketMapper, Bi
     @Override
     @Deprecated() // 不推荐使用，因为无法缓存
     public InputStream readBitBucket(Long bitbucketId) throws IOException {
-        Bitbucket bitbucket = this.getById(bitbucketId);
+        QueryWrapper<Bitbucket> queryWrapper = new QueryWrapper<>();
+        queryWrapper = queryWrapper.eq("id", bitbucketId).isNull("deleted_at");
+        Bitbucket bitbucket = getOne(queryWrapper);
         if (bitbucket == null) {
             throw new IOException("Given BitBucket not exists.");
         }
