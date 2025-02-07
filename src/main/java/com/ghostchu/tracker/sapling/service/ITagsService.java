@@ -1,7 +1,10 @@
 package com.ghostchu.tracker.sapling.service;
 
 import com.ghostchu.tracker.sapling.entity.Tags;
+import com.ghostchu.tracker.sapling.vo.TagsVO;
 import com.github.yulichang.base.MPJBaseService;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,9 @@ import com.github.yulichang.base.MPJBaseService;
  */
 public interface ITagsService extends MPJBaseService<Tags> {
 
+    Tags getTags(long id);
+
+    List<Tags> getTagsByNamespace(String namespace);
+
+    TagsVO toVO(Tags tags);
 }

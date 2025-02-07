@@ -30,10 +30,13 @@ public class ThanksServiceImpl extends MPJBaseServiceImpl<ThanksMapper, Thanks> 
 
     @Override
     public ThanksVO toVO(Thanks thanks) {
+        var users = usersService.getUserById(thanks.getOwner());
+        var torrents = torrentsService.getTorrentById(thanks.getTorrent());
+        if (users == null || torrents == null) return null;
         ThanksVO thanksVO = new ThanksVO();
         thanksVO.setId(thanks.getId());
-        thanksVO.setOwner(usersService.toVO(usersService.getUserById(thanks.getOwner())));
-        thanksVO.setTorrent(torrentsService.toVO(torrentsService.getTorrentById(thanks.getTorrent())));
+        thanksVO.setOwner(usersService.toVO(users));
+        thanksVO.setTorrent(torrentsService.toVO(torrents));
         thanksVO.setCreateAt(thanks.getCreateAt());
         return thanksVO;
     }

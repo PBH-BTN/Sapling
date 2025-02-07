@@ -88,7 +88,7 @@ public class TorrentsController {
         model.addAttribute("torrent", torrentsService.toDetailsVO(torrent));
         var recentThanks = thanksService.getThanksByPageByTorrent(id, 1, 20);
         model.addAttribute("totalThanks", recentThanks.getTotal());
-        List<ThanksVO> thanksVOList = recentThanks.getRecords().stream().map(thanksService::toVO).toList();
+        List<ThanksVO> thanksVOList = recentThanks.getRecords().stream().map(thanksService::toVO).filter(Objects::nonNull).toList();
         model.addAttribute("thanks", thanksVOList);
         model.addAttribute("thankedTorrent", thanksService.isUserThankedTorrent(StpUtil.getLoginIdAsLong(), id));
         model.addAttribute("comments", commentsService.getComments(id, 1, 20));

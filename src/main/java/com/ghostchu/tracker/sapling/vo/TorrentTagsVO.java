@@ -1,9 +1,6 @@
-package com.ghostchu.tracker.sapling.entity;
+package com.ghostchu.tracker.sapling.vo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.ghostchu.tracker.sapling.converter.JsonbTypeHandler;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,26 +20,24 @@ import java.util.Map;
 @Getter
 @Setter
 @ToString
-@TableName("torrent_tags")
-public class TorrentTags implements Serializable {
+public class TorrentTagsVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
      * 种子-标签 映射关系ID
      */
-    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
      * 种子ID
      */
-    private long torrent;
+    private TorrentVO torrent;
 
     /**
      * 标签ID
      */
-    private long tag;
+    private TagsVO tag;
 
     @TableField(typeHandler = JsonbTypeHandler.class)
     private Map<String, Object> extra;
