@@ -21,4 +21,6 @@ public interface ITagsService extends MPJBaseService<Tags> {
     List<Tags> getTagsByNamespace(String namespace);
 
     TagsVO toVO(Tags tags);
+
+    Tags getTagByString(String strTag);
 }

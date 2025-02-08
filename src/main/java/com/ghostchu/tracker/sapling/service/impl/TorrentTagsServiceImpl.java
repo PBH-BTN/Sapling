@@ -3,6 +3,7 @@ package com.ghostchu.tracker.sapling.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ghostchu.tracker.sapling.entity.Tags;
 import com.ghostchu.tracker.sapling.entity.TorrentTags;
 import com.ghostchu.tracker.sapling.mapper.TorrentTagsMapper;
 import com.ghostchu.tracker.sapling.service.ITagsService;
@@ -16,8 +17,12 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.StringJoiner;
 
 /**
  * <p>
@@ -80,6 +85,37 @@ public class TorrentTagsServiceImpl extends MPJBaseServiceImpl<TorrentTagsMapper
     })
     public boolean removeTag(long torrentId, long tagId) {
         return remove(new QueryWrapper<TorrentTags>().eq("torrent", torrentId).eq("tag", tagId));
+    }
+
+    @Override
+    public String createTagString(List<TorrentTags> torrentTags) {
+        StringJoiner tagString = new StringJoiner(";");
+        for (TorrentTags torrentTag : torrentTags) {
+            var tag = tagsService.getTags(torrentTag.getTag());
+            tagString.add(tag.getNamespace() + ":" + tag.getTagname());
+        }
+        return tagString.toString();
+    }
+
+    @Transactional
+    @Override
+    public void applyTagString(long torrent, String tagString) {
+        var strTags = tagString.split(";");
+        Set<Tags> foundTags = new HashSet<>();
+        for (String strTag : strTags) {
+            var tag = tagsService.getTagByString(strTag);
+            if (tag == null) {
+                continue;
+            }
+            foundTags.add(tag);
+        }
+        remove(new QueryWrapper<TorrentTags>().eq("torrent", torrent));
+        for (Tags tag : foundTags) {
+            TorrentTags torrentTags = new TorrentTags();
+            torrentTags.setTorrent(torrent);
+            torrentTags.setTag(tag.getId());
+            save(torrentTags);
+        }
     }
 
 }

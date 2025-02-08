@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ghostchu.tracker.sapling.entity.TorrentTags;
 import com.ghostchu.tracker.sapling.vo.TorrentTagsVO;
 import com.github.yulichang.base.MPJBaseService;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -26,4 +27,9 @@ public interface ITorrentTagsService extends MPJBaseService<TorrentTags> {
     TorrentTags addTag(long torrentId, long tagId);
 
     boolean removeTag(long torrentId, long tagId);
+
+    String createTagString(List<TorrentTags> torrentTags);
+
+    @Transactional
+    void applyTagString(long torrent, String tagString);
 }

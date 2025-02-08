@@ -41,4 +41,13 @@ public class TagsServiceImpl extends MPJBaseServiceImpl<TagsMapper, Tags> implem
         tagsVO.setTagname(tags.getTagname());
         return tagsVO;
     }
+
+    @Override
+    public Tags getTagByString(String strTag) {
+        var exploded = strTag.split(":");
+        if (exploded.length == 2) {
+            return getOne(query().eq("namespace", exploded[0]).eq("tagname", exploded[1]));
+        }
+        return null;
+    }
 }

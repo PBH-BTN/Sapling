@@ -19,4 +19,5 @@ public class TorrentUploadFormDTO {
 
     private String description;
     private boolean anonymous;
+    private String tags;
 }

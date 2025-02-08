@@ -147,6 +147,7 @@ public class TorrentsController {
                     HtmlSanitizer.sanitize(form.getDescription()), form.isAnonymous(), false);
             torrentReviewQueueService.queueTorrent(newTorrent.getId());
         }
+        torrentTagsService.applyTagString(newTorrent.getId(), form.getTags());
         return "redirect:/torrents/" + newTorrent.getId();
     }
 
@@ -186,6 +187,7 @@ public class TorrentsController {
         form.setSubtitle(torrent.getSubtitle());
         form.setDescription(torrent.getDescription());
         form.setAnonymous(torrent.isAnonymous());
+        form.setTags(torrentTagsService.createTagString(torrentTagsService.getTorrentTags(torrent.getId())));
         // 获取分类列表
         List<CategoryVO> categories = categoriesService.getAllCategories().stream().map(categoriesService::toVO).toList();
         model.addAttribute("torrent", torrent);
@@ -209,6 +211,7 @@ public class TorrentsController {
             return "redirect:/torrents/" + id + "/edit";
         }
         torrentsService.updateTorrent(id, StpUtil.getLoginIdAsLong(), form.getCategoryId(), form.getTitle(), form.getSubtitle(), HtmlSanitizer.sanitize(form.getDescription()));
+        torrentTagsService.applyTagString(id, form.getTags());
         return "redirect:/torrents/" + id;
     }
 
