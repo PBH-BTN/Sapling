@@ -89,6 +89,16 @@ public class UsersController {
         users.setName(form.getName());
         users.setTitle(form.getTitle());
         users.setSignature(HtmlSanitizer.sanitize(form.getSignature()));
+
+        if (StpUtil.hasPermission(Permission.USER_EDIT_DATA)) {
+            users.setUploaded(form.getUploaded());
+            users.setUploadedReal(form.getUploadedReal());
+            users.setDownloaded(form.getDownloaded());
+            users.setDownloadedReal(form.getDownloadedReal());
+            users.setSeedTime(form.getSeedTime());
+            users.setLeechTime(form.getLeechTime());
+        }
+
         userService.updateUser(users);
         return "redirect:/users/profile";
     }
@@ -102,6 +112,12 @@ public class UsersController {
         form.setMyBandwidthUpload(user.getMyBandwidthUpload());
         form.setMyBandwidthDownload(user.getMyBandwidthDownload());
         form.setMyIsp(user.getMyIsp());
+        form.setUploaded(user.getUploaded());
+        form.setUploadedReal(user.getUploadedReal());
+        form.setDownloaded(user.getDownloaded());
+        form.setDownloadedReal(user.getDownloadedReal());
+        form.setSeedTime(user.getSeedTime());
+        form.setLeechTime(user.getLeechTime());
         return form;
     }
 

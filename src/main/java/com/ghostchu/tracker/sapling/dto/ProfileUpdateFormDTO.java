@@ -27,4 +27,13 @@ public class ProfileUpdateFormDTO {
 
     @Size(max = 50)
     private String myIsp;
+
+    private long uploaded;
+    private long uploadedReal;
+    private long downloaded;
+    private long downloadedReal;
+    private long seedTime;
+    private long leechTime;
+
+
 }

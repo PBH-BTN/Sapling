@@ -1,6 +1,6 @@
 <!-- src/main/resources/templates/user/edit-profile.html -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sa="http://www.thymeleaf.org/extras/sa-token">
 <head th:replace="~{fragments/import :: import(title='编辑个人资料', headContent=~{::#pageHead})}">
     <th:block id="pageHead">
         <style>
@@ -21,7 +21,7 @@
         <div class="col-lg-8">
             <div class="card shadow-lg">
                 <div class="card-header bg-primary text-white">
-                    <h3 class="mb-0"><i class="fas fa-user-edit mr-2"></i>编辑个人资料</h3>
+                    <h3 class="mb-0"><i class="fas fa-user-edit"></i>编辑个人资料</h3>
                 </div>
 
                 <div class="card-body">
@@ -80,7 +80,7 @@
                         </div>
 
                         <!-- 网络设置 -->
-                        <div class="card border-primary mb-4">
+                        <div class="card border-primary mb-4 mr-2">
                             <div class="card-header bg-light">
                                 <h5 class="mb-0"><i class="fas fa-network-wired mr-2"></i>网络设置</h5>
                             </div>
@@ -108,7 +108,6 @@
                                         </div>
                                     </div>
                                 </div>
-
                                 <!-- ISP -->
                                 <div class="form-group">
                                     <label class="font-weight-bold">网络服务商</label>
@@ -120,10 +119,83 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- 用户数据修改 -->
 
+                        <div class="card border-warning mb-4" sa:hasPermission="user.edit.data">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0"><i class="fas fa-database mr-2"></i>数据修改</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group bandwidth-input">
+                                    <label class="font-weight-bold">上传量</label>
+                                    <div class="input-group mb-3">
+                                        <input type="number" class="form-control" th:field="*{uploaded}"
+                                               min="0" required aria-label="uploaded">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" id="uploaded">bytes</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group bandwidth-input">
+                                    <label class="font-weight-bold">真实上传量</label>
+                                    <div class="input-group mb-3">
+                                        <input type="number" class="form-control" th:field="*{uploadedReal}"
+                                               min="0" required aria-label="uploaded">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" id="uploadedReal">bytes</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group bandwidth-input">
+                                    <label class="font-weight-bold">下载量</label>
+                                    <div class="input-group mb-3">
+                                        <input type="number" class="form-control" th:field="*{downloaded}"
+                                               min="0" required aria-label="downloaded">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" id="downloaded">bytes</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group bandwidth-input">
+                                    <label class="font-weight-bold">真实下载量</label>
+                                    <div class="input-group mb-3">
+                                        <input type="number" class="form-control" th:field="*{downloadedReal}"
+                                               min="0" required aria-label="downloadReal">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" id="downloadReal">bytes</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group bandwidth-input">
+                                    <label class="font-weight-bold">做种时间</label>
+                                    <div class="input-group mb-3">
+                                        <input type="number" class="form-control" th:field="*{seedTime}"
+                                               min="0" required aria-label="seedTime">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" id="seedTime">ms</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group bandwidth-input">
+                                    <label class="font-weight-bold">下载时间</label>
+                                    <div class="input-group mb-3">
+                                        <input type="number" class="form-control" th:field="*{leechTime}"
+                                               min="0" required aria-label="leechTime">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" id="leechTime">ms</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <!-- 操作按钮 -->
                         <div class="mt-4 d-flex justify-content-between">
-                            <a th:href="@{/profile}" class="btn btn-outline-secondary">
+                            <a th:href="@{/users/profile}" class="btn btn-outline-secondary">
                                 <i class="fas fa-times mr-2"></i>取消
                             </a>
                             <button type="submit" class="btn btn-primary">

@@ -75,7 +75,7 @@ public class Permission {
 
     public static final String USER_EDIT = "user.edit"; // 编辑自己的用户信息
 
-    public static final String USER_EDIT_SELF = "user.edit.other"; // 编辑所有人的用户信息
+    public static final String USER_EDIT_OTHER = "user.edit.other"; // 编辑所有人的用户信息
 
     public static final String USER_WARNING = "user.warning"; // 给用户警告
 
@@ -100,4 +100,6 @@ public class Permission {
 
     public static final String ADMIN_DASHBOARD = "admin.dashboard"; // 访问站点管理员控制面板
     public static final String ADMIN_TRACKER_CLIENTS = "admin.tracker.clients"; // 管理 Tracker 的客户端许可列表
+
+    public static final String USER_EDIT_DATA = "user.edit.data"; // 编辑用户的统计数据
 }
