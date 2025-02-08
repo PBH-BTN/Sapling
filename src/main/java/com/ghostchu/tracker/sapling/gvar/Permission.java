@@ -20,7 +20,8 @@ public class Permission {
 
     public static final String BITBUCKET_UPLOAD = "bitbucket.upload"; // 上传文件
 
-    public static final String BITBUCKET_DELETE = "bitbucket.delete.self"; // 删除自己上传的文件
+    public static final String BITBUCKET_DELETE = "bitbucket.delete"; // 删除自己上传的文件
+    public static final String BITBUCKET_DELETE_OTHER = "bitbucket.delete.other"; // 删除自己上传的文件
 
     public static final String TORRENT_VIEW = "torrent.view"; // 查看种子
     public static final String TORRENT_VIEW_INVISIBLE = "torrent.view.invisible"; // 查看未公开种子
@@ -92,10 +93,11 @@ public class Permission {
 
     public static final String PERMISSION_GROUP_EDIT = "permission.group.edit"; // 编辑权限组设定
 
-    public static final String ADMIN_PANEL = "admin"; // 访问站点后台设置
-
     public static final String PAGES_VIEW = "page.view";
     public static final String COMMENT_CREATE = "comment.create"; // 发表评论
     public static final String COMMENT_DELETE = "comment.delete"; // 删除评论
     public static final String COMMENT_DELETE_OTHER = "comment.delete.other"; // 删除他人评论
+
+    public static final String ADMIN_DASHBOARD = "admin.dashboard"; // 访问站点管理员控制面板
+    public static final String ADMIN_TRACKER_CLIENTS = "admin.tracker.clients"; // 管理 Tracker 的客户端许可列表
 }

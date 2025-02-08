@@ -1,19 +1,25 @@
 package com.ghostchu.tracker.sapling.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.dev33.satoken.annotation.SaMode;
 import cn.dev33.satoken.stp.StpUtil;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ghostchu.tracker.sapling.entity.Bitbucket;
 import com.ghostchu.tracker.sapling.gvar.Permission;
 import com.ghostchu.tracker.sapling.gvar.Setting;
+import com.ghostchu.tracker.sapling.model.StdMsg;
 import com.ghostchu.tracker.sapling.service.IBitbucketService;
 import com.ghostchu.tracker.sapling.service.ISettingsService;
 import com.ghostchu.tracker.sapling.util.FileUtil;
+import com.ghostchu.tracker.sapling.vo.BitbucketVO;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -73,9 +79,20 @@ public class BitbucketController {
     @PostMapping("/upload")
     @ResponseBody
     @SaCheckPermission(Permission.BITBUCKET_UPLOAD)
-    public Map<String, String> upload(@RequestParam MultipartFile file, @RequestParam String name, @RequestParam String type) throws IOException {
+    public ResponseEntity<?> upload(@RequestParam MultipartFile file, @RequestParam(required = false) String name, @RequestParam(required = false) String type) throws IOException {
+        if (type == null) {
+            if (name == null) {
+                name = file.getOriginalFilename();
+            }
+            if (name != null) {
+                type = FileUtil.mime(name, null).getType();
+            }
+        }
         Bitbucket bitbucket = bitbucketService.uploadToBitbucket(file, StpUtil.getLoginIdAsLong(), type, true, false);
-        return Map.of("url", request.getContextPath() + "/bitbucket/file/" + bitbucket.getId());
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new StdMsg<>(true, null, Map.of("url", request.getContextPath() + "/bitbucket/file/" + bitbucket.getId())));
     }
 
 
@@ -112,6 +129,35 @@ public class BitbucketController {
                 .header("Content-Disposition", "attachment;filename=" + fileName + ";filename*=UTF-8" + fileName)
                 .body(inputStream);
 
+    }
+
+    @GetMapping
+    public String listFiles(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "50") int size,
+            Model model) {
+        Page<Bitbucket> pageQuery = new Page<>(page, size);
+        IPage<Bitbucket> files = bitbucketService.listUserFiles(StpUtil.getLoginIdAsLong(), pageQuery);
+        Page<BitbucketVO> filesVO = new Page<>(page, size, files.getTotal(), files.searchCount());
+        filesVO.setRecords(files.getRecords().stream().map(bitbucketService::toVO).toList());
+        model.addAttribute("files", files);
+        return "bitbucket/index";
+    }
+
+    @PostMapping("/delete/{id}")
+    @SaCheckPermission(value = {Permission.BITBUCKET_DELETE, Permission.BITBUCKET_DELETE_OTHER}, mode = SaMode.OR)
+    public String deleteFile(@PathVariable Long id) {
+        Bitbucket bitbucket = bitbucketService.getBitBucket(id);
+        if (bitbucket == null) {
+            return "redirect:/bitbucket/index";
+        }
+        if (bitbucket.getOwner() == StpUtil.getLoginIdAsLong()) {
+            StpUtil.checkPermission(Permission.BITBUCKET_DELETE);
+        } else {
+            StpUtil.checkPermission(Permission.BITBUCKET_DELETE_OTHER);
+        }
+        bitbucketService.deleteById(id);
+        return "redirect:/bitbucket/index";
     }
 
 }

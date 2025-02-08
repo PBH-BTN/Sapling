@@ -1,6 +1,9 @@
 package com.ghostchu.tracker.sapling.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ghostchu.tracker.sapling.entity.Bitbucket;
+import com.ghostchu.tracker.sapling.vo.BitbucketVO;
 import com.github.yulichang.base.MPJBaseService;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,4 +31,10 @@ public interface IBitbucketService extends MPJBaseService<Bitbucket> {
     InputStream readBitBucket(Bitbucket bitbucket) throws IOException;
 
     Bitbucket getBitBucket(Long bitbucketId);
+
+    IPage<Bitbucket> listUserFiles(long loginIdAsLong, Page<Bitbucket> pageQuery);
+
+    BitbucketVO toVO(Bitbucket bitbucket);
+
+    void deleteById(Long id);
 }

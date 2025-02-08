@@ -43,10 +43,18 @@
             maxNumberOfFiles: 20,
             minNumberOfFiles: 1,
             allowedFileTypes: allowedFileExtensions
-        }
+        },
     })
     uppy.use(Dashboard, {inline: true, target: 'uppy',})
-        .use(XHRUpload, {endpoint: uploadEndpoint});
+        .use(XHRUpload, {
+            endpoint: uploadEndpoint,
+            getResponseData(xhr) {
+                const json = JSON.parse(xhr.responseText)
+                return {
+                    url: json.data.url
+                }
+            }
+        });
     uppy.on('success', (fileCount) => {
         console.log(`${fileCount} files uploaded`)
     })

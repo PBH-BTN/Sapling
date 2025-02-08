@@ -1,11 +1,14 @@
 package com.ghostchu.tracker.sapling.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ghostchu.tracker.sapling.entity.Bitbucket;
 import com.ghostchu.tracker.sapling.gvar.Setting;
 import com.ghostchu.tracker.sapling.mapper.BitbucketMapper;
 import com.ghostchu.tracker.sapling.service.IBitbucketService;
 import com.ghostchu.tracker.sapling.service.ISettingsService;
+import com.ghostchu.tracker.sapling.vo.BitbucketVO;
 import com.github.yulichang.base.MPJBaseServiceImpl;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +47,40 @@ public class BitbucketServiceImpl extends MPJBaseServiceImpl<BitbucketMapper, Bi
         QueryWrapper<Bitbucket> queryWrapper = new QueryWrapper<>();
         queryWrapper = queryWrapper.eq("id", bitbucketId).isNull("deleted_at");
         return getOne(queryWrapper);
+    }
+
+    @Override
+    public IPage<Bitbucket> listUserFiles(long loginIdAsLong, Page<Bitbucket> pageQuery) {
+        QueryWrapper<Bitbucket> queryWrapper = new QueryWrapper<>();
+        queryWrapper = queryWrapper
+                .eq("owner", loginIdAsLong)
+                .eq("managed", false)
+                .isNull("deleted_at")
+                .orderByDesc("id");
+        return page(pageQuery, queryWrapper);
+    }
+
+    @Override
+    public BitbucketVO toVO(Bitbucket bitbucket) {
+        BitbucketVO vo = new BitbucketVO();
+        vo.setId(bitbucket.getId());
+        vo.setDisplayName(bitbucket.getDisplayName());
+        vo.setFilePath(bitbucket.getFilePath());
+        vo.setHandler(bitbucket.getHandler());
+        vo.setCreatedAt(bitbucket.getCreatedAt());
+        vo.setLastAccessAt(bitbucket.getLastAccessAt());
+        vo.setDirectAccess(bitbucket.isDirectAccess());
+        vo.setFileSize(bitbucket.getFileSize());
+        vo.setMime(bitbucket.getMime());
+        return vo;
+
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        Bitbucket bitbucket = getById(id);
+        bitbucket.setDeletedAt(OffsetDateTime.now());
+        updateById(bitbucket);
     }
 
     @Override
