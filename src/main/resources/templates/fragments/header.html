@@ -76,6 +76,9 @@
                                 <i class="fas fa-user-plus mr-2"></i>邀请
                             </a>
                             <div class="dropdown-divider"></div>
+                            <a sa:hasPermission="bitbucket.view" class="dropdown-item" th:href="@{/bitbucket}">
+                                <i class="fas fa-hdd mr-2"></i>文件仓库
+                            </a>
                             <a sa:hasPermission="admin.dashboard" class="dropdown-item text-danger" th:href="@{/admin}">
                                 <i class="fas fa-tools mr-2"></i>管理面板
                             </a>

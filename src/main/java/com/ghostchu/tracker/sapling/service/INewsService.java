@@ -1,7 +1,10 @@
 package com.ghostchu.tracker.sapling.service;
 
 import com.ghostchu.tracker.sapling.entity.News;
+import com.ghostchu.tracker.sapling.vo.NewsVO;
 import com.github.yulichang.base.MPJBaseService;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,7 @@ import com.github.yulichang.base.MPJBaseService;
  */
 public interface INewsService extends MPJBaseService<News> {
 
+    List<News> getActiveNews();
+
+    NewsVO toVO(News news);
 }
