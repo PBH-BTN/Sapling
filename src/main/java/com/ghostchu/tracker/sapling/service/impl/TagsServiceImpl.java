@@ -46,7 +46,7 @@ public class TagsServiceImpl extends MPJBaseServiceImpl<TagsMapper, Tags> implem
     public Tags getTagByString(String strTag) {
         var exploded = strTag.split(":");
         if (exploded.length == 2) {
-            return getOne(query().eq("namespace", exploded[0]).eq("tagname", exploded[1]));
+            return getOne(query().eq("namespace", exploded[0].trim()).eq("tagname", exploded[1].trim()));
         }
         return null;
     }
