@@ -74,8 +74,8 @@
                                       th:text="${user.levelPermissionGroup.name}"></span>
                             </div>
                         </div>
-                        <div th:if="${isCurrentUser}" class="btn-group">
-                            <a th:href="@{/users/profile/edit}"
+                        <div th:if="${isCurrentUser} || ${stp.hasPermission('user.edit.other')}" class="btn-group">
+                            <a th:href="@{/users/profile/edit/{id}(id=${user.id})}"
                                class="btn btn-outline-primary">
                                 <i class="fas fa-cog mr-2"></i>编辑资料
                             </a>

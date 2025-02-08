@@ -1,6 +1,7 @@
 package com.ghostchu.tracker.sapling.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.dev33.satoken.annotation.SaMode;
 import cn.dev33.satoken.stp.StpUtil;
 import com.ghostchu.tracker.sapling.dto.ProfileUpdateFormDTO;
 import com.ghostchu.tracker.sapling.entity.Bitbucket;
@@ -49,27 +50,55 @@ public class UsersController {
         return "users/profile";
     }
 
+    // 查看其他用户资料
+    @GetMapping("/profile/{userId}")
+    public String viewUserProfile(
+            @PathVariable long userId,
+            Model model) {
+        Users users = userService.getUserById(userId);
+        if (users == null) {
+            throw new UserNotExistsException(userId, "指定的用户不存在");
+        }
+        UserVO targetUser = userService.toVO(userService.getUserById(userId));
+
+        boolean isCurrentUser = targetUser.getId() == StpUtil.getLoginIdAsLong();
+        model.addAttribute("user", targetUser);
+        model.addAttribute("isCurrentUser", isCurrentUser);
+        return "users/profile";
+    }
+
     // 编辑当前用户资料
-    @GetMapping("/profile/edit")
-    @SaCheckPermission(Permission.USER_EDIT)
-    public String editProfile(Model model) {
-        UserVO currentUser = userService.toVO(userService.getUserById(StpUtil.getLoginIdAsLong()));
+    @GetMapping("/profile/edit/{id}")
+    @SaCheckPermission(value = {Permission.USER_EDIT, Permission.USER_EDIT_OTHER}, mode = SaMode.OR)
+    public String editProfile(Model model, @PathVariable long id) {
+        if (id == StpUtil.getLoginIdAsLong()) {
+            StpUtil.checkPermission(Permission.USER_EDIT);
+        } else {
+            StpUtil.checkPermission(Permission.USER_EDIT_OTHER);
+        }
+        UserVO currentUser = userService.toVO(userService.getUserById(id));
         model.addAttribute("user", currentUser);
         model.addAttribute("isCurrentUser", true);
         model.addAttribute("form", convertToForm(currentUser));
         return "users/edit";
     }
 
-    @PostMapping("/profile/edit")
-    @SaCheckPermission(Permission.USER_EDIT)
+    @PostMapping("/profile/edit/{id}")
+    @SaCheckPermission(value = {Permission.USER_EDIT, Permission.USER_EDIT_OTHER}, mode = SaMode.OR)
     public String updateProfile(
             @ModelAttribute @Valid ProfileUpdateFormDTO form,
+            @PathVariable long id,
             BindingResult result,
             @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile) throws IOException {
         if (result.hasErrors()) {
             return "users/edit";
         }
-        Users users = userService.getUserById(StpUtil.getLoginIdAsLong());
+        if (id == StpUtil.getLoginIdAsLong()) {
+            StpUtil.checkPermission(Permission.USER_EDIT);
+        } else {
+            StpUtil.checkPermission(Permission.USER_EDIT_OTHER);
+        }
+        Users users = userService.getUserById(id);
         if (!form.getName().equals(users.getName()) && userService.userNameExists(form.getName())) {
             result.rejectValue("name", "user.name.exists", "给定的用户名已被使用");
             return "users/edit";
@@ -100,11 +129,12 @@ public class UsersController {
         }
 
         userService.updateUser(users);
-        return "redirect:/users/profile";
+        return "redirect:/users/profile/" + id;
     }
 
     private ProfileUpdateFormDTO convertToForm(UserVO user) {
         ProfileUpdateFormDTO form = new ProfileUpdateFormDTO();
+        form.setId(user.getId());
         form.setName(user.getName());
         form.setTitle(user.getTitle());
         form.setSignature(user.getSignature());
@@ -119,23 +149,6 @@ public class UsersController {
         form.setSeedTime(user.getSeedTime());
         form.setLeechTime(user.getLeechTime());
         return form;
-    }
-
-    // 查看其他用户资料
-    @GetMapping("/profile/{userId}")
-    public String viewUserProfile(
-            @PathVariable long userId,
-            Model model) {
-        Users users = userService.getUserById(userId);
-        if (users == null) {
-            throw new UserNotExistsException(userId, "指定的用户不存在");
-        }
-        UserVO targetUser = userService.toVO(userService.getUserById(userId));
-
-        boolean isCurrentUser = targetUser.getId() == StpUtil.getLoginIdAsLong();
-        model.addAttribute("user", targetUser);
-        model.addAttribute("isCurrentUser", isCurrentUser);
-        return "users/profile";
     }
 
 

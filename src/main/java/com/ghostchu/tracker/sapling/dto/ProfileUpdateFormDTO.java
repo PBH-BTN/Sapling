@@ -5,6 +5,9 @@ import lombok.Data;
 
 @Data
 public class ProfileUpdateFormDTO {
+
+    private long id;
+
     @NotBlank
     @Pattern(regexp = "^[a-zA-Z0-9_]{4,20}$", message = "用户名格式不正确")
     private String name;

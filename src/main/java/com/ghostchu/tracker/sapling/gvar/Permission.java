@@ -102,4 +102,5 @@ public class Permission {
     public static final String ADMIN_TRACKER_CLIENTS = "admin.tracker.clients"; // 管理 Tracker 的客户端许可列表
 
     public static final String USER_EDIT_DATA = "user.edit.data"; // 编辑用户的统计数据
+    public static final String ADMIN_USERS_LIST = "admin.users.list"; // 查看用户列表
 }

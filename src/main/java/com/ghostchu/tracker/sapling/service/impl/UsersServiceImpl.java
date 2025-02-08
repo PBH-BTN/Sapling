@@ -1,6 +1,8 @@
 package com.ghostchu.tracker.sapling.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ghostchu.tracker.sapling.entity.Users;
 import com.ghostchu.tracker.sapling.mapper.UsersMapper;
 import com.ghostchu.tracker.sapling.service.ILevelPermissionGroupsService;
@@ -8,6 +10,7 @@ import com.ghostchu.tracker.sapling.service.IPermissionGroupsService;
 import com.ghostchu.tracker.sapling.service.IUsersService;
 import com.ghostchu.tracker.sapling.vo.UserVO;
 import com.github.yulichang.base.MPJBaseServiceImpl;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -92,6 +95,7 @@ public class UsersServiceImpl extends MPJBaseServiceImpl<UsersMapper, Users> imp
         UserVO vo = new UserVO();
         vo.setId(user.getId());
         vo.setName(user.getName());
+        vo.setEmail(user.getEmail());
         vo.setAvatar(user.getAvatar());
         vo.setTitle(user.getTitle());
         vo.setPrimaryPermissionGroup(permissionGroupsService.toVO(permissionGroupsService.getPermissionGroupById(user.getPrimaryPermissionGroup())));
@@ -110,6 +114,13 @@ public class UsersServiceImpl extends MPJBaseServiceImpl<UsersMapper, Users> imp
         vo.setWarned(user.getWarnedId() != null);
         vo.setSystemAccount(user.isSystemAccount());
         vo.setLevelPermissionGroup(levelPermissionGroupsService.toVO(levelPermissionGroupsService.getLevelPermissionGroupById(user.getLevelPermissionGroup())));
+        vo.setRegisterAt(user.getRegisterAt());
+        vo.setLastLoginAt(user.getLastLoginAt());
+        vo.setLastAccessAt(user.getLastAccessAt());
+        vo.setRegisterIp(user.getRegisterIp().getHostAddress());
+        vo.setLastLoginIp(user.getLastLoginIp().getHostAddress());
+        vo.setLastAccessIp(user.getLastAccessIp().getHostAddress());
+        vo.setPasskey(user.getPasskey());
         return vo;
     }
 
@@ -130,6 +141,18 @@ public class UsersServiceImpl extends MPJBaseServiceImpl<UsersMapper, Users> imp
     })
     public boolean updateUser(Users user) {
         return updateById(user);
+    }
+
+    @Override
+    public IPage<Users> searchUsers(int page, int size, String search) {
+        Page<Users> p = new Page<>(page, size);
+        QueryWrapper<Users> wrapper = new QueryWrapper<>();
+        wrapper = wrapper
+                .like(StringUtils.isNotBlank(search), "name", "%" + search + "%")
+                .or()
+                .like(StringUtils.isNotBlank(search), "email", "%" + search + "%")
+                .orderByAsc("id");
+        return page(p, wrapper);
     }
 
 }

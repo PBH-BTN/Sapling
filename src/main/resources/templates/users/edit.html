@@ -25,7 +25,8 @@
                 </div>
 
                 <div class="card-body">
-                    <form th:action="@{/users/profile/edit}" method="post" enctype="multipart/form-data"
+                    <form th:action="@{/users/profile/edit/{id}(id=${form.id})}" method="post"
+                          enctype="multipart/form-data"
                           th:object="${form}">
 
                         <!-- 头像上传 -->

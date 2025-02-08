@@ -85,6 +85,7 @@ public class SaplingControllerAdvice {
         }
     }
 
+
     @ModelAttribute("siteName")
     public String addSiteName() {
         return settingsService.getValue(Setting.SITE_NAME);

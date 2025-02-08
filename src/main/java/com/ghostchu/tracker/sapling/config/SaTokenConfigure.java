@@ -21,4 +21,5 @@ public class SaTokenConfigure implements WebMvcConfigurer {
     public SaTokenDialect getSaTokenDialect() {
         return new SaTokenDialect();
     }
+
 }

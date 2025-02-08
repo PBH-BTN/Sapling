@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.time.OffsetDateTime;
 
 @Data
 @AllArgsConstructor
@@ -22,6 +23,8 @@ public class UserVO implements Serializable {
      * 用户名
      */
     private String name;
+
+    private String email;
 
     /**
      * 头像 URL，可以为相对路径
@@ -112,4 +115,36 @@ public class UserVO implements Serializable {
      * 晋级权限组
      */
     private LevelPermissionGroupVO levelPermissionGroup;
+
+    /**
+     * 用户注册时间
+     */
+    private OffsetDateTime registerAt;
+
+    /**
+     * 用户上次登录时间
+     */
+    private OffsetDateTime lastLoginAt;
+
+    /**
+     * 用户上次访问时间
+     */
+    private OffsetDateTime lastAccessAt;
+
+    /**
+     * 注册 IP 地址
+     */
+    private String registerIp;
+
+    /**
+     * 上次登录 IP 地址
+     */
+    private String lastLoginIp;
+
+    /**
+     * 上次访问 IP 地址
+     */
+    private String lastAccessIp;
+
+    private String passkey;
 }

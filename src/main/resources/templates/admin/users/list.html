@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/import :: import(title='用户管理', headContent=~{::#pageHead})}">
+    <style>
+        .user-table thead th {
+            background: #f8f9fa;
+            white-space: nowrap;
+        }
+
+        .permission-badge {
+            display: inline-block;
+            padding: 0.25em 0.4em;
+            font-size: 85%;
+            font-weight: 500;
+        }
+
+        .search-box {
+            max-width: 400px;
+        }
+    </style>
+</head>
+<body>
+
+<main class="container-fluid my-4 flex-grow-1">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="fas fa-users mr-2"></i>用户管理</h5>
+            <form th:action="@{/admin/users/list}" method="get" class="form-inline">
+                <div class="input-group input-group-sm search-box">
+                    <input type="text" class="form-control" name="search"
+                           placeholder="用户名或邮箱" th:value="${param.search}">
+                    <div class="input-group-append">
+                        <button class="btn btn-light" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="card-body">
+            <table class="table user-table">
+                <thead>
+                <tr>
+                    <th>UID</th>
+                    <th>用户名</th>
+                    <th>邮箱</th>
+                    <th>主权限组</th>
+                    <th>等级权限组</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="user : ${users.records}">
+                    <td style="min-width: 5%" th:text="${user.id}" nowrap></td>
+                    <td style="width: 15%">
+                        <a th:href="@{/users/profile/{uid}(uid=${user.id})}"
+                           target="_blank" class="text-primary">
+                            <span th:text="${user.name}"></span>
+                            <i class="fas fa-external-link-alt ml-1" style="font-size: 0.8em"></i>
+                        </a>
+                    </td>
+                    <td style="width: 25%" th:text="${user.email}"></td>
+                    <td style="width: 15%">
+                        <span class="permission-badge"
+                              th:if="${user.primaryPermissionGroup}"
+                              th:style="'background-color:'+${user.primaryPermissionGroup.color}+';color:white'"
+                              th:text="${user.primaryPermissionGroup.name}"></span>
+                    </td>
+                    <td style="width: 15%">
+                        <span class="permission-badge"
+                              th:if="${user.levelPermissionGroup}"
+                              th:style="'background-color:'+${user.levelPermissionGroup.color}+';color:white'"
+                              th:text="${user.levelPermissionGroup.name}"></span>
+                    </td>
+                    <td style="width: 10%">
+                        <span class="badge"
+                              th:classappend="${user.banned} ? 'badge-danger' : 'badge-success'"
+                              th:text="${user.banned} ? '封禁' : '正常'"></span>
+                        <span class="badge badge-warning"
+                              th:if="${user.warned}">警告</span>
+                    </td>
+                    <td nowrap>
+                        <a th:href="@{/users/profile/edit/{uid}(uid=${user.id})}"
+                           class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <!-- 分页导航 -->
+            <nav th:if="${users.pages > 1}">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${users.current == 1} ? 'disabled'">
+                        <a class="page-link" th:href="@{/admin/users(search=${param.search}, page=1)}">首页</a>
+                    </li>
+                    <li class="page-item" th:classappend="${users.current == 1} ? 'disabled'">
+                        <a class="page-link" th:href="@{/admin/users(search=${param.search}, page=${users.current-1})}">上一页</a>
+                    </li>
+                    <li class="page-item" th:each="page : ${#numbers.sequence(1, users.pages)}"
+                        th:classappend="${page == users.current} ? 'active'">
+                        <a class="page-link" th:href="@{/admin/users(search=${param.search}, page=${page})}"
+                           th:text="${page}"></a>
+                    </li>
+                    <li class="page-item" th:classappend="${users.current == users.pages} ? 'disabled'">
+                        <a class="page-link" th:href="@{/admin/users(search=${param.search}, page=${users.current+1})}">下一页</a>
+                    </li>
+                    <li class="page-item" th:classappend="${users.current == users.pages} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/users(search=${param.search}, page=${users.pages})}">尾页</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>
