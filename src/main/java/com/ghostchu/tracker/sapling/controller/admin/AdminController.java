@@ -1,4 +1,4 @@
-package com.ghostchu.tracker.sapling.controller;
+package com.ghostchu.tracker.sapling.controller.admin;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
