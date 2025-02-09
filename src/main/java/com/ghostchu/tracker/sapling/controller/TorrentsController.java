@@ -12,6 +12,7 @@ import com.ghostchu.tracker.sapling.entity.Torrents;
 import com.ghostchu.tracker.sapling.entity.Users;
 import com.ghostchu.tracker.sapling.exception.TorrentNotExistsException;
 import com.ghostchu.tracker.sapling.gvar.Permission;
+import com.ghostchu.tracker.sapling.gvar.Setting;
 import com.ghostchu.tracker.sapling.service.*;
 import com.ghostchu.tracker.sapling.util.HtmlSanitizer;
 import com.ghostchu.tracker.sapling.util.MsgUtil;
@@ -62,6 +63,8 @@ public class TorrentsController {
     private ICommentsService commentsService;
     @Autowired
     private ITorrentTagsService torrentTagsService;
+    @Autowired
+    private ISettingsService settingsService;
 
     @GetMapping
     @SaCheckPermission(value = {Permission.TORRENT_VIEW})
@@ -160,8 +163,9 @@ public class TorrentsController {
                 || (torrent.isDeleted() && !StpUtil.hasPermission(Permission.TORRENT_VIEW_DELETED))) { // 已被删除
             throw new TorrentNotExistsException(null, id, "种子不存在或已被删除");
         }
+        String siteName = settingsService.getValue(Setting.SITE_NAME);
         Users user = usersService.getUserById(StpUtil.getLoginIdAsLong());
-        String fileName = torrent.getTitle() + ".torrent";
+        String fileName = "[" + siteName + "]" + torrent.getTitle() + ".torrent";
         return ResponseEntity.ok()
                 .header("Content-Disposition", "attachment;filename=" + fileName + ";filename*=UTF-8" + fileName)
                 .body(new InputStreamResource(new ByteArrayInputStream(torrentsService.downloadTorrentForUser(torrent, user))));
