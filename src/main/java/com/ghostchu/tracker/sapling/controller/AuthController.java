@@ -119,9 +119,9 @@ public class AuthController {
         }
         var passhash = SecretUtil.hashPassword(regFormDTO.getPassword());
         Users registered = usersService.registerUser(
-                regFormDTO.getUsername(),
+                invite == null ? regFormDTO.getUsername() : invite.getInviteUsername(),
                 passhash,
-                regFormDTO.getEmail(),
+                invite == null ? regFormDTO.getEmail() : invite.getInviteEmail(),
                 ServletUtil.inet(request)
         );
         if (!invitesService.markInviteAsUsed(invite, registered)) {
