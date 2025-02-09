@@ -1,7 +1,5 @@
-package com.ghostchu.tracker.sapling.entity;
+package com.ghostchu.tracker.sapling.vo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -11,12 +9,10 @@ import java.time.OffsetDateTime;
 @Getter
 @Setter
 @ToString
-public class Invites {
-
-    @TableId(type = IdType.AUTO)
+public class InvitesVO {
     private Long id;
 
-    private long inviteBy;
+    private UserVO inviteBy;
 
     private String inviteEmail;
 
@@ -26,7 +22,7 @@ public class Invites {
 
     private OffsetDateTime expireAt;
 
-    private Long invitedUser;
+    private UserVO invitedUser;
 
     private OffsetDateTime consumeAt;
 
