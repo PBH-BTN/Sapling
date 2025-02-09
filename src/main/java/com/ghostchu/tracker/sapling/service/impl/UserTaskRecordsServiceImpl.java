@@ -5,6 +5,7 @@ import com.ghostchu.tracker.sapling.mapper.UserTaskRecordsMapper;
 import com.ghostchu.tracker.sapling.service.IUserTaskRecordsService;
 import com.ghostchu.tracker.sapling.tracker.PeerEvent;
 import com.github.yulichang.base.MPJBaseServiceImpl;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -20,6 +21,7 @@ import java.time.OffsetDateTime;
 @Service
 public class UserTaskRecordsServiceImpl extends MPJBaseServiceImpl<UserTaskRecordsMapper, UserTaskRecords> implements IUserTaskRecordsService {
     @Override
+    @Retryable
     public UserTaskRecords updateUserTaskRecord(long owner, long torrent, long toGo, OffsetDateTime announceAt, PeerEvent event, long incrementUploaded,
                                                 long incrementDownloaded, long incrementSeedTime, long incrementLeechTime, String userAgent) {
         UserTaskRecords userTaskRecords = this.baseMapper.selectUserTaskRecordsForUpdate(owner, torrent);

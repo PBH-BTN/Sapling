@@ -110,14 +110,13 @@ public class PeersServiceImpl extends MPJBaseServiceImpl<PeersMapper, Peers> imp
                 incrementDownloaded = request.downloaded() - peers.getDownloadOffset();
             }
 
-            var redisDupeCheckKey = "dupe_announce_check:torrent" + request.torrentId() + ":user:" + request.userId() + ":peer:" + HexFormat.of().formatHex(request.peerId());
-            var stored = redisTemplate.opsForValue().get(redisDupeCheckKey);
-            if (stored != null && System.currentTimeMillis() < (Long.parseLong(stored) + 30000)) {
-                // 避免重复计算
+            var redisKey = "announce_dupe_check:" + request.userId() + ":" + request.torrentId() + ":" + HexFormat.of().formatHex(request.peerId());
+            var currentValue = "E:" + request.peerEvent().name() + "U:" + request.uploaded() + ",D:" + request.downloaded();
+            String cachedValue = redisTemplate.opsForValue().getAndSet(redisKey, currentValue);
+            redisTemplate.expire(redisKey, 60000, TimeUnit.MILLISECONDS);
+            if (currentValue.equals(cachedValue)) {
                 incrementUploaded = 0;
                 incrementDownloaded = 0;
-            } else {
-                redisTemplate.opsForValue().set(redisDupeCheckKey, String.valueOf(System.currentTimeMillis()), 30000, TimeUnit.MILLISECONDS);
             }
 
             // 更新到当前状态
