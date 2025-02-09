@@ -44,22 +44,19 @@ public class UsersController {
     // 查看当前用户资料
     @GetMapping("/profile")
     public String viewProfile(Model model) {
-        UserVO currentUser = userService.toVO(userService.getUserById(StpUtil.getLoginIdAsLong()));
-        model.addAttribute("user", currentUser);
-        model.addAttribute("isCurrentUser", true);
-        return "users/profile";
+        return "redirect:/users/profile/" + StpUtil.getLoginIdAsLong();
     }
 
     // 查看其他用户资料
-    @GetMapping("/profile/{userId}")
+    @GetMapping("/profile/{id}")
     public String viewUserProfile(
-            @PathVariable long userId,
+            @PathVariable long id,
             Model model) {
-        Users users = userService.getUserById(userId);
+        Users users = userService.getUserById(id);
         if (users == null) {
-            throw new UserNotExistsException(userId, "指定的用户不存在");
+            throw new UserNotExistsException(id, "指定的用户不存在");
         }
-        UserVO targetUser = userService.toVO(userService.getUserById(userId));
+        UserVO targetUser = userService.toVO(userService.getUserById(id));
 
         boolean isCurrentUser = targetUser.getId() == StpUtil.getLoginIdAsLong();
         model.addAttribute("user", targetUser);
@@ -67,7 +64,7 @@ public class UsersController {
         return "users/profile";
     }
 
-    // 编辑当前用户资料
+    // 编辑用户资料
     @GetMapping("/profile/edit/{id}")
     @SaCheckPermission(value = {Permission.USER_EDIT, Permission.USER_EDIT_OTHER}, mode = SaMode.OR)
     public String editProfile(Model model, @PathVariable long id) {

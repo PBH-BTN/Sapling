@@ -74,11 +74,37 @@
                                       th:text="${user.levelPermissionGroup.name}"></span>
                             </div>
                         </div>
-                        <div th:if="${isCurrentUser} || ${stp.hasPermission('user.edit.other')}" class="btn-group">
+                        <div th:if="${isCurrentUser || stp.hasPermission('user.edit.other')}" class="btn-group">
+                            <!-- 原有的编辑资料按钮 -->
                             <a th:href="@{/users/profile/edit/{id}(id=${user.id})}"
                                class="btn btn-outline-primary">
-                                <i class="fas fa-cog mr-2"></i>编辑资料
+                                <i class="fas fa-cog mr-2"></i>编辑
                             </a>
+                            <!-- 发送站内信按钮（对所有非当前用户可见） -->
+                            <button
+                                    class="btn btn-outline-info"
+                                    onclick="showMessageDialog()">
+                                <i class="fas fa-envelope mr-2"></i>站内信
+                            </button>
+
+                            <!-- 管理员操作按钮组 -->
+                            <div class="btn-group">
+                                <!-- 警告用户按钮 -->
+                                <button class="btn btn-outline-warning"
+                                        th:classappend="${user.warned} ? 'active' : ''"
+                                        onclick="warnUser(${user.id})">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <span th:text="${user.warned} ? '解除警告' : '警告'"></span>
+                                </button>
+
+                                <!-- 封禁用户按钮 -->
+                                <button class="btn btn-outline-danger"
+                                        th:classappend="${user.banned} ? 'active' : ''"
+                                        onclick="banUser(${user.id})">
+                                    <i class="fas fa-ban"></i>
+                                    <span th:text="${user.banned} ? '解除封禁' : '封禁'"></span>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
