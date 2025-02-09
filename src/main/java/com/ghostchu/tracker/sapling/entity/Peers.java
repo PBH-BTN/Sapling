@@ -1,6 +1,9 @@
 package com.ghostchu.tracker.sapling.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.ghostchu.tracker.sapling.converter.InetAddressTypeHandler;
 import com.ghostchu.tracker.sapling.converter.JsonbTypeHandler;
 import lombok.Getter;
@@ -36,8 +39,6 @@ public class Peers implements Serializable {
     private long uploadOffset;
     private String userAgent;
     private String lastAction;
-    @Version
-    private long version = 0;
 
     /**
      * 扩展信息
