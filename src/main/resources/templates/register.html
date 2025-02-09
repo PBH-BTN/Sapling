@@ -34,7 +34,7 @@
                             <label for="username">用户名(*)</label>
                             <input type="text" id="username" th:field="*{username}"
                                    class="form-control" required
-                                   th:disabled="*{username}"
+                                   th:readonly="*{username}"
                                    th:classappend="${#fields.hasErrors('username')} ? 'is-invalid'">
                             <div class="invalid-feedback" th:errors="*{username}"></div>
                         </div>
@@ -44,7 +44,7 @@
                             <label for="email">电子邮箱(*)</label>
                             <input type="email" id="email" th:field="*{email}"
                                    class="form-control" required
-                                   th:disabled="*{email}"
+                                   th:readonly="*{email}"
                                    th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'">
                             <div class="invalid-feedback" th:errors="*{email}"></div>
                         </div>
@@ -72,7 +72,7 @@
                             <label for="inviteCode">邀请码</label>
                             <input type="text" id="inviteCode" th:field="*{inviteCode}"
                                    class="form-control"
-                                   th:disabled="*{inviteCode}"
+                                   th:readonly="*{inviteCode}"
                                    th:classappend="${#fields.hasErrors('inviteCode')} ? 'is-invalid'">
                             <div class="invalid-feedback" th:errors="*{inviteCode}"></div>
                         </div>

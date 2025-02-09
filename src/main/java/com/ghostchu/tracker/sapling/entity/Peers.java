@@ -19,11 +19,12 @@ import java.util.Map;
 @Setter
 @ToString
 @TableName(autoResultMap = true)
-public class Peers implements Serializable, Cloneable {
+public class Peers implements Serializable {
     private static final long serialVersionUID = 1L;
     @TableId(type = IdType.AUTO)
     private Long id;
     private long torrent;
+    private long owner;
     private byte[] peerId;
     @TableField(typeHandler = InetAddressTypeHandler.class)
     private InetAddress ip;
@@ -39,6 +40,7 @@ public class Peers implements Serializable, Cloneable {
     private long uploadOffset;
     private String userAgent;
     private String lastAction;
+    @TableField(typeHandler = InetAddressTypeHandler.class)
     private InetAddress reqIp;
 
     /**

@@ -11,6 +11,7 @@ import com.ghostchu.tracker.sapling.service.ISettingsService;
 import com.ghostchu.tracker.sapling.service.ITorrentsService;
 import com.ghostchu.tracker.sapling.service.IUsersService;
 import com.ghostchu.tracker.sapling.tracker.PeerEvent;
+import com.ghostchu.tracker.sapling.util.ExternalSwitch;
 import com.ghostchu.tracker.sapling.util.ServletUtil;
 import com.google.common.net.HostAndPort;
 import jakarta.servlet.http.HttpServletRequest;
@@ -180,11 +181,18 @@ public class TrackerController {
                 })
                 .distinct()
                 .filter(Objects::nonNull)
-                .filter(ip -> !ip.isSiteLocalAddress() && !ip.isLoopbackAddress() && !ip.isAnyLocalAddress() && !ip.isMulticastAddress())
+                .filter(ip -> {
+                    if (ExternalSwitch.parseBoolean("sapling.tracker.ignore-local-address", true)) {
+                        return !ip.isSiteLocalAddress() && !ip.isLoopbackAddress() && !ip.isAnyLocalAddress() && !ip.isMulticastAddress();
+                    } else {
+                        return true;
+                    }
+                })
                 .toList();
         List<AnnounceRequest> requests = new ArrayList<>(8);
         for (InetAddress ip : peerIps) {
-            requests.add(new AnnounceRequest(torrents.getId(),
+            requests.add(new AnnounceRequest(
+                    torrents.getId(),
                     users.getId(),
                     peerId,
                     reqIpInetAddress,

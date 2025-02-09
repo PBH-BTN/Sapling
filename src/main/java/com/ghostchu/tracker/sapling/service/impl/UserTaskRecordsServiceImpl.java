@@ -23,7 +23,11 @@ public class UserTaskRecordsServiceImpl extends MPJBaseServiceImpl<UserTaskRecor
     public UserTaskRecords updateUserTaskRecord(long owner, long torrent, long toGo, OffsetDateTime announceAt, PeerEvent event, long incrementUploaded,
                                                 long incrementDownloaded, long incrementSeedTime, long incrementLeechTime, String userAgent) {
         UserTaskRecords userTaskRecords = this.baseMapper.selectUserTaskRecordsForUpdate(owner, torrent);
-        if (userTaskRecords == null) userTaskRecords = new UserTaskRecords();
+        if (userTaskRecords == null) {
+            userTaskRecords = new UserTaskRecords();
+            userTaskRecords.setOwner(owner);
+            userTaskRecords.setTorrent(torrent);
+        }
         userTaskRecords.setToGo(toGo);
         userTaskRecords.setLastAnnounce(announceAt);
         userTaskRecords.setLastEvent(event.name());

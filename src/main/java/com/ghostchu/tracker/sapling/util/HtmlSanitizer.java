@@ -15,8 +15,8 @@ public class HtmlSanitizer {
             .allowElements("ul", "ol", "li")
 
             // 允许链接和图片
-            .allowElements("a", "img")
-            .allowAttributes("href", "title").onElements("a")
+            .allowElements("mapper", "img")
+            .allowAttributes("href", "title").onElements("mapper")
             .allowAttributes("src", "alt", "title", "width", "height").onElements("img")
             .allowUrlProtocols("http", "https", "mailto", "data")
 

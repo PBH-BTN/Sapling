@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ghostchu.tracker.sapling.mapper.PeersMapper">
+    <select id="selectPeersForUpdateByIp"
+            parameterType="map"
+            resultType="com.ghostchu.tracker.sapling.entity.Peers">
+        SELECT *
+        FROM peers
+        WHERE torrent = #{torrent}
+          AND owner = #{owner}
+          AND peer_id = #{peerId}
+          AND ip = #{ip} FOR UPDATE
+    </select>
+    <select id="selectPeersForUpdateList"
+            parameterType="map"
+            resultType="com.ghostchu.tracker.sapling.entity.Peers">
+        SELECT *
+        FROM peers
+        WHERE torrent = #{torrent}
+          AND owner = #{owner}
+          AND peer_id = #{peerId} FOR UPDATE
+    </select>
+</mapper>
