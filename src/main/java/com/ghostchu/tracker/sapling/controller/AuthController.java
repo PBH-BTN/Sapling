@@ -82,17 +82,21 @@ public class AuthController {
     }
 
     @GetMapping("/register")
-    public String register(Model model, @RequestParam String inviteCode) {
+    public String register(Model model, @RequestParam(required = false) String inviteCode) {
         Invites invite = null;
         if (inviteCode != null) {
             invite = invitesService.getInviteByCode(inviteCode);
         }
-        if (!isPublicRegisterAllowed() && (invite == null || invite.isInviteValid())) {
+        if (!isPublicRegisterAllowed() && (invite == null || !invite.isInviteValid())) {
             return disallowPublicRegister(model);
         }
         var regFormDTO = new RegFormDTO();
-        regFormDTO.setInviteCode(inviteCode);
-        model.addAttribute("registerForm", new RegFormDTO());
+        if (invite != null) {
+            regFormDTO.setInviteCode(inviteCode);
+            regFormDTO.setEmail(invite.getInviteEmail());
+            regFormDTO.setUsername(invite.getInviteUsername());
+        }
+        model.addAttribute("registerForm", regFormDTO);
         return "register";
     }
 
@@ -103,7 +107,7 @@ public class AuthController {
         if (regFormDTO.getInviteCode() != null) {
             invite = invitesService.getInviteByCode(regFormDTO.getInviteCode());
         }
-        if (!isPublicRegisterAllowed() && (invite == null || invite.isInviteValid())) {
+        if (!isPublicRegisterAllowed() && (invite == null || !invite.isInviteValid())) {
             return disallowPublicRegister(model);
         }
         if (bindingResult.hasErrors()) {

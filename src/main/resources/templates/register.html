@@ -31,25 +31,27 @@
                     <form th:action="@{/auth/register}" method="post" th:object="${registerForm}">
                         <!-- 用户名 -->
                         <div class="form-group">
-                            <label for="username">用户名</label>
+                            <label for="username">用户名(*)</label>
                             <input type="text" id="username" th:field="*{username}"
                                    class="form-control" required
+                                   th:disabled="*{username}"
                                    th:classappend="${#fields.hasErrors('username')} ? 'is-invalid'">
                             <div class="invalid-feedback" th:errors="*{username}"></div>
                         </div>
 
                         <!-- 邮箱 -->
                         <div class="form-group">
-                            <label for="email">电子邮箱</label>
+                            <label for="email">电子邮箱(*)</label>
                             <input type="email" id="email" th:field="*{email}"
                                    class="form-control" required
+                                   th:disabled="*{email}"
                                    th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'">
                             <div class="invalid-feedback" th:errors="*{email}"></div>
                         </div>
 
                         <!-- 密码 -->
                         <div class="form-group">
-                            <label for="password">密码</label>
+                            <label for="password">密码(*)</label>
                             <input type="password" id="password" th:field="*{password}"
                                    class="form-control" required
                                    th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'">
@@ -58,7 +60,7 @@
 
                         <!-- 确认密码 -->
                         <div class="form-group">
-                            <label for="confirmPassword">确认密码</label>
+                            <label for="confirmPassword">确认密码(*)</label>
                             <input type="password" id="confirmPassword" th:field="*{confirmPassword}"
                                    class="form-control" required
                                    th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid'">
@@ -66,10 +68,11 @@
                         </div>
 
                         <!-- 邀请码 -->
-                        <div class="form-group" th:if="${requireInviteCode}">
+                        <div class="form-group">
                             <label for="inviteCode">邀请码</label>
                             <input type="text" id="inviteCode" th:field="*{inviteCode}"
-                                   class="form-control" required
+                                   class="form-control"
+                                   th:disabled="*{inviteCode}"
                                    th:classappend="${#fields.hasErrors('inviteCode')} ? 'is-invalid'">
                             <div class="invalid-feedback" th:errors="*{inviteCode}"></div>
                         </div>
@@ -80,7 +83,7 @@
                                 <input type="checkbox" class="custom-control-input"
                                        id="agreeTerms" required>
                                 <label class="custom-control-label" for="agreeTerms">
-                                    我已阅读并同意
+                                    (*)我已阅读并同意
                                     <a href="#" class="text-primary">服务条款</a>
                                     和
                                     <a href="#" class="text-primary">隐私政策</a>
