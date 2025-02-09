@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ghostchu.tracker.sapling.entity.Users;
 import com.ghostchu.tracker.sapling.vo.UserVO;
 import com.github.yulichang.base.MPJBaseService;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.net.InetAddress;
 
@@ -34,4 +35,7 @@ public interface IUsersService extends MPJBaseService<Users> {
     boolean updateUser(Users user);
 
     IPage<Users> searchUsers(int page, int size, String search);
+
+    @Transactional
+    Users updateUsersStatisticalData(long userId, long incrementUploaded, long incrementDownloaded, long incrementSeedTime, long incrementLeechTime);
 }

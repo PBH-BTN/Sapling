@@ -6,9 +6,12 @@ import com.ghostchu.tracker.sapling.mapper.PeersMapper;
 import com.ghostchu.tracker.sapling.model.AnnounceRequest;
 import com.ghostchu.tracker.sapling.model.ScrapePeers;
 import com.ghostchu.tracker.sapling.service.IPeersService;
+import com.ghostchu.tracker.sapling.service.IUserTaskRecordsService;
+import com.ghostchu.tracker.sapling.service.IUsersService;
 import com.ghostchu.tracker.sapling.tracker.PeerEvent;
 import com.github.yulichang.base.MPJBaseServiceImpl;
 import jakarta.annotation.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +28,11 @@ import java.util.List;
  */
 @Service
 public class PeersServiceImpl extends MPJBaseServiceImpl<PeersMapper, Peers> implements IPeersService {
+    @Autowired
+    private IUserTaskRecordsService userTaskRecordsService;
+    @Autowired
+    private IUsersService usersService;
+
     @Override
     public List<Peers> fetchPeers(long userId, long torrentId, int limit, @Nullable Integer specificIpProtocolVersion) {
         var wrapper = new QueryWrapper<Peers>()
@@ -57,6 +65,7 @@ public class PeersServiceImpl extends MPJBaseServiceImpl<PeersMapper, Peers> imp
     @Override
     @Transactional
     public void announce(List<AnnounceRequest> requests) {
+        OffsetDateTime now = OffsetDateTime.now();
         for (AnnounceRequest request : requests) {
             if (request.peerEvent() == PeerEvent.STOPPED) {
                 remove(new QueryWrapper<Peers>()
@@ -67,39 +76,73 @@ public class PeersServiceImpl extends MPJBaseServiceImpl<PeersMapper, Peers> imp
                 );
                 continue;
             }
-            Peers peers = getOne(new QueryWrapper<Peers>()
-                    .eq("torrent", request.torrentId())
-                    .eq("owner", request.userId())
-                    .eq("ip", request.peerIp())
-                    .eq("peer_id", request.peerId())
-            );
+            Peers peers = this.baseMapper.selectPeersForUpdate(request.torrentId(), request.userId(), request.peerId(), request.peerIp());
             if (peers == null) {
+                // 初始化新建数据，特别注意下面的 previous 的都要在这里使用当前数据初始化
                 peers = new Peers();
                 peers.setTorrent(request.torrentId());
                 peers.setPeerId(request.peerId());
                 peers.setIp(request.peerIp());
-                peers.setStarted(OffsetDateTime.now());
+                peers.setStarted(now);
+                peers.setLastAnnounce(now);
+                peers.setLastAction(request.peerEvent().toString());
+                peers.setToGo(request.left());
             }
-            peers.setPort(request.port());
-            peers.setToGo(request.left());
-            peers.setLastAnnounce(OffsetDateTime.now());
-            peers.setConnectable(null);
-            peers.setUserAgent(request.ua());
-            peers.setLastAction(request.peerEvent().toString());
+            // 获取更新前的状态
+            OffsetDateTime previousAnnounce = peers.getLastAnnounce();
+            PeerEvent previousEvent = PeerEvent.valueOf(peers.getLastAction());
+            long previousToGo = peers.getToGo();
             // 根据offset计算差值
+            long incrementUploaded;
+            long incrementDownloaded;
             if (request.downloaded() < peers.getDownloadOffset() || request.uploaded() < peers.getUploadOffset()) {
                 // 客户端数据重置了，下载器重启过？那么本次提交数据全部加上
-                peers.setUploaded(peers.getUploaded() + request.uploaded());
-                peers.setDownloaded(peers.getDownloaded() + request.downloaded());
+                incrementUploaded = request.uploaded();
+                incrementDownloaded = request.downloaded();
             } else {
                 // 正常情况下，只有增加的数据
-                peers.setUploaded(peers.getUploadOffset() - peers.getUploaded());
-                peers.setDownloaded(peers.getDownloadOffset() - peers.getDownloaded());
+                incrementUploaded = peers.getUploadOffset() - peers.getUploaded();
+                incrementDownloaded = peers.getDownloadOffset() - peers.getDownloaded();
             }
-            // 更新offset
+            // 更新到当前状态
             peers.setUploadOffset(request.uploaded());
             peers.setDownloadOffset(request.downloaded());
+            peers.setUploaded(peers.getUploaded() + incrementUploaded);
+            peers.setDownloaded(peers.getDownloaded() + incrementDownloaded);
+            peers.setPort(request.port());
+            peers.setToGo(request.left());
+            peers.setLastAnnounce(now);
+            peers.setLastAction(request.peerEvent().toString());
+            peers.setConnectable(null);
+            peers.setUserAgent(request.ua());
+            peers.setReqIp(request.reqIpInetAddress());
             saveOrUpdate(peers);
+            // ---------------------------
+            // 计算下载/做种时间
+            boolean previousSeeding = previousEvent == PeerEvent.COMPLETED || previousToGo == 0;
+            boolean currentSeeding = request.peerEvent() == PeerEvent.COMPLETED || request.left() == 0;
+            long incrementSeedingTime = 0;
+            long incrementLeechingTime = 0;
+            long duration = (now.toEpochSecond() - previousAnnounce.toEpochSecond()) * 1000;
+            if (previousSeeding && currentSeeding) {
+                // 获取上次宣告到当前的毫秒数
+                incrementSeedingTime = duration;
+            } else {
+                incrementLeechingTime = duration;
+            }
+            userTaskRecordsService.updateUserTaskRecord(
+                    request.userId(),
+                    request.torrentId(),
+                    request.left(),
+                    now,
+                    request.peerEvent(),
+                    incrementUploaded,
+                    incrementDownloaded,
+                    incrementSeedingTime,
+                    incrementLeechingTime,
+                    request.ua()
+            );
+            usersService.updateUsersStatisticalData(request.userId(), incrementUploaded, incrementDownloaded, incrementSeedingTime, incrementLeechingTime);
         }
     }
 }

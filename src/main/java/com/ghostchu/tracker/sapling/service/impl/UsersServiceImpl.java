@@ -16,6 +16,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.net.InetAddress;
 import java.time.OffsetDateTime;
@@ -158,4 +159,15 @@ public class UsersServiceImpl extends MPJBaseServiceImpl<UsersMapper, Users> imp
         return page(p, wrapper);
     }
 
+    @Transactional
+    @Override
+    public Users updateUsersStatisticalData(long userId, long incrementUploaded, long incrementDownloaded, long incrementSeedTime, long incrementLeechTime) {
+        Users user = this.baseMapper.selectUserForUpdate(userId);
+        user.setUploaded(user.getUploaded() + incrementUploaded);
+        user.setDownloaded(user.getDownloaded() + incrementDownloaded);
+        user.setSeedTime(user.getSeedTime() + incrementSeedTime);
+        user.setLeechTime(user.getLeechTime() + incrementLeechTime);
+        saveOrUpdate(user);
+        return user;
+    }
 }

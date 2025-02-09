@@ -1,7 +1,10 @@
 package com.ghostchu.tracker.sapling.service;
 
 import com.ghostchu.tracker.sapling.entity.UserTaskRecords;
+import com.ghostchu.tracker.sapling.tracker.PeerEvent;
 import com.github.yulichang.base.MPJBaseService;
+
+import java.time.OffsetDateTime;
 
 /**
  * <p>
@@ -13,4 +16,6 @@ import com.github.yulichang.base.MPJBaseService;
  */
 public interface IUserTaskRecordsService extends MPJBaseService<UserTaskRecords> {
 
+    UserTaskRecords updateUserTaskRecord(long owner, long torrent, long toGo, OffsetDateTime announceAt, PeerEvent event, long incrementUploaded,
+                                         long incrementDownloaded, long incrementSeedTime, long incrementLeechTime, String userAgent);
 }

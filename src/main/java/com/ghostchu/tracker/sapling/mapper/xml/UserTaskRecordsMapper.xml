@@ -2,9 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ghostchu.tracker.sapling.mapper.UserReportRecordsMapper">
 
-    <select id="selectUserTaskRecordsForUpdate" resultType="com.ghostchu.tracker.sapling.entity.UserTaskRecords">
+    <select id="selectUserTaskRecordsForUpdate" parameterType="map"
+            resultType="com.ghostchu.tracker.sapling.entity.UserTaskRecords">
         SELECT *
-        FROM user_task_records FOR UPDATE
+        FROM user_task_records
+        WHERE owner = #{owner}
+          AND torrent = #{torrent} FOR UPDATE
     </select>
 
 </mapper>

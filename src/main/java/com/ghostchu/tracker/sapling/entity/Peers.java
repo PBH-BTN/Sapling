@@ -39,6 +39,7 @@ public class Peers implements Serializable {
     private long uploadOffset;
     private String userAgent;
     private String lastAction;
+    private InetAddress reqIp;
 
     /**
      * 扩展信息
