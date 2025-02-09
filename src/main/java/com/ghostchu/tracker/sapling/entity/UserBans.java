@@ -21,8 +21,8 @@ import java.time.OffsetDateTime;
 @Getter
 @Setter
 @ToString
-@TableName("user_ban_logs")
-public class UserBanLogs implements Serializable {
+@TableName("user_bans")
+public class UserBans implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

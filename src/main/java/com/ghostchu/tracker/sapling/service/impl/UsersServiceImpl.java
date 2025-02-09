@@ -50,7 +50,7 @@ public class UsersServiceImpl extends MPJBaseServiceImpl<UsersMapper, Users> imp
     }
 
     @Override
-    public boolean registerUser(String username, String passhash, String email, InetAddress registerIp) {
+    public Users registerUser(String username, String passhash, String email, InetAddress registerIp) {
         Users user = new Users();
         user.setName(username);
         user.setPasshash(passhash);
@@ -73,7 +73,10 @@ public class UsersServiceImpl extends MPJBaseServiceImpl<UsersMapper, Users> imp
         user.setPrimaryPermissionGroup(1L);
         user.setAvatar("/assets/img/avatar.png");
         user.setPasskey(UUID.randomUUID().toString());
-        return this.save(user);
+        if (!this.save(user)) {
+            throw new IllegalStateException("用户注册过程中出现了非预期错误");
+        }
+        return user;
     }
 
     @Override

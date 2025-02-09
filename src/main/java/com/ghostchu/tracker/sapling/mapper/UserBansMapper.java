@@ -1,6 +1,6 @@
 package com.ghostchu.tracker.sapling.mapper;
 
-import com.ghostchu.tracker.sapling.entity.UserBanLogs;
+import com.ghostchu.tracker.sapling.entity.UserBans;
 
 
 /**
@@ -11,7 +11,7 @@ import com.ghostchu.tracker.sapling.entity.UserBanLogs;
  * @author Ghost_chu
  * @since 2025-02-04
  */
-public interface UserBanLogsMapper extends SaplingMapper<UserBanLogs> {
+public interface UserBansMapper extends SaplingMapper<UserBans> {
 
 }
 

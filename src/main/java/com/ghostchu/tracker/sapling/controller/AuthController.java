@@ -3,19 +3,25 @@ package com.ghostchu.tracker.sapling.controller;
 import cn.dev33.satoken.stp.StpUtil;
 import com.ghostchu.tracker.sapling.dto.LoginFormDTO;
 import com.ghostchu.tracker.sapling.dto.RegFormDTO;
+import com.ghostchu.tracker.sapling.entity.Invites;
 import com.ghostchu.tracker.sapling.entity.Users;
+import com.ghostchu.tracker.sapling.service.IInvitesService;
+import com.ghostchu.tracker.sapling.service.ISettingsService;
 import com.ghostchu.tracker.sapling.service.IUsersService;
+import com.ghostchu.tracker.sapling.service.impl.InvitesServiceImpl;
 import com.ghostchu.tracker.sapling.util.SecretUtil;
 import com.ghostchu.tracker.sapling.util.ServletUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.OffsetDateTime;
@@ -23,13 +29,17 @@ import java.time.OffsetDateTime;
 @Controller
 @RequestMapping("/auth")
 public class AuthController {
-    private final IUsersService usersService;
+    @Autowired
+    private IUsersService usersService;
+    @Autowired
+    private ISettingsService settingsService;
     @Autowired
     private HttpServletRequest request;
+    @Autowired
+    private IInvitesService invitesService;
+    @Autowired
+    private InvitesServiceImpl invitesServiceImpl;
 
-    public AuthController(IUsersService usersService) {
-        this.usersService = usersService;
-    }
 
     @GetMapping("/login")
     public String login(Model model) {
@@ -72,13 +82,30 @@ public class AuthController {
     }
 
     @GetMapping("/register")
-    public String register(Model model) {
+    public String register(Model model, @RequestParam String inviteCode) {
+        Invites invite = null;
+        if (inviteCode != null) {
+            invite = invitesService.getInviteByCode(inviteCode);
+        }
+        if (!isPublicRegisterAllowed() && (invite == null || invite.isInviteValid())) {
+            return disallowPublicRegister(model);
+        }
+        var regFormDTO = new RegFormDTO();
+        regFormDTO.setInviteCode(inviteCode);
         model.addAttribute("registerForm", new RegFormDTO());
         return "register";
     }
 
     @PostMapping("/register")
-    public String register(@Valid RegFormDTO regFormDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    @Transactional
+    public String register(@Valid RegFormDTO regFormDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
+        Invites invite = null;
+        if (regFormDTO.getInviteCode() != null) {
+            invite = invitesService.getInviteByCode(regFormDTO.getInviteCode());
+        }
+        if (!isPublicRegisterAllowed() && (invite == null || invite.isInviteValid())) {
+            return disallowPublicRegister(model);
+        }
         if (bindingResult.hasErrors()) {
             return "register";
         }
@@ -91,18 +118,40 @@ public class AuthController {
             return "register";
         }
         var passhash = SecretUtil.hashPassword(regFormDTO.getPassword());
-        boolean success = usersService.registerUser(
+        Users registered = usersService.registerUser(
                 regFormDTO.getUsername(),
                 passhash,
                 regFormDTO.getEmail(),
                 ServletUtil.inet(request)
         );
-        if (!success) {
-            redirectAttributes.addAttribute("error", "注册失败，遇到了非预期错误，请稍后再试。");
-            return "register";
+        if (!invitesService.markInviteAsUsed(invite, registered)) {
+            // 抛出运行时异常，触发事务回滚
+            throw new IllegalStateException("邀请码使用失败，可能已经过期或者被使用（并发注册？）");
         }
-        StpUtil.login(usersService.getUserByUsernameAndPasswordHash(regFormDTO.getUsername(), passhash).getId());
+        StpUtil.login(registered.getId());
         return "redirect:/";
+    }
+
+    private String disallowPublicRegister(Model model) {
+        model.addAttribute("errTitle", "自由注册已关闭");
+        model.addAttribute("err", """
+                很抱歉，自由注册当前关闭，只允许邀请注册。<br>
+                如果你想加入，请找到能够邀请你进入本站的朋友:)<br>
+                <br>
+                我们只想知道有多少作弊者和吸血鬼在被封禁后才开始想到珍惜帐户。<br>
+                请具备邀请资格的用户注意，如果你在知情的情况下将邀请发给作弊者和行为不端者，你和被邀请者都会被封禁。<br>
+                如果你想重新启用帐户必须经过我们同意。
+                """);
+        return "error";
+    }
+
+    private boolean isPublicRegisterAllowed() {
+        return Boolean.parseBoolean(settingsService.getValue("user.register.public"));
+    }
+
+    private boolean inviteCodeIsValid(String inviteCode) {
+
+        return false;
     }
 
 }

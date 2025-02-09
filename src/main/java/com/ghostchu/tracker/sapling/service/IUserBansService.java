@@ -1,6 +1,6 @@
 package com.ghostchu.tracker.sapling.service;
 
-import com.ghostchu.tracker.sapling.entity.UserBanLogs;
+import com.ghostchu.tracker.sapling.entity.UserBans;
 import com.github.yulichang.base.MPJBaseService;
 
 /**
@@ -11,6 +11,6 @@ import com.github.yulichang.base.MPJBaseService;
  * @author Ghost_chu
  * @since 2025-02-04
  */
-public interface IUserBanLogsService extends MPJBaseService<UserBanLogs> {
+public interface IUserBansService extends MPJBaseService<UserBans> {
 
 }

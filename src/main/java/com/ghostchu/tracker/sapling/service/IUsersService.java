@@ -21,7 +21,7 @@ public interface IUsersService extends MPJBaseService<Users> {
 
     Users getUserById(long id);
 
-    boolean registerUser(String username, String passhash, String email, InetAddress registerIp);
+    Users registerUser(String username, String passhash, String email, InetAddress registerIp);
 
     boolean userNameExists(String username);
 
