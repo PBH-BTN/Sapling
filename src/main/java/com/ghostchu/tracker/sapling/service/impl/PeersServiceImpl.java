@@ -88,7 +88,6 @@ public class PeersServiceImpl extends MPJBaseServiceImpl<PeersMapper, Peers> imp
                 peers.setLastAction(request.peerEvent().toString());
                 peers.setToGo(request.left());
             }
-            // 获取更新前的状态
             OffsetDateTime previousAnnounce = peers.getLastAnnounce();
             PeerEvent previousEvent = PeerEvent.valueOf(peers.getLastAction());
             long previousToGo = peers.getToGo();

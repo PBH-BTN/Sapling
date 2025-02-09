@@ -19,7 +19,7 @@ import java.util.Map;
 @Setter
 @ToString
 @TableName(autoResultMap = true)
-public class Peers implements Serializable {
+public class Peers implements Serializable, Cloneable {
     private static final long serialVersionUID = 1L;
     @TableId(type = IdType.AUTO)
     private Long id;
