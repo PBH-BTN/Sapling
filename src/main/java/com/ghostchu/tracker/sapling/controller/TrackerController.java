@@ -1,5 +1,6 @@
 package com.ghostchu.tracker.sapling.controller;
 
+import cn.dev33.satoken.annotation.SaCheckDisable;
 import com.dampcake.bencode.Bencode;
 import com.ghostchu.tracker.sapling.entity.Peers;
 import com.ghostchu.tracker.sapling.entity.Torrents;
@@ -37,6 +38,7 @@ import java.util.*;
 
 @Controller
 @Slf4j
+@SaCheckDisable
 public class TrackerController {
     private static final Random random = new Random();
     @Autowired

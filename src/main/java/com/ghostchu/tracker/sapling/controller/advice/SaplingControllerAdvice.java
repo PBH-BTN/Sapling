@@ -1,13 +1,17 @@
 package com.ghostchu.tracker.sapling.controller.advice;
 
+import cn.dev33.satoken.exception.DisableServiceException;
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.exception.NotPermissionException;
 import cn.dev33.satoken.stp.StpUtil;
+import com.ghostchu.tracker.sapling.entity.UserBans;
 import com.ghostchu.tracker.sapling.entity.Users;
 import com.ghostchu.tracker.sapling.exception.BusinessException;
 import com.ghostchu.tracker.sapling.gvar.Setting;
 import com.ghostchu.tracker.sapling.service.ISettingsService;
+import com.ghostchu.tracker.sapling.service.IUserBansService;
 import com.ghostchu.tracker.sapling.service.IUsersService;
+import com.ghostchu.tracker.sapling.vo.UserVO;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +28,8 @@ public class SaplingControllerAdvice {
     private IUsersService usersService;
     @Autowired
     private ISettingsService settingsService;
+    @Autowired
+    private IUserBansService userBansService;
 
     @ExceptionHandler(NotLoginException.class)
     public String handlerNotLoginException(NotLoginException e, Model model, HttpServletResponse response) {
@@ -39,6 +45,16 @@ public class SaplingControllerAdvice {
         addModelAttributesForExceptionHandler(model);
         model.addAttribute("err", "您没有足够的权限访问此模块的内容：" + e.getMessage());
         return "error";
+    }
+
+    @ExceptionHandler(DisableServiceException.class)
+    public String handlerDisableServiceException(DisableServiceException e, Model model, HttpServletResponse response) {
+        Users users = usersService.getById(StpUtil.getLoginIdAsLong());
+        UserBans userBans = userBansService.getBanRecord(users.getBannedId());
+        model.addAttribute("userBan", usersService.toUserBanVO(userBans));
+        addModelAttributesForExceptionHandler(model);
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        return "error_banned";
     }
 
     // 业务异常拦截
@@ -73,6 +89,7 @@ public class SaplingControllerAdvice {
     private void addModelAttributesForExceptionHandler(Model model) {
         model.addAttribute("siteName", settingsService.getValue(Setting.SITE_NAME));
         model.addAttribute("user", addUserToModel());
+        model.addAttribute("timezone", viewerTimeZone());
     }
 
     @ModelAttribute("timezone")
@@ -88,10 +105,13 @@ public class SaplingControllerAdvice {
     }
 
     @ModelAttribute("user")
-    public Users addUserToModel() {
+    public UserVO addUserToModel() {
         if (!StpUtil.isLogin()) return null;
         try {
-            return usersService.getById(StpUtil.getLoginIdAsLong());
+            var usr = usersService.getById(StpUtil.getLoginIdAsLong());
+            if (usr != null)
+                return usersService.toVO(usr);
+            return null;
         } catch (NotLoginException e) {
             return null;
         }

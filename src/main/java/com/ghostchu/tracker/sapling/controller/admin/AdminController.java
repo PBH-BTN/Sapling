@@ -1,5 +1,6 @@
 package com.ghostchu.tracker.sapling.controller.admin;
 
+import cn.dev33.satoken.annotation.SaCheckDisable;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,6 +20,7 @@ import java.util.List;
 @RequestMapping("/admin")
 @Controller
 @SaCheckPermission(Permission.ADMIN_DASHBOARD)
+@SaCheckDisable
 public class AdminController {
     @Autowired
     private ObjectMapper mapper;

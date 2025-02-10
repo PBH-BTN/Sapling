@@ -1,5 +1,6 @@
 package com.ghostchu.tracker.sapling.controller;
 
+import cn.dev33.satoken.annotation.SaCheckDisable;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.ghostchu.tracker.sapling.entity.Pages;
 import com.ghostchu.tracker.sapling.gvar.Permission;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 @RequestMapping("/pages")
+@SaCheckDisable
 public class PagesController {
 
     @Autowired

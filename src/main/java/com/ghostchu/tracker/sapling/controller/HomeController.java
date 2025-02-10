@@ -1,5 +1,6 @@
 package com.ghostchu.tracker.sapling.controller;
 
+import cn.dev33.satoken.annotation.SaCheckDisable;
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import com.ghostchu.tracker.sapling.service.INewsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
+@SaCheckDisable
 public class HomeController {
     @Autowired
     private INewsService newsService;

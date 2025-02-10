@@ -1,12 +1,15 @@
 package com.ghostchu.tracker.sapling.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.ghostchu.tracker.sapling.entity.UserBans;
 import com.ghostchu.tracker.sapling.entity.Users;
+import com.ghostchu.tracker.sapling.vo.UserBansVO;
 import com.ghostchu.tracker.sapling.vo.UserVO;
 import com.github.yulichang.base.MPJBaseService;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.net.InetAddress;
+import java.time.OffsetDateTime;
 
 /**
  * <p>
@@ -38,4 +41,10 @@ public interface IUsersService extends MPJBaseService<Users> {
 
     @Transactional
     Users updateUsersStatisticalData(long userId, long incrementUploaded, long incrementDownloaded, long incrementSeedTime, long incrementLeechTime);
+
+    Users banUser(long id, long op, String reason, OffsetDateTime endedAt);
+
+    Users unbanUser(long id, long op);
+
+    UserBansVO toUserBanVO(UserBans userBans);
 }

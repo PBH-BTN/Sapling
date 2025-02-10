@@ -1,5 +1,6 @@
 package com.ghostchu.tracker.sapling.controller.admin.users;
 
+import cn.dev33.satoken.annotation.SaCheckDisable;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping("/admin/users/list")
 @SaCheckPermission(Permission.ADMIN_USERS_LIST)
+@SaCheckDisable
 public class AdminUsersListController {
     @Autowired
     private IUsersService usersService;

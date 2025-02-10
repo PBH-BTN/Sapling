@@ -1,8 +1,5 @@
-package com.ghostchu.tracker.sapling.entity;
+package com.ghostchu.tracker.sapling.vo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -21,26 +18,24 @@ import java.time.OffsetDateTime;
 @Getter
 @Setter
 @ToString
-@TableName("user_bans")
-public class UserBans implements Serializable {
+public class UserBansVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
      * 用户封禁日志ID
      */
-    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
      * 关联用户ID
      */
-    private long owner;
+    private UserVO owner;
 
     /**
      * 操作员ID
      */
-    private long operator;
+    private UserVO operator;
 
     /**
      * 封禁操作时间

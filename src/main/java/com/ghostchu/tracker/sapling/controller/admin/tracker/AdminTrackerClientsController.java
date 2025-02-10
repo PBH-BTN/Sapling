@@ -1,5 +1,6 @@
 package com.ghostchu.tracker.sapling.controller.admin.tracker;
 
+import cn.dev33.satoken.annotation.SaCheckDisable;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.ghostchu.tracker.sapling.entity.Clients;
 import com.ghostchu.tracker.sapling.gvar.Permission;
@@ -17,6 +18,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/admin/tracker/clients")
 @SaCheckPermission(Permission.ADMIN_TRACKER_CLIENTS)
+@SaCheckDisable
 public class AdminTrackerClientsController {
     @Autowired
     private IClientsService clientsService;

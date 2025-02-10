@@ -80,35 +80,25 @@
                                class="btn btn-outline-primary">
                                 <i class="fas fa-cog mr-2"></i>编辑
                             </a>
-                            <!-- 发送站内信按钮（对所有非当前用户可见） -->
-                            <button
-                                    class="btn btn-outline-info"
+                            <a class="btn btn-outline-info"
                                     onclick="showMessageDialog()">
                                 <i class="fas fa-envelope mr-2"></i>站内信
-                            </button>
-
-                            <!-- 管理员操作按钮组 -->
-                            <div class="btn-group">
-                                <!-- 警告用户按钮 -->
-                                <button class="btn btn-outline-warning"
-                                        th:classappend="${user.warned} ? 'active' : ''"
-                                        onclick="warnUser(${user.id})">
-                                    <i class="fas fa-exclamation-triangle"></i>
-                                    <span th:text="${user.warned} ? '解除警告' : '警告'"></span>
-                                </button>
-
-                                <!-- 封禁用户按钮 -->
-                                <button class="btn btn-outline-danger"
-                                        th:classappend="${user.banned} ? 'active' : ''"
-                                        onclick="banUser(${user.id})">
-                                    <i class="fas fa-ban"></i>
-                                    <span th:text="${user.banned} ? '解除封禁' : '封禁'"></span>
-                                </button>
-                            </div>
+                            </a>
+                            <a class="btn btn-outline-danger"
+                               th:if="${!user.banned}"
+                               th:classappend="${user.banned} ? 'active' : ''"
+                               th:href="@{/users/{id}/ban(id=${user.id})}">
+                                <i class="fas fa-ban mr-2"></i>
+                                封禁
+                            </a>
+                            <a class="btn btn-outline-danger active"
+                               th:if="${user.banned}"
+                               th:href="@{/users/{id}/unban(id=${user.id})}">
+                                <i class="fas fa-ban mr-2"></i>
+                                解除封禁
+                            </a>
                         </div>
                     </div>
-
-                    <!-- 统计信息 -->
                     <div class="row profile-stats mt-3">
                         <div class="col-md-4 mb-3">
                             <div class="card">

@@ -1,13 +1,17 @@
 package com.ghostchu.tracker.sapling.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ghostchu.tracker.sapling.entity.UserBans;
 import com.ghostchu.tracker.sapling.entity.Users;
 import com.ghostchu.tracker.sapling.mapper.UsersMapper;
 import com.ghostchu.tracker.sapling.service.ILevelPermissionGroupsService;
 import com.ghostchu.tracker.sapling.service.IPermissionGroupsService;
+import com.ghostchu.tracker.sapling.service.IUserBansService;
 import com.ghostchu.tracker.sapling.service.IUsersService;
+import com.ghostchu.tracker.sapling.vo.UserBansVO;
 import com.ghostchu.tracker.sapling.vo.UserVO;
 import com.github.yulichang.base.MPJBaseServiceImpl;
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.net.InetAddress;
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 /**
@@ -36,6 +41,8 @@ public class UsersServiceImpl extends MPJBaseServiceImpl<UsersMapper, Users> imp
     private IPermissionGroupsService permissionGroupsService;
     @Autowired
     private ILevelPermissionGroupsService levelPermissionGroupsService;
+    @Autowired
+    private IUserBansService userBansService;
 
     @Override
     public Users getUserByUsernameAndPasswordHash(String username, String passhash) {
@@ -169,5 +176,58 @@ public class UsersServiceImpl extends MPJBaseServiceImpl<UsersMapper, Users> imp
         user.setLeechTime(user.getLeechTime() + incrementLeechTime);
         saveOrUpdate(user);
         return user;
+    }
+
+    @Override
+    @Caching(evict = {
+            @CacheEvict(value = "users", key = "'id:' + #result.id"),
+            @CacheEvict(value = "users.exists", key = "'username:' + #result.name"),
+            @CacheEvict(value = "users.exists", key = "'email:' + #result.email"),
+            @CacheEvict(value = "users", key = "'passkey:' + #result.passkey"),
+            @CacheEvict(value = "stp.permissions", key = "'id:' + #result.id"),
+            @CacheEvict(value = "stp.roles", key = "'id:' + #result.id")
+    })
+    public Users banUser(long id, long op, String reason, OffsetDateTime endedAt) {
+        Users user = this.baseMapper.selectUserForUpdate(id);
+        if (user == null) {
+            throw new IllegalStateException("用户不存在");
+        }
+        var userBans = userBansService.banUser(user.getId(), op, reason, endedAt);
+        user.setBannedId(userBans.getId());
+        saveOrUpdate(user);
+        StpUtil.disable(id, "login", OffsetDateTime.now().until(endedAt, ChronoUnit.SECONDS));
+        return user;
+    }
+
+    @Override
+    @Caching(evict = {
+            @CacheEvict(value = "users", key = "'id:' + #result.id"),
+            @CacheEvict(value = "users.exists", key = "'username:' + #result.name"),
+            @CacheEvict(value = "users.exists", key = "'email:' + #result.email"),
+            @CacheEvict(value = "users", key = "'passkey:' + #result.passkey"),
+            @CacheEvict(value = "stp.permissions", key = "'id:' + #result.id"),
+            @CacheEvict(value = "stp.roles", key = "'id:' + #result.id")
+    })
+    public Users unbanUser(long id, long op) {
+        Users user = this.baseMapper.selectUserForUpdate(id);
+        if (user == null) {
+            throw new IllegalStateException("用户不存在");
+        }
+        user.setBannedId(null);
+        saveOrUpdate(user);
+        StpUtil.untieDisable(id);
+        return user;
+    }
+
+    @Override
+    public UserBansVO toUserBanVO(UserBans userBans) {
+        UserBansVO vo = new UserBansVO();
+        vo.setId(userBans.getId());
+        vo.setOwner(toVO(getById(userBans.getOwner())));
+        vo.setOperator(toVO(getById(userBans.getOperator())));
+        vo.setCreatedAt(userBans.getCreatedAt());
+        vo.setEndedAt(userBans.getEndedAt());
+        vo.setDescription(userBans.getDescription());
+        return vo;
     }
 }

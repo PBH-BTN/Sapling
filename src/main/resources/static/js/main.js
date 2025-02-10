@@ -1,7 +1,13 @@
 // 改进文字对比度
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.text-contrast').forEach(badge => {
-        const bgColor = badge.dataset.bgColor;
+        let bgColor = badge.dataset.bgColor;
+        if (bgColor === undefined) {
+            bgColor = badge.style.backgroundColor;
+        }
+        if (bgColor === undefined) {
+            bgColor = badge.style.color;
+        }
         const rgb = hexToRgb(bgColor);
         const brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
         badge.classList.add(brightness > 128 ? 'text-dark' : 'text-white');

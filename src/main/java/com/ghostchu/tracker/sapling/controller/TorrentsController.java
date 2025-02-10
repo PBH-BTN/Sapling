@@ -1,5 +1,6 @@
 package com.ghostchu.tracker.sapling.controller;
 
+import cn.dev33.satoken.annotation.SaCheckDisable;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaMode;
 import cn.dev33.satoken.stp.StpUtil;
@@ -48,6 +49,7 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/torrents")
 @Data
+@SaCheckDisable
 public class TorrentsController {
     @Autowired
     private ITorrentsService torrentsService;

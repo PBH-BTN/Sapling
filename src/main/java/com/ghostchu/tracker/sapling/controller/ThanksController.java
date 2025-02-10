@@ -1,5 +1,6 @@
 package com.ghostchu.tracker.sapling.controller;
 
+import cn.dev33.satoken.annotation.SaCheckDisable;
 import cn.dev33.satoken.stp.StpUtil;
 import com.ghostchu.tracker.sapling.model.StdMsg;
 import com.ghostchu.tracker.sapling.service.IThanksService;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 @RequestMapping("/thanks")
+@SaCheckDisable
 public class ThanksController {
     @Autowired
     private IThanksService thanksService;

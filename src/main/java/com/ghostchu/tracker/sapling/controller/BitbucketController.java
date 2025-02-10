@@ -1,5 +1,6 @@
 package com.ghostchu.tracker.sapling.controller;
 
+import cn.dev33.satoken.annotation.SaCheckDisable;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaMode;
 import cn.dev33.satoken.stp.StpUtil;
@@ -47,6 +48,7 @@ import java.util.StringJoiner;
 @Controller
 @Data
 @RequestMapping("/bitbucket")
+@SaCheckDisable
 public class BitbucketController {
     @Autowired
     private ISettingsService settingsService;

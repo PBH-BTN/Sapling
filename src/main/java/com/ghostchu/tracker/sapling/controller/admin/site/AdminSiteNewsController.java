@@ -1,5 +1,6 @@
 package com.ghostchu.tracker.sapling.controller.admin.site;
 
+import cn.dev33.satoken.annotation.SaCheckDisable;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -19,6 +20,7 @@ import java.time.OffsetDateTime;
 @Controller
 @RequestMapping("/admin/site/news")
 @SaCheckPermission(Permission.ADMIN_SITE_NEWS)
+@SaCheckDisable
 public class AdminSiteNewsController {
     @Autowired
     private INewsService newsService;

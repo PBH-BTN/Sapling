@@ -112,22 +112,22 @@
 		<dependency>
 			<groupId>cn.dev33</groupId>
 			<artifactId>sa-token-spring-boot3-starter</artifactId>
-			<version>1.38.0</version>
+            <version>1.40.0</version>
 		</dependency>
 		<dependency>
 			<groupId>cn.dev33</groupId>
 			<artifactId>sa-token-spring-aop</artifactId>
-			<version>1.38.0</version>
+            <version>1.40.0</version>
 		</dependency>
 		<dependency>
 			<groupId>cn.dev33</groupId>
 			<artifactId>sa-token-redis-jackson</artifactId>
-			<version>1.38.0</version>
+            <version>1.40.0</version>
 		</dependency>
 		<dependency>
 			<groupId>cn.dev33</groupId>
 			<artifactId>sa-token-dialect-thymeleaf</artifactId>
-			<version>1.38.0</version>
+            <version>1.40.0</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
 		<dependency>
