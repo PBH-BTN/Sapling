@@ -66,7 +66,7 @@
                     <td th:text="${invite.inviteEmail}"></td>
                     <td th:text="${invite.inviteUsername}"></td>
                     <td>
-                        <span th:text="${#temporals.format(invite.expireAt, 'yyyy-MM-dd HH:mm')}"></span>
+                        <span th:text="${timeConverter.formatTime(invite.expireAt, timezone)}"></span>
                         <span th:if="${invite.isInviteValid()}" class="badge badge-success ml-1">有效</span>
                     </td>
                     <td>
@@ -83,7 +83,7 @@
                               th:classappend="${invite.consumeAt} ? 'badge-success' : 'badge-secondary'"
                               th:text="${invite.consumeAt} ? '已使用' : '未使用'"></span>
                         <div th:if="${invite.consumeAt}" class="text-muted small"
-                             th:text="${#temporals.format(invite.consumeAt, 'yyyy-MM-dd HH:mm')}"></div>
+                             th:text="${timeConverter.formatTime(invite.consumeAt, timezone)}"></div>
                     </td>
                 </tr>
                 </tbody>

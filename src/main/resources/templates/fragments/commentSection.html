@@ -62,9 +62,9 @@
                                        th:text="${cc.owner.name}"
                                        class="font-weight-bold"></a>
                                     <div class="text-muted small">
-                                        <span th:text="${#temporals.format(cc.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+                                        <span th:text="${timeConverter.formatTime(cc.createdAt, timezone)}"></span>
                                         <span th:if="${cc.editedAt}">
-                                (编辑于 <span th:text="${#temporals.format(cc.editedAt, 'yyyy-MM-dd HH:mm')}"></span>)
+                                (编辑于 <span th:text="${timeConverter.formatTime(cc.editedAt, timezone)}"></span>)
                             </span>
                                     </div>
                                 </div>

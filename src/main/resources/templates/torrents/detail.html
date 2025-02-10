@@ -33,7 +33,7 @@
                         <td class="centered-td"><b>分类:</b> <span th:styleappend="'color:' + ${torrent.category.color}"
                                                                    th:text="${torrent.category.name}"></span>
                             <b>发布时间:</b> <span
-                                    th:text="${#temporals.format(torrent.createdAt, 'yyyy-MM-dd')}"></span>
+                                    th:text="${timeConverter.formatTime(torrent.createdAt, timezone)}"></span>
                             <b>发布者:</b> <span th:if="${torrent.anonymous}">匿名用户</span><a
                                     th:unless="${torrent.anonymous}"
                                     th:styleappend="'color:' + ${torrent.anonymous ? 'black' : torrent.owner.levelPermissionGroup.color}"
@@ -45,7 +45,7 @@
                         <th class="centered-td" scope="row">文件</th>
                         <td class="centered-td">
                             <b>大小:</b> <span
-                                th:text="${T(com.ghostchu.tracker.sapling.util.UnitConverter).autoUnit(torrent.size)}"></span>
+                                th:text="${unitConverter.autoUnit(torrent.size)}"></span>
                             <b>文件数:</b> <span th:text="${torrent.info.files}"></span>
                             <b>BT协议版本:</b> <span th:text="${torrent.info.metaVersion}"></span>
                         </td>

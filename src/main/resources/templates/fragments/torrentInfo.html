@@ -33,7 +33,7 @@
     </tr>
     <tr>
         <th scope="row" nowrap>种子创建时间:</th>
-        <td th:text="${torrent.info.creationDate()}"></td>
+        <td th:text="${timeConverter.formatTime(torrent.info.creationDate(), timezone)}"></td>
     </tr>
     <tr>
         <th scope="row" nowrap>种子创建人:</th>

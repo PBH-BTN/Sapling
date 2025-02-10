@@ -147,4 +147,6 @@ public class UserVO implements Serializable {
     private String lastAccessIp;
 
     private String passkey;
+
+    private String timeZone;
 }

@@ -75,6 +75,18 @@ public class SaplingControllerAdvice {
         model.addAttribute("user", addUserToModel());
     }
 
+    @ModelAttribute("timezone")
+    public String viewerTimeZone() {
+        if (!StpUtil.isLogin()) return settingsService.getValue(Setting.SITE_TIMEZONE);
+        try {
+            var usr = usersService.getById(StpUtil.getLoginIdAsLong());
+            if (usr == null) return settingsService.getValue(Setting.SITE_TIMEZONE);
+            return usr.getTimeZone();
+        } catch (NotLoginException e) {
+            return settingsService.getValue(Setting.SITE_TIMEZONE);
+        }
+    }
+
     @ModelAttribute("user")
     public Users addUserToModel() {
         if (!StpUtil.isLogin()) return null;

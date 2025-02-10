@@ -44,8 +44,8 @@
                 <tr th:each="item : ${news.records}">
                     <td th:text="${item.title}"></td>
                     <td class="news-content-preview" th:text="${item.description}"></td>
-                    <td th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
-                    <td th:text="${#temporals.format(item.expiredAt, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td th:text="${timeConverter.formatTime(item.createdAt, timezone)}"></td>
+                    <td th:text="${timeConverter.formatTime(item.expiredAt, timezone)}"></td>
                     <td nowrap>
                         <button class="btn btn-sm btn-outline-primary mr-2 edit-news"
                                 th:attr="data-news-id=${item.id}">

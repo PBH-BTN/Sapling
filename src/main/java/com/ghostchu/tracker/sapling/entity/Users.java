@@ -187,4 +187,6 @@ public class Users implements Serializable {
      * 晋级权限组
      */
     private long levelPermissionGroup;
+
+    private String timeZone;
 }
