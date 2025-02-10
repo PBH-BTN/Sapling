@@ -1,10 +1,12 @@
 package com.ghostchu.tracker.sapling.controller.admin.site;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ghostchu.tracker.sapling.dto.NewsFormDTO;
 import com.ghostchu.tracker.sapling.entity.News;
+import com.ghostchu.tracker.sapling.gvar.Permission;
 import com.ghostchu.tracker.sapling.service.INewsService;
 import com.ghostchu.tracker.sapling.vo.NewsVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import java.time.OffsetDateTime;
 
 @Controller
 @RequestMapping("/admin/site/news")
+@SaCheckPermission(Permission.ADMIN_SITE_NEWS)
 public class AdminSiteNewsController {
     @Autowired
     private INewsService newsService;

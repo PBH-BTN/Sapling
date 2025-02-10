@@ -103,4 +103,6 @@ public class Permission {
 
     public static final String USER_EDIT_DATA = "user.edit.data"; // 编辑用户的统计数据
     public static final String ADMIN_USERS_LIST = "admin.users.list"; // 查看用户列表
+    public static final String ADMIN_USERS_INVITES = "admin.users.invites";
+    public static final String ADMIN_SITE_NEWS = "admin.site.news"; // 管理站点公告
 }

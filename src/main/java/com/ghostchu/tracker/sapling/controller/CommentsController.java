@@ -47,28 +47,6 @@ public class CommentsController {
         Comments comment = commentsService.createComment(StpUtil.getLoginIdAsLong(), torrentId, parentId, HtmlSanitizer.sanitize(content));
         return ResponseEntity.ok(commentsService.toVO(comment, false));
     }
-//
-//    // 编辑评论（新增）
-//    @PutMapping("/{commentId}")
-//    public ResponseEntity<?> updateComment(
-//            @PathVariable Long commentId,
-//            @RequestBody CommentFormDTO request) {
-//        // 权限校验
-//        CommentVO comment = commentService.getCommentById(commentId);
-//        if (comment == null) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        if (!comment.getOwner().getId().equals(user.getId())) {
-//            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-//                    .body(Map.of("error", "无权修改此评论"));
-//        }
-//
-//        CommentVO updated = commentService.updateComment(
-//                commentId,
-//                request.getContent()
-//        );
-//        return ResponseEntity.ok(updated);
-//    }
 
     // 删除评论（新增）
     @DeleteMapping("/{commentId}")

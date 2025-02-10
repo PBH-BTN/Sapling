@@ -1,8 +1,10 @@
 package com.ghostchu.tracker.sapling.controller.admin.users;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ghostchu.tracker.sapling.entity.Invites;
+import com.ghostchu.tracker.sapling.gvar.Permission;
 import com.ghostchu.tracker.sapling.service.IInvitesService;
 import com.ghostchu.tracker.sapling.vo.InvitesVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/admin/users/invites")
+@SaCheckPermission(Permission.ADMIN_USERS_INVITES)
 public class AdminUsersInviteController {
     @Autowired
     private IInvitesService invitesService;
