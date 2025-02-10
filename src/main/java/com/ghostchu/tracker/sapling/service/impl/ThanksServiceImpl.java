@@ -13,6 +13,8 @@ import com.github.yulichang.base.MPJBaseServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
+
 /**
  * <p>
  *  服务实现类
@@ -60,6 +62,7 @@ public class ThanksServiceImpl extends MPJBaseServiceImpl<ThanksMapper, Thanks> 
         Thanks thanks = new Thanks();
         thanks.setOwner(userId);
         thanks.setTorrent(id);
+        thanks.setCreateAt(OffsetDateTime.now());
         return save(thanks);
     }
 }

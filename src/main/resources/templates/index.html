@@ -30,6 +30,21 @@
                 line-height: 1.6;
                 margin-top: 0.5rem;
             }
+
+            /* 折叠图标动画 */
+            .transition-all {
+                transition: all 0.3s ease;
+            }
+
+            /* 展开时旋转图标 */
+            [aria-expanded="true"] .fa-angle-down {
+                transform: rotate(-180deg);
+            }
+
+            /* 鼠标悬停手型 */
+            .news-title a:hover {
+                cursor: pointer;
+            }
         </style>
     </th:block>
 </head>
@@ -48,23 +63,34 @@
                 </h4>
             </div>
 
-            <!-- 新闻列表 -->
             <div th:if="${not #lists.isEmpty(news)}" class="news-list">
-                <div th:each="item : ${news}" class="news-item">
+                <div th:each="item,itemStat : ${news}" class="news-item">
                     <div class="d-flex justify-content-between align-items-start">
                         <div class="flex-grow-1">
-                            <h5 class="news-title" th:text="${item.title}"></h5>
-                            <div class="news-time">
-                                <i class="fas fa-clock"></i>
-                                <span th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
-                            </div>
+                            <h5 class="news-title mb-0">
+                                <a href="javascript:void(0)"
+                                   class="text-dark text-decoration-none d-flex align-items-center"
+                                   data-toggle="collapse"
+                                   th:attr="data-target='#collapse'+${itemStat.index}"
+                                   aria-expanded="${itemStat.first} ? 'true' : 'false'"
+                                   aria-controls="collapse${itemStat.index}">
+                                    <i class="fas fa-angle-down ms-2 transition-all mr-2"></i>
+                                    <span th:text="${item.title}"></span>
+                                </a>
+                            </h5>
                         </div>
                     </div>
-                    <!-- 使用utext渲染HTML内容 -->
-                    <div class="news-content mt-2" th:utext="${item.description}"></div>
+                    <div th:attr="id='collapse'+${itemStat.index}"
+                         th:classappend="${itemStat.first} ? 'show' : ''"
+                         class="collapse">
+                        <div class="news-time">
+                            <i class="fas fa-clock"></i>
+                            <span th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+                        </div>
+                        <div class="news-content mt-2" th:utext="${item.description}"></div>
+                    </div>
                 </div>
             </div>
-
             <!-- 空状态 -->
             <div th:if="${#lists.isEmpty(news)}" class="text-center text-muted py-4">
                 <i class="fas fa-inbox fa-2x mb-2"></i>

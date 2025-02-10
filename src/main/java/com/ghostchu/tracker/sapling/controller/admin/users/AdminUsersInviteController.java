@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/admin/users/invites")
-public class InviteAdminController {
+public class AdminUsersInviteController {
     @Autowired
     private IInvitesService invitesService;
 

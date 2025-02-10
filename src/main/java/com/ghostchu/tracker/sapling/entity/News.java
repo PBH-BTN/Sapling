@@ -54,9 +54,4 @@ public class News implements Serializable {
      * 公告到期时间
      */
     private OffsetDateTime expiredAt;
-
-    /**
-     * 公告删除时间
-     */
-    private OffsetDateTime deletedAt;
 }

@@ -1,6 +1,8 @@
 package com.ghostchu.tracker.sapling.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ghostchu.tracker.sapling.entity.News;
 import com.ghostchu.tracker.sapling.mapper.NewsMapper;
 import com.ghostchu.tracker.sapling.service.INewsService;
@@ -37,6 +39,31 @@ public class NewsServiceImpl extends MPJBaseServiceImpl<NewsMapper, News> implem
         vo.setTitle(news.getTitle());
         vo.setDescription(news.getDescription());
         vo.setCreatedAt(news.getCreatedAt());
+        vo.setExpiredAt(news.getExpiredAt());
         return vo;
     }
+
+    @Override
+    public News saveNews(News news) {
+        saveOrUpdate(news);
+        return news;
+    }
+
+    @Override
+    public News deleteNews(Long id) {
+        News news = getById(id);
+        removeById(news);
+        return news;
+    }
+
+    @Override
+    public News getNews(Long id) {
+        return getById(id);
+    }
+
+    @Override
+    public IPage<News> pageNews(int page, int size) {
+        return page(new Page<>(page, size), new QueryWrapper<News>().orderByDesc("id"));
+    }
+
 }

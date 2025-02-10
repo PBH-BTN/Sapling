@@ -1,4 +1,4 @@
-package com.ghostchu.tracker.sapling.vo;
+package com.ghostchu.tracker.sapling.dto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -18,7 +18,7 @@ import java.time.OffsetDateTime;
 @Getter
 @Setter
 @ToString
-public class NewsVO implements Serializable {
+public class NewsFormDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -40,10 +40,6 @@ public class NewsVO implements Serializable {
     /**
      * 公告创建时间
      */
-    private OffsetDateTime createdAt;
 
-    /**
-     * 公告到期时间
-     */
     private OffsetDateTime expiredAt;
 }

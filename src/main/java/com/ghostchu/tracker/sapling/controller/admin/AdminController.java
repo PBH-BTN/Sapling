@@ -35,6 +35,12 @@ public class AdminController {
         List<PrimaryMenuVO> menus = new ArrayList<>();
 
         // 系统设置菜单
+
+        PrimaryMenuVO siteMenu = new PrimaryMenuVO(4L, "站点管理", null);
+        siteMenu.setSubMenus(Arrays.asList(
+                new SubMenuVO(401L, "站点公告", "/admin/site/news")
+        ));
+
         PrimaryMenuVO userMenu = new PrimaryMenuVO(1L, "用户管理", null);
         userMenu.setSubMenus(Arrays.asList(
                 new SubMenuVO(101L, "用户列表", "/admin/users/list"),
@@ -59,6 +65,7 @@ public class AdminController {
                 new SubMenuVO(303L, "Seedbox", "/admin/tracker/seedbox")
         ));
 
+        menus.add(siteMenu);
         menus.add(userMenu);
         menus.add(torrentMenu);
         menus.add(trackerMenu);

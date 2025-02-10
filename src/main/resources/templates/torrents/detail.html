@@ -186,9 +186,7 @@
 <!-- 操作脚本 -->
 <script th:inline="javascript">
     /*<![CDATA[*/
-    const url = [[@{/thanks/
-    }]]
-    +[[${torrent.id}]];
+    const url = '/thanks/[[${torrent.id}]]';
     /*]]>*/
     document.getElementById('thankButton').addEventListener('click', function () {
         fetch(url, {
