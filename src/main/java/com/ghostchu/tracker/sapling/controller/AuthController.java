@@ -68,7 +68,7 @@ public class AuthController {
         );
         if (matchedUser == null) {
             redirectAttributes.addAttribute("error", true); // 添加 URL 参数
-            return "redirect:/login"; // 重定向到登录页（会保留参数）
+            return "redirect:/auth/login"; // 重定向到登录页（会保留参数）
         }
         matchedUser.setLastLoginAt(OffsetDateTime.now());
         matchedUser.setLastLoginIp(ServletUtil.inet(request));
