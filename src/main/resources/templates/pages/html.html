@@ -17,9 +17,12 @@
                     <p th:utext="${pages.htmlContent}"></p>
                 </div>
                 <div class="card-footer">
-                    <p>创建于: <span th:text="${timeConventer.formatTime(pages.createdAt, timezone)}"></span> <span
-                            th:if="${pages.editedAt != null}">最后编辑于: </span><span
-                            th:text="${timeConventer.formatTime(pages.editedAt, timezone)}"></span></p>
+                    <p>创建于: <span th:text="${timeConverter.formatTime(pages.createdAt, timezone)}"></span>
+                        <span
+                                th:if="${pages.editedAt}">最后编辑于: <span
+                                th:text="${timeConverter.formatTime(pages.editedAt, timezone)}"></span></span>
+
+                    </p>
                 </div>
             </div>
         </div>
