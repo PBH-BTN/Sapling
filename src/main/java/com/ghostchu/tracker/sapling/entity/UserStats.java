@@ -33,4 +33,8 @@ public class UserStats implements Serializable {
     private long seedTime;
     private long leechTime;
     private long seedScore;
+
+    public float shareRatio() {
+        return downloaded == 0 ? -1 : Math.max((float) uploaded / downloaded, 0);
+    }
 }

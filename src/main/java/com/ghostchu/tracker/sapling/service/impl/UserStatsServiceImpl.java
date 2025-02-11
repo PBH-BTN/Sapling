@@ -1,5 +1,6 @@
 package com.ghostchu.tracker.sapling.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ghostchu.tracker.sapling.entity.UserStats;
 import com.ghostchu.tracker.sapling.mapper.UserStatsMapper;
 import com.ghostchu.tracker.sapling.service.IUserStatsService;
@@ -20,30 +21,32 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserStatsServiceImpl extends MPJBaseServiceImpl<UserStatsMapper, UserStats> implements IUserStatsService {
     @Override
-    @Cacheable(value = "userStats", key = "'id:' + #id", unless = "#result == null")
-    public UserStats getUserStats(long id) {
-        UserStats userStats = baseMapper.selectById(id);
+    @Cacheable(value = "userStats", key = "'uid:' + #userId", unless = "#result == null")
+    public UserStats getUserStats(long userId) {
+        UserStats userStats = getOne(new QueryWrapper<UserStats>().eq("owner", userId));
         if (userStats == null) {
             userStats = new UserStats();
+            userStats.setOwner(userId);
             save(userStats);
         }
         return userStats;
     }
 
     @Override
-    @Cacheable(value = "userStats", key = "'id:' + #id", unless = "#result == null")
-    public UserStats selectUserStatsForUpdate(long id) {
-        UserStats stats = baseMapper.selectUserStatsForUpdate(id);
+    @Cacheable(value = "userStats", key = "'uid:' + #userId", unless = "#result == null")
+    public UserStats selectUserStatsForUpdate(long userId) {
+        UserStats stats = baseMapper.selectUserStatsForUpdate(userId);
         if (stats == null) {
             stats = new UserStats();
+            stats.setOwner(userId);
             save(stats);
-            stats = baseMapper.selectUserStatsForUpdate(id);
+            stats = baseMapper.selectUserStatsForUpdate(userId);
         }
         return stats;
     }
 
     @Override
-    @CacheEvict(value = "userStats", key = "'id:' + #userStats.getId()")
+    @CacheEvict(value = "userStats", key = "'uid:' + #userStats.owner")
     public void updateUserStats(UserStats userStats) {
         baseMapper.updateById(userStats);
     }
@@ -60,6 +63,15 @@ public class UserStatsServiceImpl extends MPJBaseServiceImpl<UserStatsMapper, Us
         userStatsVO.setSeedTime(userStats.getSeedTime());
         userStatsVO.setLeechTime(userStats.getLeechTime());
         userStatsVO.setSeedScore(userStats.getSeedScore());
+        userStatsVO.setShareRatio(userStats.shareRatio());
+        // x.xx
+        String shareRatioString;
+        if (userStats.shareRatio() == -1) {
+            shareRatioString = "Inf.";
+        } else {
+            shareRatioString = String.format("%.2f", userStatsVO.getShareRatio());
+        }
+        userStatsVO.setShareRatioStr(shareRatioString);
         return userStatsVO;
     }
 }

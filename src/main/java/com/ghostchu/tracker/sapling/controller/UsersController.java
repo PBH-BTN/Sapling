@@ -127,7 +127,7 @@ public class UsersController {
         UserVO targetUser = userService.toVO(userService.getUserById(id));
         boolean isCurrentUser = targetUser.getId() == StpUtil.getLoginIdAsLong();
         model.addAttribute("user", targetUser);
-        model.addAttribute("userStats", userStatsService.getUserStats(id));
+        model.addAttribute("userStats", userStatsService.toVO(userStatsService.getUserStats(id)));
         model.addAttribute("isCurrentUser", isCurrentUser);
         return "users/profile";
     }
@@ -198,6 +198,7 @@ public class UsersController {
     }
 
     private ProfileUpdateFormDTO convertToForm(UserVO user) {
+        UserStats userStats = userStatsService.getUserStats(user.getId());
         ProfileUpdateFormDTO form = new ProfileUpdateFormDTO();
         form.setId(user.getId());
         form.setName(user.getName());
@@ -207,12 +208,12 @@ public class UsersController {
         form.setMyBandwidthUpload(user.getMyBandwidthUpload());
         form.setMyBandwidthDownload(user.getMyBandwidthDownload());
         form.setMyIsp(user.getMyIsp());
-        form.setUploaded(user.getUploaded());
-        form.setUploadedReal(user.getUploadedReal());
-        form.setDownloaded(user.getDownloaded());
-        form.setDownloadedReal(user.getDownloadedReal());
-        form.setSeedTime(user.getSeedTime());
-        form.setLeechTime(user.getLeechTime());
+        form.setUploaded(userStats.getUploaded());
+        form.setUploadedReal(userStats.getUploadedReal());
+        form.setDownloaded(userStats.getDownloaded());
+        form.setDownloadedReal(userStats.getDownloadedReal());
+        form.setSeedTime(userStats.getSeedTime());
+        form.setLeechTime(userStats.getLeechTime());
         return form;
     }
 

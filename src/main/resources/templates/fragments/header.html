@@ -100,17 +100,17 @@
                     <span class="text-muted small">
                         <i class="fas fa-arrow-up text-success"></i>
                         上传:<span
-                            th:text="${T(com.ghostchu.tracker.sapling.util.UnitConverter).autoUnit(userStats.uploaded)}"></span>
+                            th:text="${unitConverter.autoUnit(userStats.uploaded)}"></span>
                     </span>
                 <span class="text-muted small ml-3">
                         <i class="fas fa-arrow-down text-danger"></i>
                         下载: <span
-                        th:text="${T(com.ghostchu.tracker.sapling.util.UnitConverter).autoUnit(userStats.downloaded)}"></span>
+                        th:text="${unitConverter.autoUnit(userStats.downloaded)}"></span>
                     </span>
                 <span class="text-muted small ml-3">
                         <i class="fas fa-percentage text-info"></i>
                         分享率: <span
-                        th:text="${user.downloaded != 0 ? #numbers.formatDecimal(userStats.uploaded / userStats.downloaded, 2, 'COMMA', 2, 'POINT') : 'Inf'}"></span>
+                        th:text="${userStats.shareRatioStr}"></span>
                     </span>
             </div>
 <!--            <div class="text-muted small">-->

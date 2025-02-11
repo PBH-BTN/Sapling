@@ -28,4 +28,6 @@ public class UserStatsVO implements Serializable {
     private long seedTime;
     private long leechTime;
     private long seedScore;
+    private float shareRatio;
+    private String shareRatioStr;
 }

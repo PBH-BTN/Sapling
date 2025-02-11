@@ -127,7 +127,7 @@
                                 <div class="card-body">
                                     <h5 class="card-title">
                                         <i class="fas fa-percentage text-primary"></i>
-                                        <span th:text="${user.downloaded != 0 ? #numbers.formatDecimal(userStats.uploaded / userStats.downloaded, 2, 'COMMA', 2, 'POINT') : 'Inf'}"></span>
+                                        <span th:text="${userStats.shareRatioStr}"></span>
                                     </h5>
                                     <p class="card-text text-muted small">分享率</p>
                                 </div>

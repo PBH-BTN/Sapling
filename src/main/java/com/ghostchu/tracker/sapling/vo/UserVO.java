@@ -42,36 +42,6 @@ public class UserVO implements Serializable {
     private PermissionGroupVO primaryPermissionGroup;
 
     /**
-     * BT 上传量
-     */
-    private long uploaded;
-
-    /**
-     * BT 上传量（真实数据）
-     */
-    private long uploadedReal;
-
-    /**
-     * BT 下载量
-     */
-    private long downloaded;
-
-    /**
-     * BT 下载量（真实数据）
-     */
-    private long downloadedReal;
-
-    /**
-     * BT 做种持续时间（毫秒）
-     */
-    private long seedTime;
-
-    /**
-     * BT 下载持续时间（毫秒）
-     */
-    private long leechTime;
-
-    /**
      * 语言代码
      */
     private String language;

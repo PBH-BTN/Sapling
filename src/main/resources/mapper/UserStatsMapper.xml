@@ -5,6 +5,6 @@
             resultType="com.ghostchu.tracker.sapling.entity.UserStats">
         SELECT *
         FROM user_stats
-        WHERE id = #{id} FOR UPDATE
+        WHERE owner = #{id} FOR UPDATE
     </select>
 </mapper>
