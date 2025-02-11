@@ -7,7 +7,7 @@ import com.ghostchu.tracker.sapling.model.AnnounceRequest;
 import com.ghostchu.tracker.sapling.model.ScrapePeers;
 import com.ghostchu.tracker.sapling.service.IPeersService;
 import com.ghostchu.tracker.sapling.service.IUserStatsService;
-import com.ghostchu.tracker.sapling.service.IUserTaskRecordsService;
+import com.ghostchu.tracker.sapling.service.IUserTasksService;
 import com.ghostchu.tracker.sapling.service.IUsersService;
 import com.ghostchu.tracker.sapling.tracker.PeerEvent;
 import com.github.yulichang.base.MPJBaseServiceImpl;
@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class PeersServiceImpl extends MPJBaseServiceImpl<PeersMapper, Peers> implements IPeersService {
     @Autowired
-    private IUserTaskRecordsService userTaskRecordsService;
+    private IUserTasksService userTaskRecordsService;
     @Autowired
     private IUsersService usersService;
     @Autowired
