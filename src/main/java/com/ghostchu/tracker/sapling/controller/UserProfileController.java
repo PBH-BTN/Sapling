@@ -42,7 +42,7 @@ public class UserProfileController {
 
     // 查看当前用户资料
     @GetMapping
-    public String viewProfile(Model model) {
+    public String viewProfile() {
         return "redirect:/users/profile/" + StpUtil.getLoginIdAsLong();
     }
 
