@@ -2,14 +2,13 @@ package com.ghostchu.tracker.sapling.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ghostchu.tracker.sapling.entity.Peers;
+import com.ghostchu.tracker.sapling.entity.Settings;
 import com.ghostchu.tracker.sapling.entity.projection.PeerStats;
+import com.ghostchu.tracker.sapling.gvar.Setting;
 import com.ghostchu.tracker.sapling.mapper.PeersMapper;
 import com.ghostchu.tracker.sapling.model.AnnounceRequest;
 import com.ghostchu.tracker.sapling.model.ScrapePeers;
-import com.ghostchu.tracker.sapling.service.IPeersService;
-import com.ghostchu.tracker.sapling.service.IUserStatsService;
-import com.ghostchu.tracker.sapling.service.IUserTasksService;
-import com.ghostchu.tracker.sapling.service.IUsersService;
+import com.ghostchu.tracker.sapling.service.*;
 import com.ghostchu.tracker.sapling.tracker.PeerEvent;
 import com.github.yulichang.base.MPJBaseServiceImpl;
 import jakarta.annotation.Nullable;
@@ -18,10 +17,12 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -41,6 +42,8 @@ public class PeersServiceImpl extends MPJBaseServiceImpl<PeersMapper, Peers> imp
     private IUserTasksService userTaskRecordsService;
     @Autowired
     private IUsersService usersService;
+    @Autowired
+    private ISettingsService settingsService;
     @Autowired
     private IUserStatsService userStatsService;
     @Autowired
@@ -184,8 +187,19 @@ public class PeersServiceImpl extends MPJBaseServiceImpl<PeersMapper, Peers> imp
     }
 
     @Override
-    @Cacheable(value = "torrent_comment_count", key = "#torrentId")
+    @Cacheable(value = "peers_count", key = "'torrent:' + #torrentId")
     public PeerStats countPeersByTorrent(@Param("torrent") Long torrentId) {
         return baseMapper.countPeersByTorrent(torrentId);
+    }
+
+    @Scheduled(cron = "0 0/10 * * * ?")
+    public void cleanupPeers() {
+        Settings interval = settingsService.getSetting(Setting.TRACKER_ANNOUNCE_INTERVAL);
+        Settings randomOffset = settingsService.getSetting(Setting.TRACKER_ANNOUNCE_INTERVAL_RANDOM_OFFSET);
+        long intervalValue = Long.parseLong(interval.getValue()) + Long.parseLong(randomOffset.getValue()) + 30000;
+        OffsetDateTime now = OffsetDateTime.now();
+        OffsetDateTime cutoff = now.minus(intervalValue, ChronoUnit.MILLIS);
+        int removed = this.baseMapper.delete(new QueryWrapper<Peers>().le("last_announce", cutoff));
+        log.info("Cleanup peers, removed {} peers", removed);
     }
 }

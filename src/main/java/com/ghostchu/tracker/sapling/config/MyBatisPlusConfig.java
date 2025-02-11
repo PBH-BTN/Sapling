@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @MapperScan(basePackages = "com.ghostchu.tracker.sapling.mapper")
+@MapperScan(basePackages = "com.ghostchu.tracker.sapling.mapper.projection")
 public class MyBatisPlusConfig {
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {

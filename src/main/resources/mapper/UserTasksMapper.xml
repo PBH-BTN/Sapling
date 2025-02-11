@@ -5,7 +5,7 @@
     <select id="selectUserTaskRecordsForUpdate" parameterType="map"
             resultType="com.ghostchu.tracker.sapling.entity.UserTasks">
         SELECT *
-        FROM user_task_records
+        FROM user_tasks
         WHERE owner = #{owner}
           AND torrent = #{torrent} FOR UPDATE
     </select>

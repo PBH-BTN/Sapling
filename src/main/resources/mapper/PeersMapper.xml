@@ -21,7 +21,8 @@
           AND peer_id = #{peerId} FOR UPDATE
     </select>
 
-    <select id="countPeersByTorrent" resultType="com.ghostchu.tracker.sapling.entity.projection.PeerStats">
+    <select id="countPeersByTorrent" parameterType="map"
+            resultType="com.ghostchu.tracker.sapling.entity.projection.PeerStats">
         SELECT COUNT(CASE WHEN to_go = 0 THEN 1 END)  AS seeds,
                COUNT(CASE WHEN to_go != 0 THEN 1 END) AS leeches
         FROM peers
