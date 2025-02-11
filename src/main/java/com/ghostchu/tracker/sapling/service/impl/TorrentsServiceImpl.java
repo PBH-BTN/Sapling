@@ -55,10 +55,14 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
     }
 
     @Override
-    public IPage<Torrents> getTorrentsByPage(long page, int size, boolean includeInvisible, boolean includeDeleted) {
+    public IPage<Torrents> getTorrentsByPage(long page, int size, String keyword, boolean includeInvisible, boolean includeDeleted) {
         IPage<Torrents> iPage = new Page<>(page, size);
         return baseMapper.selectPage(iPage, new QueryWrapper<Torrents>()
-                .orderBy(true, false, "created_at"));
+                .like(keyword != null, "title", "%" + keyword + "%")
+                .or()
+                .like(keyword != null, "subtitle", "%" + keyword + "%")
+                .orderBy(true, false, "created_at")
+        );
     }
 
     @Override

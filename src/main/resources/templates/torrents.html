@@ -45,7 +45,7 @@
             <form th:action="@{/torrents}" method="get">
                 <div class="input-group">
                     <input type="search" name="keyword" class="form-control"
-                           placeholder="搜索种子..." aria-label="搜索">
+                           placeholder="搜索种子..." th:value="${keyword}" aria-label="搜索">
                     <div class="input-group-append">
                         <button class="btn btn-primary" type="submit">
                             <i class="fas fa-search"></i>
@@ -161,11 +161,12 @@
         </div>
     </div>
 
-    <!-- 分页控件 (保持原样) -->
+    <!-- 分页控件-->
     <nav th:if="${pagination.pages > 1}" class="mt-4">
         <ul class="pagination justify-content-center">
             <li class="page-item" th:classappend="${pagination.current == 1} ? 'disabled'">
-                <a class="page-link" th:href="@{/torrents(page=${pagination.current - 1}, size=${pagination.size})}">
+                <a class="page-link"
+                   th:href="@{/torrents(page=${pagination.current - 1}, size=${pagination.size}, keyword=${keyword})}">
                     <i class="fas fa-angle-left"></i>
                 </a>
             </li>
@@ -173,11 +174,12 @@
                 class="page-item"
                 th:classappend="${pageNum == pagination.current} ? 'active'">
                 <a class="page-link"
-                   th:href="@{/torrents(page=${pageNum}, size=${pagination.size})}"
+                   th:href="@{/torrents(page=${pageNum}, size=${pagination.size}, keyword=${keyword})}"
                    th:text="${pageNum}"></a>
             </li>
             <li class="page-item" th:classappend="${pagination.current == pagination.pages} ? 'disabled'">
-                <a class="page-link" th:href="@{/torrents(page=${pagination.current + 1}, size=${pagination.size})}">
+                <a class="page-link"
+                   th:href="@{/torrents(page=${pagination.current + 1}, size=${pagination.size}, keyword=${keyword})}">
                     <i class="fas fa-angle-right"></i>
                 </a>
             </li>

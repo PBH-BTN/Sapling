@@ -73,12 +73,18 @@ public class TorrentsController {
     public String torrentList(
             @RequestParam(defaultValue = "1") long page,
             @RequestParam(defaultValue = "50") int size,
+            @RequestParam(required = false) String keyword,
             Model model) {
         // 获取分页数据
-        IPage<Torrents> pageResult = torrentsService.getTorrentsByPage(page, size, StpUtil.hasPermission(Permission.TORRENT_VIEW_INVISIBLE), StpUtil.hasPermission(Permission.TORRENT_VIEW_DELETED));
+        IPage<Torrents> pageResult = torrentsService.getTorrentsByPage(page,
+                size,
+                keyword,
+                StpUtil.hasPermission(Permission.TORRENT_VIEW_INVISIBLE),
+                StpUtil.hasPermission(Permission.TORRENT_VIEW_DELETED));
         // 准备模型数据
         model.addAttribute("torrents", pageResult.getRecords().stream().map(torrentsService::toVO).toList());
         model.addAttribute("pagination", pageResult);
+        model.addAttribute("keyword", keyword);
         return "torrents";
     }
 
