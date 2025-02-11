@@ -105,7 +105,7 @@
                                 <div class="card-body">
                                     <h5 class="card-title">
                                         <i class="fas fa-arrow-up text-success"></i>
-                                        <span th:text="${unitConverter.autoUnit(user.uploaded)}"></span>
+                                        <span th:text="${unitConverter.autoUnit(userStats.uploaded)}"></span>
                                     </h5>
                                     <p class="card-text text-muted small">上传量</p>
                                 </div>
@@ -116,7 +116,7 @@
                                 <div class="card-body">
                                     <h5 class="card-title">
                                         <i class="fas fa-arrow-down text-danger"></i>
-                                        <span th:text="${unitConverter.autoUnit(user.downloaded)}"></span>
+                                        <span th:text="${unitConverter.autoUnit(userStats.downloaded)}"></span>
                                     </h5>
                                     <p class="card-text text-muted small">下载量</p>
                                 </div>
@@ -127,7 +127,7 @@
                                 <div class="card-body">
                                     <h5 class="card-title">
                                         <i class="fas fa-percentage text-primary"></i>
-                                        <span th:text="${user.downloaded != 0 ? #numbers.formatDecimal(user.uploaded / user.downloaded, 2, 'COMMA', 2, 'POINT') : 'Inf'}"></span>
+                                        <span th:text="${user.downloaded != 0 ? #numbers.formatDecimal(userStats.uploaded / userStats.downloaded, 2, 'COMMA', 2, 'POINT') : 'Inf'}"></span>
                                     </h5>
                                     <p class="card-text text-muted small">分享率</p>
                                 </div>
@@ -138,7 +138,7 @@
                                 <div class="card-body">
                                     <h5 class="card-title">
                                         <i class="fas fa-seedling text-success"></i>
-                                        <span th:text="${timeConverter.formatDuration(user.seedTime)}"></span>
+                                        <span th:text="${timeConverter.formatDuration(userStats.seedTime)}"></span>
                                     </h5>
                                     <p class="card-text text-muted small">总做种时间</p>
                                 </div>
@@ -149,7 +149,7 @@
                                 <div class="card-body">
                                     <h5 class="card-title">
                                         <i class="fas fa-download text-info"></i>
-                                        <span th:text="${timeConverter.formatDuration(user.seedTime)}"></span>
+                                        <span th:text="${timeConverter.formatDuration(userStats.seedTime)}"></span>
                                     </h5>
                                     <p class="card-text text-muted small">总下载时间</p>
                                 </div>

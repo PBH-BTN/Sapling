@@ -7,11 +7,13 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.ghostchu.tracker.sapling.dto.ConfirmFormDTO;
 import com.ghostchu.tracker.sapling.dto.ProfileUpdateFormDTO;
 import com.ghostchu.tracker.sapling.entity.Bitbucket;
+import com.ghostchu.tracker.sapling.entity.UserStats;
 import com.ghostchu.tracker.sapling.entity.Users;
 import com.ghostchu.tracker.sapling.exception.UserNotExistsException;
 import com.ghostchu.tracker.sapling.gvar.Permission;
 import com.ghostchu.tracker.sapling.service.IBitbucketService;
 import com.ghostchu.tracker.sapling.service.IUserBansService;
+import com.ghostchu.tracker.sapling.service.IUserStatsService;
 import com.ghostchu.tracker.sapling.service.IUsersService;
 import com.ghostchu.tracker.sapling.util.FileUtil;
 import com.ghostchu.tracker.sapling.util.HtmlSanitizer;
@@ -22,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -48,6 +51,8 @@ public class UsersController {
     private IBitbucketService bitbucketService;
     @Autowired
     private IUserBansService userBansService;
+    @Autowired
+    private IUserStatsService userStatsService;
 
     // 查看当前用户资料
     @GetMapping("/profile")
@@ -120,9 +125,9 @@ public class UsersController {
             throw new UserNotExistsException(id, "指定的用户不存在");
         }
         UserVO targetUser = userService.toVO(userService.getUserById(id));
-
         boolean isCurrentUser = targetUser.getId() == StpUtil.getLoginIdAsLong();
         model.addAttribute("user", targetUser);
+        model.addAttribute("userStats", userStatsService.getUserStats(id));
         model.addAttribute("isCurrentUser", isCurrentUser);
         return "users/profile";
     }
@@ -144,6 +149,7 @@ public class UsersController {
     }
 
     @PostMapping("/profile/edit/{id}")
+    @Transactional
     @SaCheckPermission(value = {Permission.USER_EDIT, Permission.USER_EDIT_OTHER}, mode = SaMode.OR)
     public String updateProfile(
             @ModelAttribute @Valid ProfileUpdateFormDTO form,
@@ -158,12 +164,11 @@ public class UsersController {
         } else {
             StpUtil.checkPermission(Permission.USER_EDIT_OTHER);
         }
-        Users users = userService.getUserById(id);
+        Users users = userService.getUserByIdForUpdate(id);
         if (!form.getName().equals(users.getName()) && userService.userNameExists(form.getName())) {
             result.rejectValue("name", "user.name.exists", "给定的用户名已被使用");
             return "users/edit";
         }
-
         if (!(avatarFile.getContentType() == null || StringUtils.isBlank(avatarFile.getOriginalFilename()))) {
             Bitbucket bitbucket = bitbucketService.uploadToBitbucket(
                     avatarFile,
@@ -178,16 +183,16 @@ public class UsersController {
         users.setName(form.getName());
         users.setTitle(form.getTitle());
         users.setSignature(HtmlSanitizer.sanitize(form.getSignature()));
-
         if (StpUtil.hasPermission(Permission.USER_EDIT_DATA)) {
-            users.setUploaded(form.getUploaded());
-            users.setUploadedReal(form.getUploadedReal());
-            users.setDownloaded(form.getDownloaded());
-            users.setDownloadedReal(form.getDownloadedReal());
-            users.setSeedTime(form.getSeedTime());
-            users.setLeechTime(form.getLeechTime());
+            UserStats userStats = userStatsService.selectUserStatsForUpdate(id);
+            userStats.setUploaded(form.getUploaded());
+            userStats.setUploadedReal(form.getUploadedReal());
+            userStats.setDownloaded(form.getDownloaded());
+            userStats.setDownloadedReal(form.getDownloadedReal());
+            userStats.setSeedTime(form.getSeedTime());
+            userStats.setLeechTime(form.getLeechTime());
+            userStatsService.updateUserStats(userStats);
         }
-
         userService.updateUser(users);
         return "redirect:/users/profile/" + id;
     }

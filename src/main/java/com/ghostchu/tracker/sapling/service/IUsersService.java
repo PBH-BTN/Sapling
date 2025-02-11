@@ -6,7 +6,6 @@ import com.ghostchu.tracker.sapling.entity.Users;
 import com.ghostchu.tracker.sapling.vo.UserBansVO;
 import com.ghostchu.tracker.sapling.vo.UserVO;
 import com.github.yulichang.base.MPJBaseService;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.net.InetAddress;
 import java.time.OffsetDateTime;
@@ -25,6 +24,8 @@ public interface IUsersService extends MPJBaseService<Users> {
 
     Users getUserById(long id);
 
+    Users getUserByIdForUpdate(long id);
+
     Users registerUser(String username, String passhash, String email, InetAddress registerIp);
 
     boolean userNameExists(String username);
@@ -38,9 +39,6 @@ public interface IUsersService extends MPJBaseService<Users> {
     boolean updateUser(Users user);
 
     IPage<Users> searchUsers(int page, int size, String search);
-
-    @Transactional
-    Users updateUsersStatisticalData(long userId, long incrementUploaded, long incrementDownloaded, long incrementSeedTime, long incrementLeechTime);
 
     Users banUser(long id, long op, String reason, OffsetDateTime endedAt);
 

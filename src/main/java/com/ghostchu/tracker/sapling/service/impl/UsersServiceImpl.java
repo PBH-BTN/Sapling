@@ -20,7 +20,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.net.InetAddress;
 import java.time.OffsetDateTime;
@@ -58,6 +57,11 @@ public class UsersServiceImpl extends MPJBaseServiceImpl<UsersMapper, Users> imp
     }
 
     @Override
+    public Users getUserByIdForUpdate(long id) {
+        return baseMapper.selectUserForUpdate(id);
+    }
+
+    @Override
     public Users registerUser(String username, String passhash, String email, InetAddress registerIp) {
         Users user = new Users();
         user.setName(username);
@@ -70,12 +74,6 @@ public class UsersServiceImpl extends MPJBaseServiceImpl<UsersMapper, Users> imp
         user.setRegisterAt(OffsetDateTime.now());
         user.setAllowLogin(true);
         user.setSystemAccount(false);
-        user.setDownloaded(0L);
-        user.setUploaded(0L);
-        user.setUploadedReal(0L);
-        user.setDownloadedReal(0L);
-        user.setSeedTime(0L);
-        user.setLeechTime(0L);
         user.setMyBandwidthDownload(0L);
         user.setMyBandwidthUpload(0L);
         user.setPrimaryPermissionGroup(1L);
@@ -110,12 +108,6 @@ public class UsersServiceImpl extends MPJBaseServiceImpl<UsersMapper, Users> imp
         vo.setAvatar(user.getAvatar());
         vo.setTitle(user.getTitle());
         vo.setPrimaryPermissionGroup(permissionGroupsService.toVO(permissionGroupsService.getPermissionGroupById(user.getPrimaryPermissionGroup())));
-        vo.setUploaded(user.getUploaded());
-        vo.setUploadedReal(user.getUploadedReal());
-        vo.setDownloaded(user.getDownloaded());
-        vo.setDownloadedReal(user.getDownloadedReal());
-        vo.setSeedTime(user.getSeedTime());
-        vo.setLeechTime(user.getLeechTime());
         vo.setLanguage(user.getLanguage());
         vo.setSignature(user.getSignature());
         vo.setMyBandwidthUpload(user.getMyBandwidthUpload());
@@ -164,18 +156,6 @@ public class UsersServiceImpl extends MPJBaseServiceImpl<UsersMapper, Users> imp
                 .like(StringUtils.isNotBlank(search), "email", "%" + search + "%")
                 .orderByAsc("id");
         return page(p, wrapper);
-    }
-
-    @Transactional
-    @Override
-    public Users updateUsersStatisticalData(long userId, long incrementUploaded, long incrementDownloaded, long incrementSeedTime, long incrementLeechTime) {
-        Users user = this.baseMapper.selectUserForUpdate(userId);
-        user.setUploaded(user.getUploaded() + incrementUploaded);
-        user.setDownloaded(user.getDownloaded() + incrementDownloaded);
-        user.setSeedTime(user.getSeedTime() + incrementSeedTime);
-        user.setLeechTime(user.getLeechTime() + incrementLeechTime);
-        saveOrUpdate(user);
-        return user;
     }
 
     @Override

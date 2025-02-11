@@ -57,11 +57,11 @@ public class InvitesServiceImpl extends MPJBaseServiceImpl<InvitesMapper, Invite
     public InvitesVO toVO(Invites invites) {
         InvitesVO vo = new InvitesVO();
         vo.setId(invites.getId());
-        vo.setInviteBy(usersService.toVO(usersService.getById(invites.getInviteBy())));
+        vo.setInviteBy(usersService.toVO(usersService.getUserById(invites.getInviteBy())));
         vo.setInviteEmail(invites.getInviteEmail());
         vo.setInviteUsername(invites.getInviteUsername());
         vo.setExpireAt(invites.getExpireAt());
-        vo.setInvitedUser(invites.getInvitedUser() != null ? usersService.toVO(usersService.getById(invites.getInvitedUser())) : null);
+        vo.setInvitedUser(invites.getInvitedUser() != null ? usersService.toVO(usersService.getUserById(invites.getInvitedUser())) : null);
         vo.setConsumeAt(invites.getConsumeAt());
         vo.setInviteCode(invites.getInviteCode());
         return vo;

@@ -1,6 +1,5 @@
 package com.ghostchu.tracker.sapling.controller;
 
-import cn.dev33.satoken.annotation.SaCheckDisable;
 import cn.dev33.satoken.stp.StpUtil;
 import com.ghostchu.tracker.sapling.dto.LoginFormDTO;
 import com.ghostchu.tracker.sapling.dto.RegFormDTO;
@@ -29,7 +28,6 @@ import java.time.OffsetDateTime;
 
 @Controller
 @RequestMapping("/auth")
-@SaCheckDisable
 public class AuthController {
     @Autowired
     private IUsersService usersService;

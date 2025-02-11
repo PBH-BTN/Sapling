@@ -6,6 +6,7 @@ import com.ghostchu.tracker.sapling.mapper.PeersMapper;
 import com.ghostchu.tracker.sapling.model.AnnounceRequest;
 import com.ghostchu.tracker.sapling.model.ScrapePeers;
 import com.ghostchu.tracker.sapling.service.IPeersService;
+import com.ghostchu.tracker.sapling.service.IUserStatsService;
 import com.ghostchu.tracker.sapling.service.IUserTaskRecordsService;
 import com.ghostchu.tracker.sapling.service.IUsersService;
 import com.ghostchu.tracker.sapling.tracker.PeerEvent;
@@ -37,6 +38,8 @@ public class PeersServiceImpl extends MPJBaseServiceImpl<PeersMapper, Peers> imp
     private IUserTaskRecordsService userTaskRecordsService;
     @Autowired
     private IUsersService usersService;
+    @Autowired
+    private IUserStatsService userStatsService;
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
@@ -164,7 +167,14 @@ public class PeersServiceImpl extends MPJBaseServiceImpl<PeersMapper, Peers> imp
                     incrementLeechingTime,
                     request.ua()
             );
-            usersService.updateUsersStatisticalData(request.userId(), incrementUploaded, incrementDownloaded, incrementSeedingTime, incrementLeechingTime);
+            var userStats = userStatsService.selectUserStatsForUpdate(request.userId());
+            userStats.setUploaded(userStats.getUploaded() + incrementUploaded);
+            userStats.setDownloaded(userStats.getDownloaded() + incrementDownloaded);
+            userStats.setUploadedReal(userStats.getUploadedReal() + incrementUploaded);
+            userStats.setDownloadedReal(userStats.getDownloadedReal() + incrementDownloaded);
+            userStats.setSeedTime(userStats.getSeedTime() + incrementSeedingTime);
+            userStats.setLeechTime(userStats.getLeechTime() + incrementLeechingTime);
+            userStatsService.updateUserStats(userStats);
             log.info("User {} announce {} event {} left {} incrementUpload {} incrementDownload {} ip {}",
                     request.userId(), request.torrentId(), request.peerEvent(), request.left(), incrementUploaded, incrementDownloaded, request.peerIp().getHostAddress());
         }

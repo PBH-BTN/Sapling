@@ -10,7 +10,9 @@ import com.ghostchu.tracker.sapling.exception.BusinessException;
 import com.ghostchu.tracker.sapling.gvar.Setting;
 import com.ghostchu.tracker.sapling.service.ISettingsService;
 import com.ghostchu.tracker.sapling.service.IUserBansService;
+import com.ghostchu.tracker.sapling.service.IUserStatsService;
 import com.ghostchu.tracker.sapling.service.IUsersService;
+import com.ghostchu.tracker.sapling.vo.UserStatsVO;
 import com.ghostchu.tracker.sapling.vo.UserVO;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +32,8 @@ public class SaplingControllerAdvice {
     private ISettingsService settingsService;
     @Autowired
     private IUserBansService userBansService;
+    @Autowired
+    private IUserStatsService userStatsService;
 
     @ExceptionHandler(NotLoginException.class)
     public String handlerNotLoginException(NotLoginException e, Model model, HttpServletResponse response) {
@@ -49,7 +53,7 @@ public class SaplingControllerAdvice {
 
     @ExceptionHandler(DisableServiceException.class)
     public String handlerDisableServiceException(DisableServiceException e, Model model, HttpServletResponse response) {
-        Users users = usersService.getById(StpUtil.getLoginIdAsLong());
+        Users users = usersService.getUserById(StpUtil.getLoginIdAsLong());
         UserBans userBans = userBansService.getBanRecord(users.getBannedId());
         model.addAttribute("userBan", usersService.toUserBanVO(userBans));
         addModelAttributesForExceptionHandler(model);
@@ -89,14 +93,28 @@ public class SaplingControllerAdvice {
     private void addModelAttributesForExceptionHandler(Model model) {
         model.addAttribute("siteName", settingsService.getValue(Setting.SITE_NAME));
         model.addAttribute("user", addUserToModel());
+        model.addAttribute("userStats", addUserStatsToModel());
         model.addAttribute("timezone", viewerTimeZone());
+    }
+
+    @ModelAttribute("userStats")
+    private UserStatsVO addUserStatsToModel() {
+        if (!StpUtil.isLogin()) return null;
+        try {
+            var usr = userStatsService.getUserStats(StpUtil.getLoginIdAsLong());
+            if (usr != null)
+                return userStatsService.toVO(usr);
+            return null;
+        } catch (NotLoginException e) {
+            return null;
+        }
     }
 
     @ModelAttribute("timezone")
     public String viewerTimeZone() {
         if (!StpUtil.isLogin()) return settingsService.getValue(Setting.SITE_TIMEZONE);
         try {
-            var usr = usersService.getById(StpUtil.getLoginIdAsLong());
+            var usr = usersService.getUserById(StpUtil.getLoginIdAsLong());
             if (usr == null) return settingsService.getValue(Setting.SITE_TIMEZONE);
             return usr.getTimeZone();
         } catch (NotLoginException e) {
@@ -108,7 +126,7 @@ public class SaplingControllerAdvice {
     public UserVO addUserToModel() {
         if (!StpUtil.isLogin()) return null;
         try {
-            var usr = usersService.getById(StpUtil.getLoginIdAsLong());
+            var usr = usersService.getUserById(StpUtil.getLoginIdAsLong());
             if (usr != null)
                 return usersService.toVO(usr);
             return null;
@@ -116,7 +134,6 @@ public class SaplingControllerAdvice {
             return null;
         }
     }
-
 
     @ModelAttribute("siteName")
     public String addSiteName() {

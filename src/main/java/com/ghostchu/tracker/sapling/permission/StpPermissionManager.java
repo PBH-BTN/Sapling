@@ -26,7 +26,7 @@ public class StpPermissionManager implements StpInterface {
 
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
-        Users users = usersService.getById(Long.parseLong((String) loginId));
+        Users users = usersService.getUserById(Long.parseLong((String) loginId));
         List<Permissions> permissions = new ArrayList<>();
         permissions.addAll(permissionsService.getGroupPermissions(users.getPrimaryPermissionGroup(), false));
         permissions.addAll(permissionsService.getGroupPermissions(users.getLevelPermissionGroup(), true));
@@ -36,14 +36,14 @@ public class StpPermissionManager implements StpInterface {
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
         Users users = usersService.getById(Long.parseLong((String) loginId));
-        PermissionGroups primary = permissionGroupsService.getById(users.getPrimaryPermissionGroup());
-        LevelPermissionGroups level = levelPermissionGroupsService.getById(users.getLevelPermissionGroup());
+        PermissionGroups primary = permissionGroupsService.getPermissionGroupById(users.getPrimaryPermissionGroup());
+        LevelPermissionGroups level = levelPermissionGroupsService.getLevelPermissionGroupById(users.getLevelPermissionGroup());
         return List.of(primary.getName(), level.getName());
     }
 
     @Override
     public SaDisableWrapperInfo isDisabled(Object loginId, String service) {
-        Users users = usersService.getById(Long.parseLong((String) loginId));
+        Users users = usersService.getUserById(Long.parseLong((String) loginId));
         if (users.getBannedId() == null) return new SaDisableWrapperInfo(false, 0, 0);
         UserBans userBans = userBansService.getBanRecord(users.getBannedId());
         if (userBans == null) {
