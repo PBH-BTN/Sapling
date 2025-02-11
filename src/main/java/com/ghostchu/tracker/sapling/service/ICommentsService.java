@@ -24,4 +24,6 @@ public interface ICommentsService extends MPJBaseService<Comments> {
     Comments getCommentById(Long commentId);
 
     void removeCommentById(Long commentId, long loginIdAsLong);
+
+    long getCommentsCount(Long id);
 }

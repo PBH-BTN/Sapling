@@ -1,10 +1,13 @@
 package com.ghostchu.tracker.sapling.service;
 
 import com.ghostchu.tracker.sapling.entity.Peers;
+import com.ghostchu.tracker.sapling.entity.projection.PeerStats;
 import com.ghostchu.tracker.sapling.model.AnnounceRequest;
 import com.ghostchu.tracker.sapling.model.ScrapePeers;
 import com.github.yulichang.base.MPJBaseService;
 import jakarta.annotation.Nullable;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
 
@@ -23,4 +26,7 @@ public interface IPeersService extends MPJBaseService<Peers> {
     ScrapePeers scrape(long torrentId);
 
     void announce(List<AnnounceRequest> requests);
+
+    @Cacheable(value = "torrent_comment_count", key = "#torrentId")
+    PeerStats countPeersByTorrent(@Param("torrent") Long torrentId);
 }

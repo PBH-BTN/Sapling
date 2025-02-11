@@ -1,6 +1,7 @@
 package com.ghostchu.tracker.sapling.mapper;
 
 import com.ghostchu.tracker.sapling.entity.Peers;
+import com.ghostchu.tracker.sapling.entity.projection.PeerStats;
 import org.apache.ibatis.annotations.Param;
 
 import java.net.InetAddress;
@@ -24,5 +25,7 @@ public interface PeersMapper extends SaplingMapper<Peers> {
     List<Peers> selectPeersForUpdateList(@Param("torrent") long torrent,
                                          @Param("owner") long owner,
                                          @Param("peerId") byte[] peerId);
+
+    PeerStats countPeersByTorrent(@Param("torrent") long torrentId);
 }
 

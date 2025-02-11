@@ -2,6 +2,7 @@ package com.ghostchu.tracker.sapling.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ghostchu.tracker.sapling.entity.Peers;
+import com.ghostchu.tracker.sapling.entity.projection.PeerStats;
 import com.ghostchu.tracker.sapling.mapper.PeersMapper;
 import com.ghostchu.tracker.sapling.model.AnnounceRequest;
 import com.ghostchu.tracker.sapling.model.ScrapePeers;
@@ -13,7 +14,9 @@ import com.ghostchu.tracker.sapling.tracker.PeerEvent;
 import com.github.yulichang.base.MPJBaseServiceImpl;
 import jakarta.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -178,5 +181,11 @@ public class PeersServiceImpl extends MPJBaseServiceImpl<PeersMapper, Peers> imp
             log.info("User {} announce {} event {} left {} incrementUpload {} incrementDownload {} ip {}",
                     request.userId(), request.torrentId(), request.peerEvent(), request.left(), incrementUploaded, incrementDownloaded, request.peerIp().getHostAddress());
         }
+    }
+
+    @Override
+    @Cacheable(value = "torrent_comment_count", key = "#torrentId")
+    public PeerStats countPeersByTorrent(@Param("torrent") Long torrentId) {
+        return baseMapper.countPeersByTorrent(torrentId);
     }
 }

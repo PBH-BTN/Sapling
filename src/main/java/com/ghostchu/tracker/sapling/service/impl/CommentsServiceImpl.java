@@ -10,6 +10,8 @@ import com.ghostchu.tracker.sapling.service.IUsersService;
 import com.ghostchu.tracker.sapling.vo.CommentsVO;
 import com.github.yulichang.base.MPJBaseServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -35,6 +37,7 @@ public class CommentsServiceImpl extends MPJBaseServiceImpl<CommentsMapper, Comm
     }
 
     @Override
+    @CacheEvict(value = "torrent_comment_count", key = "#torrentId")
     public Comments createComment(long loginIdAsLong, long torrentId, Long parentId, String content) {
         Comments comment = new Comments();
         comment.setOwner(loginIdAsLong);
@@ -66,7 +69,14 @@ public class CommentsServiceImpl extends MPJBaseServiceImpl<CommentsMapper, Comm
     }
 
     @Override
+    @CacheEvict(value = "torrent_comment_count", key = "#torrentId")
     public void removeCommentById(Long commentId, long loginIdAsLong) {
         baseMapper.deleteById(commentId);
+    }
+
+    @Override
+    @Cacheable(value = "torrent_comment_count", key = "#torrentId")
+    public long getCommentsCount(Long torrentId) {
+        return count(new QueryWrapper<Comments>().eq("torrent", torrentId));
     }
 }

@@ -11,6 +11,7 @@ import com.ghostchu.tracker.sapling.dto.TorrentEditFormDTO;
 import com.ghostchu.tracker.sapling.dto.TorrentUploadFormDTO;
 import com.ghostchu.tracker.sapling.entity.Torrents;
 import com.ghostchu.tracker.sapling.entity.Users;
+import com.ghostchu.tracker.sapling.entity.projection.PeerStats;
 import com.ghostchu.tracker.sapling.exception.TorrentNotExistsException;
 import com.ghostchu.tracker.sapling.gvar.Permission;
 import com.ghostchu.tracker.sapling.gvar.Setting;
@@ -33,6 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -53,6 +55,8 @@ import java.util.stream.Collectors;
 public class TorrentsController {
     @Autowired
     private ITorrentsService torrentsService;
+    @Autowired
+    private IPeersService peersService;
     @Autowired
     private ICategoriesService categoriesService;
     @Autowired
@@ -82,7 +86,19 @@ public class TorrentsController {
                 StpUtil.hasPermission(Permission.TORRENT_VIEW_INVISIBLE),
                 StpUtil.hasPermission(Permission.TORRENT_VIEW_DELETED));
         // 准备模型数据
+        Map<Long, TorrentPreviewVO> torrentPreviewMap = new HashMap<>();
+        for (Torrents torrent : pageResult.getRecords()) {
+            long comments = commentsService.getCommentsCount(torrent.getId());
+            PeerStats peerStats = peersService.countPeersByTorrent(torrent.getId());
+            TorrentPreviewVO previewVO = new TorrentPreviewVO();
+            previewVO.setTorrentId(torrent.getId());
+            previewVO.setComments(comments);
+            previewVO.setSeeds(peerStats.getSeeds());
+            previewVO.setLeeches(peerStats.getLeeches());
+            torrentPreviewMap.put(torrent.getId(), previewVO);
+        }
         model.addAttribute("torrents", pageResult.getRecords().stream().map(torrentsService::toVO).toList());
+        model.addAttribute("torrentPreviewMap", torrentPreviewMap);
         model.addAttribute("pagination", pageResult);
         model.addAttribute("keyword", keyword);
         return "torrents";
