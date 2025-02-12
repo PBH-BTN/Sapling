@@ -102,7 +102,7 @@ public class UsersServiceImpl extends MPJBaseServiceImpl<UsersMapper, Users> imp
     @Override
     public UserVO toVO(Users user) {
         UserVO vo = new UserVO();
-        vo.setId(user.getId());
+        vo.setId(user.getId() == null ? 0 : user.getId());
         vo.setName(user.getName());
         vo.setEmail(user.getEmail());
         vo.setAvatar(user.getAvatar());

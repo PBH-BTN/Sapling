@@ -54,7 +54,7 @@ public class UserStatsServiceImpl extends MPJBaseServiceImpl<UserStatsMapper, Us
     @Override
     public UserStatsVO toVO(UserStats userStats) {
         UserStatsVO userStatsVO = new UserStatsVO();
-        userStatsVO.setId(userStats.getId());
+        userStatsVO.setId(userStats.getId() == null ? 0 : userStats.getId());
         userStatsVO.setOwner(userStats.getOwner());
         userStatsVO.setUploaded(userStats.getUploaded());
         userStatsVO.setDownloaded(userStats.getDownloaded());

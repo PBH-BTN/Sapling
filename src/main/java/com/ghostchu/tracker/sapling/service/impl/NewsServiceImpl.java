@@ -35,7 +35,7 @@ public class NewsServiceImpl extends MPJBaseServiceImpl<NewsMapper, News> implem
     @Override
     public NewsVO toVO(News news) {
         NewsVO vo = new NewsVO();
-        vo.setId(news.getId());
+        vo.setId(news.getId() == null ? 0 : news.getId());
         vo.setTitle(news.getTitle());
         vo.setDescription(news.getDescription());
         vo.setCreatedAt(news.getCreatedAt());

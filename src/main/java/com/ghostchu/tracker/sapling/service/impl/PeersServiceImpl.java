@@ -22,10 +22,6 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.expression.EvaluationContext;
-import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
-import org.springframework.expression.spel.support.SimpleEvaluationContext;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -147,17 +143,10 @@ public class PeersServiceImpl extends MPJBaseServiceImpl<PeersMapper, Peers> imp
 
             Torrents torrents = torrentsService.getTorrentById(request.torrentId());
             Promotions promotions = promotionsService.getPromotionsByIdAndPromotionStatus(torrents.getPromotion());
+
             if (promotions != null) {
-                ExpressionParser parser = new SpelExpressionParser();
-                EvaluationContext context = SimpleEvaluationContext.forReadOnlyDataBinding().build();
-                context.setVariable("torrent", torrentsService.toVO(torrents));
-                context.setVariable("user", usersService.toVO(usersService.getUserById(request.userId())));
-                context.setVariable("peer", toVO(peers));
-                Boolean evalResult = parser.parseExpression(promotions.getCondition()).getValue(context, Boolean.class);
-                if (evalResult != null && evalResult) {
-                    incrementUploaded = (long) (realIncreamentUploaded * promotions.getUploadModifier());
-                    incrementDownloaded = (long) (realIncreamentDownloaded * promotions.getDownloadModifier());
-                }
+                incrementUploaded = (long) (realIncreamentUploaded * promotions.getUploadModifier());
+                incrementDownloaded = (long) (realIncreamentDownloaded * promotions.getDownloadModifier());
             }
 
             // 更新到当前状态
@@ -240,7 +229,7 @@ public class PeersServiceImpl extends MPJBaseServiceImpl<PeersMapper, Peers> imp
     @Override
     public PeersVO toVO(Peers peers) {
         PeersVO peersVO = new PeersVO();
-        peersVO.setId(peers.getId());
+        peersVO.setId(peers.getId() == null ? 0 : peers.getId());
         peersVO.setTorrent(torrentsService.toVO(torrentsService.getTorrentById(peers.getTorrent())));
         peersVO.setOwner(usersService.toVO(usersService.getUserById(peers.getOwner())));
         peersVO.setPeerId(peers.getPeerId());

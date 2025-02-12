@@ -29,7 +29,7 @@ public class ClientsServiceImpl extends MPJBaseServiceImpl<ClientsMapper, Client
     @Override
     public ClientsVO toVO(Clients entity) {
         ClientsVO vo = new ClientsVO();
-        vo.setId(entity.getId());
+        vo.setId(entity.getId() == null ? 0 : entity.getId());
         vo.setName(entity.getName());
         vo.setAgentPattern(entity.getAgentPattern());
         vo.setPeerPattern(entity.getPeerPattern());

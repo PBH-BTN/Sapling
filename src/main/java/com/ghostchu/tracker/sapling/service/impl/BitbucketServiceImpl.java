@@ -63,7 +63,7 @@ public class BitbucketServiceImpl extends MPJBaseServiceImpl<BitbucketMapper, Bi
     @Override
     public BitbucketVO toVO(Bitbucket bitbucket) {
         BitbucketVO vo = new BitbucketVO();
-        vo.setId(bitbucket.getId());
+        vo.setId(bitbucket.getId() == null ? 0 : bitbucket.getId());
         vo.setDisplayName(bitbucket.getDisplayName());
         vo.setFilePath(bitbucket.getFilePath());
         vo.setHandler(bitbucket.getHandler());

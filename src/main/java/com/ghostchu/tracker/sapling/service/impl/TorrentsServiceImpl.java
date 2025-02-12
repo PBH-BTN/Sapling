@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.dampcake.bencode.Bencode;
 import com.dampcake.bencode.Type;
 import com.ghostchu.tracker.sapling.entity.Bitbucket;
+import com.ghostchu.tracker.sapling.entity.Promotions;
 import com.ghostchu.tracker.sapling.entity.Torrents;
 import com.ghostchu.tracker.sapling.entity.Users;
 import com.ghostchu.tracker.sapling.gvar.Setting;
@@ -69,7 +70,7 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
     @Override
     public TorrentsVO toVO(Torrents torrent) {
         TorrentsVO vo = new TorrentsVO();
-        vo.setId(torrent.getId());
+        vo.setId(torrent.getId() == null ? 0 : torrent.getId());
         vo.setOwner(usersService.toVO(usersService.getUserById(torrent.getOwner())));
         vo.setTitle(torrent.getTitle());
         vo.setSubtitle(torrent.getSubtitle());
@@ -147,6 +148,8 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
         torrents.setCreatedAt(OffsetDateTime.now());
         torrents.setVisible(visible); // 默认不审核
         torrents.setInfo(torrentInfo);
+        Promotions promotions = promotionsService.generatePromotion(toVO(torrents), usersService.toVO(usersService.getUserById(owner)));
+        torrents.setPromotion(promotions == null ? null : promotions.getId());
         this.save(torrents);
         return torrents;
     }

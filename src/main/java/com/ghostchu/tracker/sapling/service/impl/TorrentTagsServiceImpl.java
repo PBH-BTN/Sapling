@@ -53,7 +53,7 @@ public class TorrentTagsServiceImpl extends MPJBaseServiceImpl<TorrentTagsMapper
         var tags = tagsService.getTags(torrentTags.getTag());
         if (tags == null || torrents == null) return null;
         TorrentTagsVO torrentTagsVO = new TorrentTagsVO();
-        torrentTagsVO.setId(torrentTags.getId());
+        torrentTagsVO.setId(torrentTags.getId() == null ? 0 : torrentTags.getId());
         torrentTagsVO.setTorrent(torrentsService.toVO(torrents));
         torrentTagsVO.setTag(tagsService.toVO(tags));
         torrentTagsVO.setExtra(torrentTags.getExtra());

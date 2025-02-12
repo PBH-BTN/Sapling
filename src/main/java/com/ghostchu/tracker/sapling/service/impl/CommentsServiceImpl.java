@@ -52,7 +52,7 @@ public class CommentsServiceImpl extends MPJBaseServiceImpl<CommentsMapper, Comm
     @Override
     public CommentsVO toVO(Comments comments, boolean reference) {
         CommentsVO vo = new CommentsVO();
-        vo.setId(comments.getId());
+        vo.setId(comments.getId() == null ? 0 : comments.getId());
         vo.setOwner(usersService.toVO(usersService.getUserById(comments.getOwner())));
         vo.setTorrent(torrentsService.toVO(torrentsService.getTorrentById(comments.getTorrent())));
         vo.setContent(comments.getContent());

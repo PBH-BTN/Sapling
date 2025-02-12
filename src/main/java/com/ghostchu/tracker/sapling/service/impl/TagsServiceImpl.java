@@ -36,7 +36,7 @@ public class TagsServiceImpl extends MPJBaseServiceImpl<TagsMapper, Tags> implem
     @Override
     public TagsVO toVO(Tags tags) {
         TagsVO tagsVO = new TagsVO();
-        tagsVO.setId(tags.getId());
+        tagsVO.setId(tags.getId() == null ? 0 : tags.getId());
         tagsVO.setNamespace(tags.getNamespace());
         tagsVO.setTagname(tags.getTagname());
         return tagsVO;

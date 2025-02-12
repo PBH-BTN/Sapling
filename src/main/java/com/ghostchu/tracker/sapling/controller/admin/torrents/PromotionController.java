@@ -28,6 +28,8 @@ public class PromotionController {
     @GetMapping
     public String promotionsPage(Model model) {
         model.addAttribute("promotions", promotionService.getPromotions());
+        model.addAttribute("globalEnabled", settingsService.getValue(Setting.TORRENTS_PROMOTIONS_GLOBAL_ENABLED).orElse("false"));
+        model.addAttribute("globalPromotionId", settingsService.getValue(Setting.TORRENTS_PROMOTIONS_GLOBAL_PROMOTION_ID).orElse("0"));
         return "admin/torrents/promotions";
     }
 

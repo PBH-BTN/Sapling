@@ -36,7 +36,7 @@ public class ThanksServiceImpl extends MPJBaseServiceImpl<ThanksMapper, Thanks> 
         var torrents = torrentsService.getTorrentById(thanks.getTorrent());
         if (users == null || torrents == null) return null;
         ThanksVO thanksVO = new ThanksVO();
-        thanksVO.setId(thanks.getId());
+        thanksVO.setId(thanks.getId() == null ? 0 : thanks.getId());
         thanksVO.setOwner(usersService.toVO(users));
         thanksVO.setTorrent(torrentsService.toVO(torrents));
         thanksVO.setCreateAt(thanks.getCreateAt());

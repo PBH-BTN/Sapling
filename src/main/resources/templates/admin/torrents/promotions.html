@@ -31,7 +31,8 @@
                     <div class="col-auto">
                         <div class="custom-control custom-switch">
                             <input type="checkbox" class="custom-control-input"
-                                   id="globalSwitch" name="enabled">
+                                   id="globalSwitch" name="enabled"
+                                   th:checked="${globalEnabled}"> <!-- 动态绑定开关状态 -->
                             <label class="custom-control-label" for="globalSwitch">启用全站促销</label>
                         </div>
                     </div>
@@ -39,7 +40,8 @@
                         <select class="custom-select" name="promotionId" required>
                             <option th:each="p : ${promotions}"
                                     th:value="${p.id}"
-                                    th:text="${p.name}"></option>
+                                    th:text="${p.name}"
+                                    th:selected="${p.id == selectedPromotionId}"></option> <!-- 动态设置选中项 -->
                         </select>
                     </div>
                     <div class="col-auto">

@@ -30,7 +30,7 @@ public class CategoriesServiceImpl extends MPJBaseServiceImpl<CategoriesMapper, 
     }
 
     @Override
-    @Cacheable(value = "users", key = "'id:' + #id")
+    @Cacheable(value = "categories", key = "'id:' + #id")
     public Categories getCategoryById(long id) {
         return baseMapper.selectById(id);
     }

@@ -56,7 +56,7 @@ public class InvitesServiceImpl extends MPJBaseServiceImpl<InvitesMapper, Invite
     @Override
     public InvitesVO toVO(Invites invites) {
         InvitesVO vo = new InvitesVO();
-        vo.setId(invites.getId());
+        vo.setId(invites.getId() == null ? 0 : invites.getId());
         vo.setInviteBy(usersService.toVO(usersService.getUserById(invites.getInviteBy())));
         vo.setInviteEmail(invites.getInviteEmail());
         vo.setInviteUsername(invites.getInviteUsername());

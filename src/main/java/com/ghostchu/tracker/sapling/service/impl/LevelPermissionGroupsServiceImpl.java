@@ -27,7 +27,7 @@ public class LevelPermissionGroupsServiceImpl extends MPJBaseServiceImpl<LevelPe
     @Override
     public LevelPermissionGroupVO toVO(LevelPermissionGroups groups) {
         LevelPermissionGroupVO permissionGroupVO = new LevelPermissionGroupVO();
-        permissionGroupVO.setId(groups.getId());
+        permissionGroupVO.setId(groups.getId() == null ? 0 : groups.getId());
         permissionGroupVO.setName(groups.getName());
         permissionGroupVO.setColor(groups.getColor());
         return permissionGroupVO;

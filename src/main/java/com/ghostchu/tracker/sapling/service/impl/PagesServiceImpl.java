@@ -36,7 +36,7 @@ public class PagesServiceImpl extends MPJBaseServiceImpl<PagesMapper, Pages> imp
     @Override
     public PagesVO toVO(Pages pages) {
         PagesVO pagesVO = new PagesVO();
-        pagesVO.setId(pages.getId());
+        pagesVO.setId(pages.getId() == null ? 0 : pages.getId());
         pagesVO.setTitle(pages.getTitle());
         pagesVO.setHtmlContent(renderHtml(pages));
         pagesVO.setSlug(pages.getSlug());
