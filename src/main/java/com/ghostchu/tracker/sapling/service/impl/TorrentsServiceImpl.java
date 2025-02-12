@@ -101,7 +101,7 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
         Map<String, Object> decoded = bencode.decode(content, Type.DICTIONARY);
         decoded.remove("announce");
         decoded.remove("announce-list");
-        decoded.put("announce", settingsService.getValue(Setting.TRACKER_ANNOUNCE_URL) + "?passkey=" + user.getPasskey());
+        decoded.put("announce", settingsService.getValue(Setting.TRACKER_ANNOUNCE_URL).orElseThrow() + "?passkey=" + user.getPasskey());
         return bencode.encode(decoded);
     }
 
@@ -119,7 +119,7 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
         decoded.remove("nodes");
         Map<String, Object> infoMap = (Map<String, Object>) decoded.get("info");
         infoMap.put("private", 1);
-        infoMap.put("source", "[" + settingsService.getValue(Setting.SITE_NAME) + "]" + settingsService.getValue(Setting.SITE_URL));
+        infoMap.put("source", "[" + settingsService.getValue(Setting.SITE_NAME).orElseThrow() + "]" + settingsService.getValue(Setting.SITE_URL));
         byte[] processed = bencode.encode(decoded);
         /* 数据库检查是否有重复种子 */
         var torrentInfo = TorrentParser.parse(processed);

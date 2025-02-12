@@ -8,6 +8,8 @@ import com.github.yulichang.base.MPJBaseServiceImpl;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务实现类
@@ -43,6 +45,21 @@ public class PromotionsServiceImpl extends MPJBaseServiceImpl<PromotionsMapper, 
         vo.setUploadModifier(promotionsById.getUploadModifier());
         vo.setColor(promotionsById.getColor());
         return vo;
+    }
+
+    @Override
+    public List<Promotions> getPromotions() {
+        return list();
+    }
+
+    @Override
+    public void deletePromotion(Long id) {
+        removeById(id);
+    }
+
+    @Override
+    public void saveOrUpdatePromotions(Promotions promotions) {
+        saveOrUpdate(promotions);
     }
 
 }

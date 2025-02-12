@@ -91,7 +91,7 @@ public class SaplingControllerAdvice {
     }
 
     private void addModelAttributesForExceptionHandler(Model model) {
-        model.addAttribute("siteName", settingsService.getValue(Setting.SITE_NAME));
+        model.addAttribute("siteName", settingsService.getValue(Setting.SITE_NAME).orElseThrow());
         model.addAttribute("user", addUserToModel());
         model.addAttribute("userStats", addUserStatsToModel());
         model.addAttribute("timezone", viewerTimeZone());
@@ -112,13 +112,13 @@ public class SaplingControllerAdvice {
 
     @ModelAttribute("timezone")
     public String viewerTimeZone() {
-        if (!StpUtil.isLogin()) return settingsService.getValue(Setting.SITE_TIMEZONE);
+        if (!StpUtil.isLogin()) return settingsService.getValue(Setting.SITE_TIMEZONE).orElseThrow();
         try {
             var usr = usersService.getUserById(StpUtil.getLoginIdAsLong());
-            if (usr == null) return settingsService.getValue(Setting.SITE_TIMEZONE);
+            if (usr == null) return settingsService.getValue(Setting.SITE_TIMEZONE).orElseThrow();
             return usr.getTimeZone();
         } catch (NotLoginException e) {
-            return settingsService.getValue(Setting.SITE_TIMEZONE);
+            return settingsService.getValue(Setting.SITE_TIMEZONE).orElseThrow();
         }
     }
 
@@ -137,6 +137,6 @@ public class SaplingControllerAdvice {
 
     @ModelAttribute("siteName")
     public String addSiteName() {
-        return settingsService.getValue(Setting.SITE_NAME);
+        return settingsService.getValue(Setting.SITE_NAME).orElseThrow();
     }
 }

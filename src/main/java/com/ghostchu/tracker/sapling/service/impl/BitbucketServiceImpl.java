@@ -38,7 +38,7 @@ public class BitbucketServiceImpl extends MPJBaseServiceImpl<BitbucketMapper, Bi
     private ISettingsService settingsService;
 
     private String getBitbucketPath() {
-        return settingsService.getValue(Setting.BITBUCKET_PATH);
+        return settingsService.getValue(Setting.BITBUCKET_PATH).orElseThrow();
     }
 
     @Override

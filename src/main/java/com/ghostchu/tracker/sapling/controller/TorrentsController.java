@@ -192,7 +192,7 @@ public class TorrentsController {
                 || (torrent.isDeleted() && !StpUtil.hasPermission(Permission.TORRENT_VIEW_DELETED))) { // 已被删除
             throw new TorrentNotExistsException(null, id, "种子不存在或已被删除");
         }
-        String siteName = settingsService.getValue(Setting.SITE_NAME);
+        String siteName = settingsService.getValue(Setting.SITE_NAME).orElseThrow();
         Users user = usersService.getUserById(StpUtil.getLoginIdAsLong());
         String fileName = "[" + siteName + "]" + torrent.getTitle() + ".torrent";
         return ResponseEntity.ok()

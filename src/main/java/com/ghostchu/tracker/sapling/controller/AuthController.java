@@ -150,7 +150,7 @@ public class AuthController {
     }
 
     private boolean isPublicRegisterAllowed() {
-        return Boolean.parseBoolean(settingsService.getValue("user.register.public"));
+        return Boolean.parseBoolean(settingsService.getValue("user.register.public").orElseThrow());
     }
 
     private boolean inviteCodeIsValid(String inviteCode) {

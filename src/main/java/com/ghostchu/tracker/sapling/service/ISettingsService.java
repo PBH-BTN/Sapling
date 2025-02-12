@@ -3,6 +3,8 @@ package com.ghostchu.tracker.sapling.service;
 import com.ghostchu.tracker.sapling.entity.Settings;
 import com.github.yulichang.base.MPJBaseService;
 
+import java.util.Optional;
+
 /**
  * <p>
  *  服务类
@@ -15,9 +17,7 @@ public interface ISettingsService extends MPJBaseService<Settings> {
 
     Settings getSetting(String key);
 
-    String getValue(String key, String defaultValue);
-
-    String getValue(String key);
+    Optional<String> getValue(String key);
 
     boolean setValue(String key, String value);
 

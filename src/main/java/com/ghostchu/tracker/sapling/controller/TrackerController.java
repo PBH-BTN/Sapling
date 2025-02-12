@@ -112,19 +112,19 @@ public class TrackerController {
     @GetMapping("/announce")
     @ResponseBody
     public ResponseEntity<?> announce() throws URISyntaxException, UnknownHostException {
-        if (Boolean.parseBoolean(settingsService.getValue(Setting.TRACKER_MAINTENANCE))) {
+        if (Boolean.parseBoolean(settingsService.getValue(Setting.TRACKER_MAINTENANCE).orElseThrow())) {
             return ResponseEntity
                     .status(HttpStatus.SERVICE_UNAVAILABLE)
                     .contentType(MediaType.TEXT_PLAIN)
-                    .body(generateFailureResponse(settingsService.getValue(Setting.TRACKER_MAINTENANCE_MESSAGE), 86400));
+                    .body(generateFailureResponse(settingsService.getValue(Setting.TRACKER_MAINTENANCE_MESSAGE).orElseThrow(), 86400));
         }
         if (req.getQueryString() == null) {
-            return redirectTo(settingsService.getValue(Setting.SITE_URL));
+            return redirectTo(settingsService.getValue(Setting.SITE_URL).orElseThrow());
         }
         String userAgent = ServletUtil.ua(req);
         if (userAgent != null) {
             if (userAgent.contains("Mozilla")) {
-                return redirectTo(settingsService.getValue(Setting.SITE_URL));
+                return redirectTo(settingsService.getValue(Setting.SITE_URL).orElseThrow());
             }
         }
         var passkey = req.getParameter("passkey");
@@ -207,7 +207,7 @@ public class TrackerController {
         peersService.announce(requests);
         TrackedPeers peers;
         if (peerEvent != PeerEvent.STOPPED) {
-            peers = new TrackedPeers(peersService.fetchPeers(users.getId(), torrents.getId(), Math.min(Integer.parseInt(settingsService.getValue(Setting.TRACKER_ANNOUNCE_MAX_RETURNS)), numWant), true, null).getRecords());
+            peers = new TrackedPeers(peersService.fetchPeers(users.getId(), torrents.getId(), Math.min(Integer.parseInt(settingsService.getValue(Setting.TRACKER_ANNOUNCE_MAX_RETURNS).orElseThrow()), numWant), true, null).getRecords());
         } else {
             peers = new TrackedPeers(Collections.emptyList());
         }
@@ -249,11 +249,11 @@ public class TrackerController {
     }
 
     private long generateInterval() {
-        var offset = random.nextLong(Long.parseLong(settingsService.getValue(Setting.TRACKER_ANNOUNCE_INTERVAL_RANDOM_OFFSET)));
+        var offset = random.nextLong(Long.parseLong(settingsService.getValue(Setting.TRACKER_ANNOUNCE_INTERVAL_RANDOM_OFFSET).orElseThrow()));
         if (random.nextBoolean()) {
             offset = -offset;
         }
-        return Long.parseLong(settingsService.getValue(Setting.TRACKER_ANNOUNCE_INTERVAL)) + offset;
+        return Long.parseLong(settingsService.getValue(Setting.TRACKER_ANNOUNCE_INTERVAL).orElseThrow()) + offset;
     }
 
     public ResponseEntity<?> redirectTo(String url) throws URISyntaxException {
@@ -265,19 +265,19 @@ public class TrackerController {
     @GetMapping("/scrape")
     @ResponseBody
     public ResponseEntity<?> scrape() throws URISyntaxException {
-        if (Boolean.parseBoolean(settingsService.getValue(Setting.TRACKER_MAINTENANCE))) {
+        if (Boolean.parseBoolean(settingsService.getValue(Setting.TRACKER_MAINTENANCE).orElseThrow())) {
             return ResponseEntity
                     .status(HttpStatus.SERVICE_UNAVAILABLE)
                     .contentType(MediaType.TEXT_PLAIN)
-                    .body(generateFailureResponse(settingsService.getValue(Setting.TRACKER_MAINTENANCE_MESSAGE), 86400));
+                    .body(generateFailureResponse(settingsService.getValue(Setting.TRACKER_MAINTENANCE_MESSAGE).orElseThrow(), 86400));
         }
         if (req.getQueryString() == null) {
-            return redirectTo(settingsService.getValue(Setting.SITE_URL));
+            return redirectTo(settingsService.getValue(Setting.SITE_URL).orElseThrow());
         }
         String userAgent = ServletUtil.ua(req);
         if (userAgent != null) {
             if (userAgent.contains("Mozilla")) {
-                return redirectTo(settingsService.getValue(Setting.SITE_URL));
+                return redirectTo(settingsService.getValue(Setting.SITE_URL).orElseThrow());
             }
         }
         var passkey = req.getParameter("passkey");

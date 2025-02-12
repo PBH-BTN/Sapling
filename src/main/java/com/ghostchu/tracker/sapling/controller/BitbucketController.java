@@ -69,7 +69,7 @@ public class BitbucketController {
         long maxFileSizeInBytes = DataSize.parse(maxFileSize).toBytes();
         long maxRequestSizeInBytes = DataSize.parse(maxRequestSize).toBytes();
         model.addAttribute("maxFileSize", Math.min(maxFileSizeInBytes, maxRequestSizeInBytes));
-        var allowedExtensions = settingsService.getValue(Setting.BITBUCKET_ALLOWED_FILE_EXTENSION).split(";");
+        var allowedExtensions = settingsService.getValue(Setting.BITBUCKET_ALLOWED_FILE_EXTENSION).orElseThrow().split(";");
         StringJoiner joiner = new StringJoiner(", ", "[", "]");
         for (String allowedExtension : allowedExtensions) {
             joiner.add("'" + allowedExtension + "'");

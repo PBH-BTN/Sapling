@@ -10,6 +10,8 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 /**
  * <p>
  *  服务实现类
@@ -27,17 +29,12 @@ public class SettingsServiceImpl extends MPJBaseServiceImpl<SettingsMapper, Sett
         return getOne(new QueryWrapper<Settings>().eq("name", key));
     }
 
-    @Override
-    @Cacheable(value = "settings_value", key = "'key:'+#key+';defvalue:'+#defaultValue")
-    public String getValue(String key, String defaultValue) {
-        Settings value = getSetting(key);
-        return value == null ? defaultValue : value.getValue();
-    }
 
     @Override
     @Cacheable(value = "settings_value", key = "#key")
-    public String getValue(String key) {
-        return getValue(key, null);
+    public Optional<String> getValue(String key) {
+        var settings = getOne(new QueryWrapper<Settings>().eq("name", key));
+        return Optional.ofNullable(settings).map(Settings::getValue);
     }
 
     @Override
@@ -64,6 +61,4 @@ public class SettingsServiceImpl extends MPJBaseServiceImpl<SettingsMapper, Sett
     public boolean removeValue(String key) {
         return remove(new QueryWrapper<Settings>().eq("name", key));
     }
-
-
 }
