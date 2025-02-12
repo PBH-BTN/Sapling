@@ -37,11 +37,8 @@ public class PromotionController {
             @RequestParam boolean enabled,
             @RequestParam Long promotionId,
             RedirectAttributes redirectAttributes) {
-        Boolean enabledSitePromotion = Boolean.parseBoolean(settingsService.getValue(Setting.TORRENTS_PROMOTIONS_GLOBAL_ENABLED).orElseThrow());
-        Long promotionIdSetting = Long.parseLong(settingsService.getValue(Setting.TORRENTS_PROMOTIONS_GLOBAL_PROMOTION_ID).orElseThrow());
-        enabledSitePromotion.setValue(enabled ? "true" : "false");
-        promotionIdSetting.setValue(promotionId.toString());
-        settingsService.setValue()
+        settingsService.setValue(Setting.TORRENTS_PROMOTIONS_GLOBAL_ENABLED, String.valueOf(enabled));
+        settingsService.setValue(Setting.TORRENTS_PROMOTIONS_GLOBAL_PROMOTION_ID, String.valueOf(promotionId));
         redirectAttributes.addFlashAttribute("success", "全局促销设置已更新");
         return "redirect:/admin/torrents/promotions";
     }
