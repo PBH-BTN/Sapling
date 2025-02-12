@@ -12,8 +12,7 @@ import com.ghostchu.tracker.sapling.gvar.Setting;
 import com.ghostchu.tracker.sapling.mapper.TorrentsMapper;
 import com.ghostchu.tracker.sapling.service.*;
 import com.ghostchu.tracker.sapling.util.TorrentParser;
-import com.ghostchu.tracker.sapling.vo.TorrentDetailsVO;
-import com.ghostchu.tracker.sapling.vo.TorrentVO;
+import com.ghostchu.tracker.sapling.vo.TorrentsVO;
 import com.github.yulichang.base.MPJBaseServiceImpl;
 import lombok.Cleanup;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +45,8 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
     private ICategoriesService categoriesService;
     @Autowired
     private ISettingsService settingsService;
+    @Autowired
+    private IPromotionsService promotionsService;
 
     @Override
     @Cacheable(value = "torrents", key = "'id:' + #id")
@@ -66,25 +67,8 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
     }
 
     @Override
-    public TorrentVO toVO(Torrents torrent) {
-        TorrentVO vo = new TorrentVO();
-        vo.setId(torrent.getId());
-        vo.setOwner(usersService.toVO(usersService.getUserById(torrent.getOwner())));
-        vo.setTitle(torrent.getTitle());
-        vo.setSubtitle(torrent.getSubtitle());
-        vo.setSize(torrent.getSize());
-        vo.setCategory(categoriesService.toVO(categoriesService.getCategoryById(torrent.getCategory())));
-        vo.setNumFiles(torrent.getNumFiles());
-        vo.setCreatedAt(torrent.getCreatedAt());
-        vo.setAnonymous(torrent.isAnonymous());
-        vo.setVisible(torrent.isVisible());
-        vo.setDeleted(torrent.getDeletedAt() != null);
-        return vo;
-    }
-
-    @Override
-    public TorrentDetailsVO toDetailsVO(Torrents torrent) {
-        TorrentDetailsVO vo = new TorrentDetailsVO();
+    public TorrentsVO toVO(Torrents torrent) {
+        TorrentsVO vo = new TorrentsVO();
         vo.setId(torrent.getId());
         vo.setOwner(usersService.toVO(usersService.getUserById(torrent.getOwner())));
         vo.setTitle(torrent.getTitle());
@@ -97,6 +81,7 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
         vo.setAnonymous(torrent.isAnonymous());
         vo.setInfo(torrent.getInfo());
         vo.setVisible(torrent.isVisible());
+        vo.setPromotions(promotionsService.toVO(promotionsService.getPromotionsByIdAndPromotionStatus(torrent.getPromotion())));
         vo.setDeleted(torrent.getDeletedAt() != null);
         return vo;
     }

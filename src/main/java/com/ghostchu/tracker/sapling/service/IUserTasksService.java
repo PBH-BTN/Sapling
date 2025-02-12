@@ -16,6 +16,10 @@ import java.time.OffsetDateTime;
  */
 public interface IUserTasksService extends MPJBaseService<UserTasks> {
 
-    UserTasks updateUserTaskRecord(long owner, long torrent, long toGo, OffsetDateTime announceAt, PeerEvent event, long incrementUploaded,
-                                   long incrementDownloaded, long incrementSeedTime, long incrementLeechTime, String userAgent);
+    UserTasks updateUserTaskRecord(long owner, long torrent, long toGo, OffsetDateTime announceAt, PeerEvent event,
+                                   long incrementUploaded,
+                                   long incrementDownloaded,
+                                   long realIncrementUploaded,
+                                   long realIncrementDownloaded,
+                                   long incrementSeedTime, long incrementLeechTime, String userAgent);
 }

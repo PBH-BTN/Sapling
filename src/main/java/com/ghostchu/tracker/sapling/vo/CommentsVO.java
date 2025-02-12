@@ -27,7 +27,7 @@ public class CommentsVO implements Serializable {
 
     private UserVO owner;
 
-    private TorrentVO torrent;
+    private TorrentsVO torrent;
 
     private String content;
 

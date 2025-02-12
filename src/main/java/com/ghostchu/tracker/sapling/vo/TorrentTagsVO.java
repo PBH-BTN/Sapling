@@ -32,7 +32,7 @@ public class TorrentTagsVO implements Serializable {
     /**
      * 种子ID
      */
-    private TorrentVO torrent;
+    private TorrentsVO torrent;
 
     /**
      * 标签ID

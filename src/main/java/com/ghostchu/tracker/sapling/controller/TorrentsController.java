@@ -116,7 +116,7 @@ public class TorrentsController {
             throw new TorrentNotExistsException(null, id, "种子不存在或已被删除");
         }
         // 准备模型数据
-        model.addAttribute("torrent", torrentsService.toDetailsVO(torrent));
+        model.addAttribute("torrent", torrentsService.toVO(torrent));
         var recentThanks = thanksService.getThanksByPageByTorrent(id, 1, 20);
         model.addAttribute("totalThanks", recentThanks.getTotal());
         List<ThanksVO> thanksVOList = recentThanks.getRecords().stream().map(thanksService::toVO).filter(Objects::nonNull).toList();
@@ -205,7 +205,7 @@ public class TorrentsController {
     @SaCheckPermission(value = {Permission.TORRENT_EDIT, Permission.TORRENT_EDIT_OTHER}, mode = SaMode.OR)
     public String showEditForm(@PathVariable Long id, Model model) {
         // 获取种子详细信息（示例代码）
-        TorrentDetailsVO torrent = torrentsService.toDetailsVO(torrentsService.getTorrentById(id));
+        TorrentsVO torrent = torrentsService.toVO(torrentsService.getTorrentById(id));
         if (torrent == null
                 || (!torrent.isVisible() && !StpUtil.hasPermission(Permission.TORRENT_VIEW_INVISIBLE))  // 处于不可见状态
                 || (torrent.isDeleted() && !StpUtil.hasPermission(Permission.TORRENT_VIEW_DELETED))) { // 已被删除

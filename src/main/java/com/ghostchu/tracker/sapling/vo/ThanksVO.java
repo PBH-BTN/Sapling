@@ -35,7 +35,7 @@ public class ThanksVO implements Serializable {
     /**
      * 种子ID
      */
-    private TorrentVO torrent;
+    private TorrentsVO torrent;
 
     private OffsetDateTime createAt;
 }

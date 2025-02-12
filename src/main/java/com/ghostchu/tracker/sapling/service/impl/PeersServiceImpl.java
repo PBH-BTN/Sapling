@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ghostchu.tracker.sapling.entity.Peers;
+import com.ghostchu.tracker.sapling.entity.Promotions;
 import com.ghostchu.tracker.sapling.entity.Settings;
+import com.ghostchu.tracker.sapling.entity.Torrents;
 import com.ghostchu.tracker.sapling.entity.projection.PeerStats;
 import com.ghostchu.tracker.sapling.gvar.Setting;
 import com.ghostchu.tracker.sapling.mapper.PeersMapper;
@@ -20,6 +22,10 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.expression.EvaluationContext;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.SimpleEvaluationContext;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,6 +59,8 @@ public class PeersServiceImpl extends MPJBaseServiceImpl<PeersMapper, Peers> imp
     private RedisTemplate<String, String> redisTemplate;
     @Autowired
     private ITorrentsService torrentsService;
+    @Autowired
+    private IPromotionsService promotionsService;
 
     @Override
     public IPage<Peers> fetchPeers(long userId, long torrentId, int limit, boolean random, @Nullable Integer specificIpProtocolVersion) {
@@ -113,16 +121,16 @@ public class PeersServiceImpl extends MPJBaseServiceImpl<PeersMapper, Peers> imp
             PeerEvent previousEvent = PeerEvent.valueOf(peers.getLastAction());
             long previousToGo = peers.getToGo();
             // 根据offset计算差值
-            long incrementUploaded;
-            long incrementDownloaded;
+            long realIncreamentUploaded;
+            long realIncreamentDownloaded;
             if (peers.getDownloadOffset() > request.downloaded() || peers.getUploadOffset() > request.uploaded()) {
                 // 客户端数据重置了，下载器重启过？那么本次提交数据全部加上
-                incrementUploaded = request.uploaded();
-                incrementDownloaded = request.downloaded();
+                realIncreamentUploaded = request.uploaded();
+                realIncreamentDownloaded = request.downloaded();
             } else {
                 // 正常情况下，只有增加的数据
-                incrementUploaded = request.uploaded() - peers.getUploadOffset();
-                incrementDownloaded = request.downloaded() - peers.getDownloadOffset();
+                realIncreamentUploaded = request.uploaded() - peers.getUploadOffset();
+                realIncreamentDownloaded = request.downloaded() - peers.getDownloadOffset();
             }
 
             var redisKey = "announce_dupe_check:" + request.userId() + ":" + request.torrentId() + ":" + HexFormat.of().formatHex(request.peerId());
@@ -130,8 +138,26 @@ public class PeersServiceImpl extends MPJBaseServiceImpl<PeersMapper, Peers> imp
             String cachedValue = redisTemplate.opsForValue().getAndSet(redisKey, currentValue);
             redisTemplate.expire(redisKey, 60000, TimeUnit.MILLISECONDS);
             if (currentValue.equals(cachedValue)) {
-                incrementUploaded = 0;
-                incrementDownloaded = 0;
+                realIncreamentUploaded = 0;
+                realIncreamentDownloaded = 0;
+            }
+
+            long incrementUploaded = realIncreamentUploaded;
+            long incrementDownloaded = realIncreamentDownloaded;
+
+            Torrents torrents = torrentsService.getTorrentById(request.torrentId());
+            Promotions promotions = promotionsService.getPromotionsByIdAndPromotionStatus(torrents.getPromotion());
+            if (promotions != null) {
+                ExpressionParser parser = new SpelExpressionParser();
+                EvaluationContext context = SimpleEvaluationContext.forReadOnlyDataBinding().build();
+                context.setVariable("torrent", torrentsService.toVO(torrents));
+                context.setVariable("user", usersService.toVO(usersService.getUserById(request.userId())));
+                context.setVariable("peer", toVO(peers));
+                Boolean evalResult = parser.parseExpression(promotions.getCondition()).getValue(context, Boolean.class);
+                if (evalResult != null && evalResult) {
+                    incrementUploaded = (long) (realIncreamentUploaded * promotions.getUploadModifier());
+                    incrementDownloaded = (long) (realIncreamentDownloaded * promotions.getDownloadModifier());
+                }
             }
 
             // 更新到当前状态
@@ -175,6 +201,8 @@ public class PeersServiceImpl extends MPJBaseServiceImpl<PeersMapper, Peers> imp
                     request.peerEvent(),
                     incrementUploaded,
                     incrementDownloaded,
+                    realIncreamentUploaded,
+                    realIncreamentDownloaded,
                     incrementSeedingTime,
                     incrementLeechingTime,
                     request.ua()
@@ -182,13 +210,13 @@ public class PeersServiceImpl extends MPJBaseServiceImpl<PeersMapper, Peers> imp
             var userStats = userStatsService.selectUserStatsForUpdate(request.userId());
             userStats.setUploaded(userStats.getUploaded() + incrementUploaded);
             userStats.setDownloaded(userStats.getDownloaded() + incrementDownloaded);
-            userStats.setUploadedReal(userStats.getUploadedReal() + incrementUploaded);
-            userStats.setDownloadedReal(userStats.getDownloadedReal() + incrementDownloaded);
+            userStats.setUploadedReal(userStats.getUploadedReal() + realIncreamentUploaded);
+            userStats.setDownloadedReal(userStats.getDownloadedReal() + realIncreamentDownloaded);
             userStats.setSeedTime(userStats.getSeedTime() + incrementSeedingTime);
             userStats.setLeechTime(userStats.getLeechTime() + incrementLeechingTime);
             userStatsService.updateUserStats(userStats);
             log.info("User {} announce {} event {} left {} incrementUpload {} incrementDownload {} ip {}",
-                    request.userId(), request.torrentId(), request.peerEvent(), request.left(), incrementUploaded, incrementDownloaded, request.peerIp().getHostAddress());
+                    request.userId(), request.torrentId(), request.peerEvent(), request.left(), realIncreamentUploaded, realIncreamentDownloaded, request.peerIp().getHostAddress());
         }
     }
 

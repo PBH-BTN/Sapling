@@ -16,7 +16,7 @@ import java.time.OffsetDateTime;
 public class PeersVO implements Serializable {
     private static final long serialVersionUID = 1L;
     private Long id;
-    private TorrentVO torrent;
+    private TorrentsVO torrent;
     private UserVO owner;
     private byte[] peerId;
     private InetAddress ip;

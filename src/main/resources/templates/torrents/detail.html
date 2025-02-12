@@ -23,7 +23,14 @@
         <div class="card shadow-lg">
             <div class="card-body">
                 <div class="mb-4">
-                    <h1 class="mb-1" th:text="${torrent.title}"></h1>
+                    <h1 class="mb-1">
+                        <span th:text="${torrent.title}"></span>
+                        <span class="badge text-contrast"
+                              th:if="${torrent.promotions}"
+                              th:style="'background-color:' + ${torrent.promotions.color}"
+                              th:data-bg-color="${torrent.promotions.color}"
+                              th:text="${torrent.promotions.name}"></span>
+                    </h1>
                     <h2 class="text-muted" th:text="${torrent.subtitle}"></h2>
                 </div>
                 <table class="table table-sm table-borderless">

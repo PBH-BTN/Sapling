@@ -11,7 +11,7 @@ import java.time.OffsetDateTime;
 @Getter
 @Setter
 @ToString
-public class TorrentDetailsVO implements Serializable {
+public class TorrentsVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -66,5 +66,7 @@ public class TorrentDetailsVO implements Serializable {
 
     private boolean visible;
     private boolean deleted;
+
+    private PromotionsVO promotions;
 
 }

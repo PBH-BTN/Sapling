@@ -26,7 +26,7 @@ public class UserTaskRecordsVO implements Serializable {
 
     private Long id;
 
-    private TorrentVO torrent;
+    private TorrentsVO torrent;
 
     private UserVO owner;
 

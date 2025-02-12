@@ -3,8 +3,7 @@ package com.ghostchu.tracker.sapling.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ghostchu.tracker.sapling.entity.Torrents;
 import com.ghostchu.tracker.sapling.entity.Users;
-import com.ghostchu.tracker.sapling.vo.TorrentDetailsVO;
-import com.ghostchu.tracker.sapling.vo.TorrentVO;
+import com.ghostchu.tracker.sapling.vo.TorrentsVO;
 import com.github.yulichang.base.MPJBaseService;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,10 +22,7 @@ public interface ITorrentsService extends MPJBaseService<Torrents> {
 
     IPage<Torrents> getTorrentsByPage(long page, int size, String keyword, boolean includeInvisible, boolean includeDeleted);
 
-
-    TorrentVO toVO(Torrents torrent);
-
-    TorrentDetailsVO toDetailsVO(Torrents torrent);
+    TorrentsVO toVO(Torrents torrent);
 
     boolean isTorrentExists(byte[] infoHash);
 
