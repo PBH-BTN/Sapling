@@ -102,7 +102,7 @@
                                            style="font-size:1rem; min-width: 0;"></a>
                                         <span class="badge text-contrast"
                                               th:if="${torrent.promotions}"
-                                              th:style="'background-color:' + ${torrent.promotions.color}"
+                                              th:styleappend="'background-color:' + ${torrent.promotions.color}"
                                               th:data-bg-color="${torrent.promotions.color}"
                                               th:text="${torrent.promotions.name}"></span>
                                         <small class="text-muted" th:if="${torrent.deleted}">[已删除]</small>
