@@ -23,7 +23,7 @@ public class UserTasksServiceImpl extends MPJBaseServiceImpl<UserTasksMapper, Us
     @Override
     @Retryable
     public UserTasks updateUserTaskRecord(long owner, long torrent, long toGo, OffsetDateTime announceAt, PeerEvent event, long incrementUploaded,
-                                          long incrementDownloaded, long incrementSeedTime, long incrementLeechTime, String userAgent) {
+                                          long incrementDownloaded, long realIncrementUploaded, long realIncrementDownloaded, long incrementSeedTime, long incrementLeechTime, String userAgent) {
         UserTasks userTasks = this.baseMapper.selectUserTaskRecordsForUpdate(owner, torrent);
         if (userTasks == null) {
             userTasks = new UserTasks();
@@ -33,8 +33,8 @@ public class UserTasksServiceImpl extends MPJBaseServiceImpl<UserTasksMapper, Us
         userTasks.setToGo(toGo);
         userTasks.setLastAnnounce(announceAt);
         userTasks.setLastEvent(event.name());
-        userTasks.setUploaded(userTasks.getUploaded() + incrementUploaded);
-        userTasks.setDownloaded(userTasks.getDownloaded() + incrementDownloaded);
+        userTasks.setUploaded(userTasks.getUploaded() + realIncrementUploaded);
+        userTasks.setDownloaded(userTasks.getDownloaded() + realIncrementDownloaded);
         userTasks.setSeedTime(userTasks.getSeedTime() + incrementSeedTime);
         userTasks.setLeechTime(userTasks.getLeechTime() + incrementLeechTime);
         if (event == PeerEvent.COMPLETED || toGo == 0) {
