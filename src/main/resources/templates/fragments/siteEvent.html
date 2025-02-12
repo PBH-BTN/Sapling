@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div class="container mb-3" th:fragment="event(siteEvents)">
+    <div class="alert alert-success" role="alert" th:each="event : ${siteEvents}" style="margin-top: 1rem">
+        <h4 class="alert-heading" th:if="${event.title}" th:utext="${event.title}"></h4>
+        <p th:if="${event.description}" th:utext="${event.description}"></p>
+    </div>
+</div>
+</html>
+
+

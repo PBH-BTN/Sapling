@@ -1,12 +1,16 @@
 package com.ghostchu.tracker.sapling.service.impl;
 
 import com.ghostchu.tracker.sapling.entity.Promotions;
+import com.ghostchu.tracker.sapling.gvar.Setting;
 import com.ghostchu.tracker.sapling.mapper.PromotionsMapper;
 import com.ghostchu.tracker.sapling.service.IPromotionsService;
+import com.ghostchu.tracker.sapling.service.ISettingsService;
 import com.ghostchu.tracker.sapling.vo.PromotionsVO;
 import com.ghostchu.tracker.sapling.vo.TorrentsVO;
 import com.ghostchu.tracker.sapling.vo.UserVO;
 import com.github.yulichang.base.MPJBaseServiceImpl;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.ExpressionParser;
@@ -26,7 +30,11 @@ import java.util.concurrent.ThreadLocalRandom;
  * @since 2025-02-04
  */
 @Service
+@Slf4j
 public class PromotionsServiceImpl extends MPJBaseServiceImpl<PromotionsMapper, Promotions> implements IPromotionsService {
+
+    @Autowired
+    private ISettingsService settingsService;
 
     @Override
     @Cacheable(value = "promotions", key = "#id")
@@ -36,6 +44,10 @@ public class PromotionsServiceImpl extends MPJBaseServiceImpl<PromotionsMapper, 
 
     @Override
     public Promotions getPromotionsByIdAndPromotionStatus(Long id) {
+        boolean useGlobalPromotion = Boolean.parseBoolean(settingsService.getValue(Setting.TORRENTS_PROMOTIONS_GLOBAL_ENABLED).orElse("false"));
+        if (useGlobalPromotion) {
+            return getById(Long.parseLong(settingsService.getValue(Setting.TORRENTS_PROMOTIONS_GLOBAL_PROMOTION_ID).orElseThrow()));
+        }
         if (id == null) {
             return null;
         }
