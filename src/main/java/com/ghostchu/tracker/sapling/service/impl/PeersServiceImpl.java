@@ -10,6 +10,7 @@ import com.ghostchu.tracker.sapling.model.AnnounceRequest;
 import com.ghostchu.tracker.sapling.model.ScrapePeers;
 import com.ghostchu.tracker.sapling.service.*;
 import com.ghostchu.tracker.sapling.tracker.PeerEvent;
+import com.ghostchu.tracker.sapling.vo.PeersVO;
 import com.github.yulichang.base.MPJBaseServiceImpl;
 import jakarta.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +49,8 @@ public class PeersServiceImpl extends MPJBaseServiceImpl<PeersMapper, Peers> imp
     private IUserStatsService userStatsService;
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
+    @Autowired
+    private ITorrentsService torrentsService;
 
     @Override
     public List<Peers> fetchPeers(long userId, long torrentId, int limit, @Nullable Integer specificIpProtocolVersion) {
@@ -201,5 +204,28 @@ public class PeersServiceImpl extends MPJBaseServiceImpl<PeersMapper, Peers> imp
         OffsetDateTime cutoff = now.minus(intervalValue, ChronoUnit.MILLIS);
         int removed = this.baseMapper.delete(new QueryWrapper<Peers>().le("last_announce", cutoff));
         log.info("Cleanup peers, removed {} peers", removed);
+    }
+
+    @Override
+    public PeersVO toVO(Peers peers) {
+        PeersVO peersVO = new PeersVO();
+        peersVO.setId(peers.getId());
+        peersVO.setTorrent(torrentsService.toVO(torrentsService.getTorrentById(peers.getTorrent())));
+        peersVO.setOwner(usersService.toVO(usersService.getUserById(peers.getOwner())));
+        peersVO.setPeerId(peers.getPeerId());
+        peersVO.setIp(peers.getIp());
+        peersVO.setPort(peers.getPort());
+        peersVO.setUploaded(peers.getUploaded());
+        peersVO.setDownloaded(peers.getDownloaded());
+        peersVO.setToGo(peers.getToGo());
+        peersVO.setStarted(peers.getStarted());
+        peersVO.setLastAnnounce(peers.getLastAnnounce());
+        peersVO.setConnectable(peers.getConnectable());
+        peersVO.setDownloadOffset(peers.getDownloadOffset());
+        peersVO.setUploadOffset(peers.getUploadOffset());
+        peersVO.setUserAgent(peers.getUserAgent());
+        peersVO.setLastAction(peers.getLastAction());
+        peersVO.setReqIp(peers.getReqIp());
+        return peersVO;
     }
 }

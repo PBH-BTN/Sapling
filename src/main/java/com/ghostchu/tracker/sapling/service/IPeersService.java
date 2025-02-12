@@ -4,6 +4,7 @@ import com.ghostchu.tracker.sapling.entity.Peers;
 import com.ghostchu.tracker.sapling.entity.projection.PeerStats;
 import com.ghostchu.tracker.sapling.model.AnnounceRequest;
 import com.ghostchu.tracker.sapling.model.ScrapePeers;
+import com.ghostchu.tracker.sapling.vo.PeersVO;
 import com.github.yulichang.base.MPJBaseService;
 import jakarta.annotation.Nullable;
 import org.apache.ibatis.annotations.Param;
@@ -27,4 +28,6 @@ public interface IPeersService extends MPJBaseService<Peers> {
     void announce(List<AnnounceRequest> requests);
 
     PeerStats countPeersByTorrent(@Param("torrent") Long torrentId);
+
+    PeersVO toVO(Peers peers);
 }
