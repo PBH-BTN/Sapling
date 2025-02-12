@@ -54,20 +54,23 @@
                         <th class="centered-td" scope="row">操作</th>
                         <td class="centered-td">
                             <div class="d-flex flex-row gap-2 align-items-center">
-                                <div sa:hasPermissionOr="torrent.edit, torrent.edit.other" class="pe-2">
+                                <div sa:hasPermission="torrent.download" class="ps-2 mr-2">
+                                    <a th:href="@{/torrents/{id}/download(id=${torrent.id})}" class="text-nowrap">
+                                        <i class="fas fa-download mr-1"></i>下载种子
+                                    </a>
+                                </div>
+                                <div sa:hasPermissionOr="torrent.edit, torrent.edit.other" class="ps-2 mr-2">
                                     <a th:href="@{/torrents/{id}/edit(id=${torrent.id})}" class="text-nowrap">
                                         <i class="fa-solid fa-pen-to-square mr-1"></i>编辑
                                     </a>
                                 </div>
-                                <div class="border-start border-secondary" style="height: 1.2em; width: 0.8em"></div>
-                                <div sa:hasPermissionOr="torrent.delete, torrent.delete.other" class="ps-2">
+                                <div sa:hasPermissionOr="torrent.delete, torrent.delete.other" class="ps-2 mr-2">
                                     <a th:href="@{/torrents/{id}/delete(id=${torrent.id})}"
                                        class="text-danger text-nowrap" th:hidden="${torrent.deleted}"><i
                                             class="fa-solid fa-trash mr-1"></i>删除
                                     </a>
                                 </div>
-                                <div class="border-start border-secondary" style="height: 1.2em; width: 0.8em"></div>
-                                <div sa:hasPermissionOr="torrent.undelete" class="ps-2">
+                                <div sa:hasPermissionOr="torrent.undelete" class="ps-2 mr-2">
                                     <a th:href="@{/torrents/{id}/undelete(id=${torrent.id})}"
                                        class="text-primary text-nowrap" th:hidden="!${torrent.deleted}"><i
                                             class="fa-solid fa-trash-arrow-up mr-1"></i>反删除
@@ -105,7 +108,8 @@
                         <button th:disabled="${thankedTorrent}"
                                 class="btn btn-outline-primary btn-sm"
                                 id="thankButton">
-                            <i class="fas fa-hand-holding-heart"></i> 说谢谢
+                            <i class="fas fa-hand-holding-heart"></i> <span
+                                th:text="${thankedTorrent ? '已感谢发布者' : '说谢谢'}">说谢谢</span>
                         </button>
                     </div>
                 </div>
@@ -121,10 +125,71 @@
                     <span th:if="${thanksTotalSize > #lists.size(thanks)}"
                           class="badge badge-pill badge-secondary">+<span
                             th:text="${thanksTotalSize - #lists.size(thanks)}"></span> 位用户
-            </span>
+                    </span>
                 </div>
             </div>
         </div>
+
+
+        <div class="container my-4">
+            <div class="card shadow-lg">
+                <div class="card-body d-flex justify-content-between align-items-center flex-wrap">
+                    <!-- 标题和总数 -->
+                    <div>
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-person text-danger"></i>
+                            同伴
+                            <small class="text-muted">（共 <span th:text="${peers.total}"></span> 个同伴）</small>
+                        </h5>
+                    </div>
+                </div>
+                <!-- 显示感谢列表 -->
+                <div class="card-body">
+                    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#peersCollapse"
+                            aria-expanded="false" aria-controls="peersCollapse">
+                        展开/折叠同伴列表
+                    </button>
+                    <div class="collapse" id="peersCollapse">
+                        <div class="card card-body">
+                            <p th:if="${peers.records.size() != peers.total}">由于记录数量过多，此处仅展示前 <span
+                                    th:text="${peers.records.size()}"> 条记录。</span></p>
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>用户</th>
+                                    <th>IP类型</th>
+                                    <th>上传量</th>
+                                    <th>下载量</th>
+                                    <th>分享率</th>
+                                    <th>进度</th>
+                                    <th>连接时间</th>
+                                    <th>最近汇报</th>
+                                    <th>客户端</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="peer : ${peers.records}">
+                                    <td nowrap th:text="${peer.owner.name}"
+                                        th:styleappend="'color:'+${peer.owner.primaryPermissionGroup.color}"
+                                        th:href="@{/users/profile/{id}(id=${torrent.owner.id})}">用户名
+                                    </td>
+                                    <td nowrap th:text="${peer.ipType()}">上传量</td>
+                                    <td nowrap th:text="${unitConverter.autoUnit(peer.uploaded)}">上传量</td>
+                                    <td nowrap th:text="${unitConverter.autoUnit(peer.downloaded)}">下载量</td>
+                                    <td nowrap th:text="${peer.shareRatioStr()}">分享率</td>
+                                    <td nowrap th:text="${peer.progress() + '%'}">进度</td>
+                                    <td th:text="${timeConverter.formatDuration(peer.connectionTime())}">连接时间</td>
+                                    <td th:text="${timeConverter.formatTime(peer.lastAnnounce, timezone)}">最近汇报</td>
+                                    <td th:text="${peer.userAgent}">客户端</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="container my-4">
             <div class="card shadow-lg">
                 <div class="card-body d-flex justify-content-between align-items-center flex-wrap">
@@ -150,7 +215,7 @@
                                     </button>
                                 </h2>
                             </div>
-                            <div id="fileListCollapse" class="collapse show" aria-labelledby="headingFileList"
+                            <div id="fileListCollapse" class="collapse" aria-labelledby="headingFileList"
                                  data-parent="#torrentInfos">
                                 <div class="card-body">
                                     <textarea style="width: 100%; height: min-content" disabled
@@ -209,13 +274,13 @@
 
 <!-- 操作按钮 -->
 <div class="text-center">
-    <a th:href="@{/torrents/{id}/download(id=${torrent.id})}"
+    <a sa:hasPermission="torrent.download" th:href="@{/torrents/{id}/download(id=${torrent.id})}"
        class="btn btn-primary btn-lg mr-3">
         <i class="fas fa-download mr-2"></i>下载种子
     </a>
-    <button class="btn btn-outline-secondary btn-lg">
-        <i class="fas fa-star mr-2"></i>加入收藏
-    </button>
+    <!--    <button class="btn btn-outline-secondary btn-lg">-->
+    <!--        <i class="fas fa-star mr-2"></i>加入收藏-->
+    <!--    </button>-->
     <!--                <div th:if="${user.admin}" class="mt-3">-->
     <!--                    <button class="btn btn-danger btn-sm">-->
     <!--                        <i class="fas fa-trash mr-2"></i>删除种子-->

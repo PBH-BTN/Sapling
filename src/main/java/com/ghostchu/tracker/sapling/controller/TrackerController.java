@@ -207,7 +207,7 @@ public class TrackerController {
         peersService.announce(requests);
         TrackedPeers peers;
         if (peerEvent != PeerEvent.STOPPED) {
-            peers = new TrackedPeers(peersService.fetchPeers(users.getId(), torrents.getId(), Math.min(Integer.parseInt(settingsService.getValue(Setting.TRACKER_ANNOUNCE_MAX_RETURNS)), numWant), null));
+            peers = new TrackedPeers(peersService.fetchPeers(users.getId(), torrents.getId(), Math.min(Integer.parseInt(settingsService.getValue(Setting.TRACKER_ANNOUNCE_MAX_RETURNS)), numWant), true, null).getRecords());
         } else {
             peers = new TrackedPeers(Collections.emptyList());
         }

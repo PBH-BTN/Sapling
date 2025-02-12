@@ -5,6 +5,7 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaMode;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.plugins.pagination.PageDTO;
 import com.ghostchu.tracker.sapling.dto.ConfirmFormDTO;
 import com.ghostchu.tracker.sapling.dto.TorrentEditFormDTO;
@@ -129,6 +130,10 @@ public class TorrentsController {
         Map<String, List<TorrentTagsVO>> groupedTags = torrentTags.stream()
                 .collect(Collectors.groupingBy(t -> t.getTag().getNamespace()));
         model.addAttribute("torrentTags", groupedTags);
+        var peers = peersService.fetchPeers(0, torrent.getId(), Short.MAX_VALUE, false, null);
+        IPage<PeersVO> peersVOIPage = new Page<>(peers.getCurrent(), peers.getSize(), peers.getTotal(), peers.searchCount());
+        peersVOIPage.setRecords(peers.getRecords().stream().map(peersService::toVO).toList());
+        model.addAttribute("peers", peersVOIPage);
         return "torrents/detail";
     }
 

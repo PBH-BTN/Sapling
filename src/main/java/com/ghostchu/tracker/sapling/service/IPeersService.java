@@ -1,5 +1,6 @@
 package com.ghostchu.tracker.sapling.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ghostchu.tracker.sapling.entity.Peers;
 import com.ghostchu.tracker.sapling.entity.projection.PeerStats;
 import com.ghostchu.tracker.sapling.model.AnnounceRequest;
@@ -21,7 +22,7 @@ import java.util.List;
  */
 public interface IPeersService extends MPJBaseService<Peers> {
 
-    List<Peers> fetchPeers(long userId, long torrentId, int limit, @Nullable Integer specificIpProtocolVersion);
+    IPage<Peers> fetchPeers(long userId, long torrentId, int limit, boolean random, @Nullable Integer specificIpProtocolVersion);
 
     ScrapePeers scrape(long torrentId);
 

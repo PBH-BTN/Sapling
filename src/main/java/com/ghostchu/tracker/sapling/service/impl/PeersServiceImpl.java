@@ -1,6 +1,8 @@
 package com.ghostchu.tracker.sapling.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ghostchu.tracker.sapling.entity.Peers;
 import com.ghostchu.tracker.sapling.entity.Settings;
 import com.ghostchu.tracker.sapling.entity.projection.PeerStats;
@@ -53,16 +55,17 @@ public class PeersServiceImpl extends MPJBaseServiceImpl<PeersMapper, Peers> imp
     private ITorrentsService torrentsService;
 
     @Override
-    public List<Peers> fetchPeers(long userId, long torrentId, int limit, @Nullable Integer specificIpProtocolVersion) {
+    public IPage<Peers> fetchPeers(long userId, long torrentId, int limit, boolean random, @Nullable Integer specificIpProtocolVersion) {
+        IPage<Peers> peersIPage = new Page<>(1, limit);
         var wrapper = new QueryWrapper<Peers>()
                 .eq("torrent", torrentId)
-                .orderByAsc("RANDOM()")
-                .last("LIMIT " + limit);
+                .orderByAsc(random, "RANDOM()")
+                .orderByDesc(!random, "last_announce");
         if (specificIpProtocolVersion != null) {
             wrapper = wrapper.eq("family(ip) = {0}", specificIpProtocolVersion);
         }
         wrapper = wrapper.ne("owner", userId);
-        return list(wrapper);
+        return page(peersIPage, wrapper);
     }
 
     @Override

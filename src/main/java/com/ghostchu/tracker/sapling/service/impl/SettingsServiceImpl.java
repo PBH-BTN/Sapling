@@ -28,14 +28,14 @@ public class SettingsServiceImpl extends MPJBaseServiceImpl<SettingsMapper, Sett
     }
 
     @Override
-    @Cacheable(value = "settings", key = "'key:'+#key+';defvalue:'+#defaultValue")
+    @Cacheable(value = "settings_value", key = "'key:'+#key+';defvalue:'+#defaultValue")
     public String getValue(String key, String defaultValue) {
         Settings value = getSetting(key);
         return value == null ? defaultValue : value.getValue();
     }
 
     @Override
-    @Cacheable(value = "settings", key = "#key")
+    @Cacheable(value = "settings_value", key = "#key")
     public String getValue(String key) {
         return getValue(key, null);
     }
@@ -43,7 +43,8 @@ public class SettingsServiceImpl extends MPJBaseServiceImpl<SettingsMapper, Sett
     @Override
     @Caching(
             evict = {
-                    @CacheEvict(value = "settings", key = "#key")
+                    @CacheEvict(value = "settings", key = "#key"),
+                    @CacheEvict(value = "settings_value", key = "#key")
             }
     )
     public boolean setValue(String key, String value) {
