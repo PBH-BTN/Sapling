@@ -219,7 +219,9 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
     public Torrents unDeleteTorrent(long id) {
         Torrents torrents = baseMapper.selectById(id);
         torrents.setDeletedAt(null);
-        baseMapper.updateById(torrents);
+        if (baseMapper.updateById(torrents) == 0) {
+            throw new IllegalArgumentException("反删除操作失败，种子已经反删除或者已有相同 InfoHash 值的种子存在");
+        }
         return torrents;
     }
 }
