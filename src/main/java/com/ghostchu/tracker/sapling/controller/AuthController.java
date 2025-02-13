@@ -11,7 +11,9 @@ import com.ghostchu.tracker.sapling.service.IUsersService;
 import com.ghostchu.tracker.sapling.service.impl.InvitesServiceImpl;
 import com.ghostchu.tracker.sapling.util.SecretUtil;
 import com.ghostchu.tracker.sapling.util.ServletUtil;
+import com.pig4cloud.captcha.utils.CaptchaJakartaUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -48,6 +50,7 @@ public class AuthController {
         }
         model.addAttribute("username", "");
         model.addAttribute("password", "");
+        model.addAttribute("captcha", "");
         return "login";
     }
 
@@ -62,12 +65,17 @@ public class AuthController {
         if (bindingResult.hasErrors()) {
             return "login";
         }
+        if (!CaptchaJakartaUtil.ver(loginFormDTO.getCaptcha(), request)) {
+            redirectAttributes.addAttribute("error", "验证码无效或已过期");
+            CaptchaJakartaUtil.clear(request);
+            return "redirect:/auth/login"; // 重定向到登录页（会保留参数）
+        }
         var matchedUser = loginViaCredentials(
                 loginFormDTO.getUsername(),
                 loginFormDTO.getPassword()
         );
         if (matchedUser == null) {
-            redirectAttributes.addAttribute("error", true); // 添加 URL 参数
+            redirectAttributes.addAttribute("error", "用户名或密码错误"); // 添加 URL 参数
             return "redirect:/auth/login"; // 重定向到登录页（会保留参数）
         }
         matchedUser.setLastLoginAt(OffsetDateTime.now());
@@ -102,7 +110,7 @@ public class AuthController {
 
     @PostMapping("/register")
     @Transactional
-    public String register(@Valid RegFormDTO regFormDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
+    public String register(@Valid RegFormDTO regFormDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpServletRequest request, Model model) {
         Invites invite = null;
         if (regFormDTO.getInviteCode() != null) {
             invite = invitesService.getInviteByCode(regFormDTO.getInviteCode());
@@ -111,6 +119,11 @@ public class AuthController {
             return disallowPublicRegister(model);
         }
         if (bindingResult.hasErrors()) {
+            return "register";
+        }
+        if (!CaptchaJakartaUtil.ver(regFormDTO.getCaptcha(), request)) {
+            redirectAttributes.addAttribute("error", "验证码无效或已过期");
+            CaptchaJakartaUtil.clear(request);
             return "register";
         }
         if (usersService.userEmailExists(regFormDTO.getEmail())) {
@@ -136,6 +149,11 @@ public class AuthController {
         return "redirect:/";
     }
 
+    @RequestMapping("/captcha")
+    public void captcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        CaptchaJakartaUtil.out(request, response);
+    }
+
     private String disallowPublicRegister(Model model) {
         model.addAttribute("errTitle", "自由注册已关闭");
         model.addAttribute("err", """
@@ -151,11 +169,6 @@ public class AuthController {
 
     private boolean isPublicRegisterAllowed() {
         return Boolean.parseBoolean(settingsService.getValue("user.register.public").orElseThrow());
-    }
-
-    private boolean inviteCodeIsValid(String inviteCode) {
-
-        return false;
     }
 
 }

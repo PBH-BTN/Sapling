@@ -77,6 +77,23 @@
                             <div class="invalid-feedback" th:errors="*{inviteCode}"></div>
                         </div>
 
+                        <div class="form-group">
+                            <label for="captcha">验证码</label>
+                            <div class="row align-items-center">
+                                <div class="col-7 pr-1">
+                                    <input type="text" id="captcha" name="captcha"
+                                           class="form-control flex-grow-1" required
+                                           th:classappend="${#fields.hasErrors('captcha')} ? 'is-invalid'">
+                                    <div class="invalid-feedback" th:errors="*{captcha}"></div>
+                                </div>
+                                <div class="col-5 pl-1">
+                                    <img src="/auth/captcha" class="img-fluid" style="cursor: pointer;"
+                                         onclick="this.src='/auth/captcha?d='+Date.now()"/>
+                                </div>
+                            </div>
+                        </div>
+
+
                         <!-- 用户协议 -->
                         <div class="form-group">
                             <div class="custom-control custom-checkbox">

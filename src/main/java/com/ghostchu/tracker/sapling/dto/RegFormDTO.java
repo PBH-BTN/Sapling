@@ -24,4 +24,5 @@ public class RegFormDTO {
     private String password;
     private String confirmPassword;
     private String inviteCode;
+    private String captcha;
 }

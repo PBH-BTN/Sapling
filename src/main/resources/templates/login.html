@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/import :: import(title='用户登录', headContent=~{::#pageHead})}"></head>
+<head th:replace="~{fragments/import :: import(title='用户登录', headContent=~{::#pageHead})}">
+    <th:block id="pageHead">
+    </th:block>
+</head>
 <body>
 <!-- 使用简化的 Header -->
 <header>
@@ -29,10 +32,10 @@
                     <h4 class="mb-0"><i class="fas fa-sign-in-alt mr-2"></i>用户登录</h4>
                 </div>
                 <div class="card-body">
-                    <form th:action="@{/auth/login}" method="post">
+                    <form th:action="@{/auth/login}" method="post" id="loginForm">
                         <!-- 错误提示 -->
-                        <div th:if="${param.error}" class="alert alert-danger">
-                            用户名或密码错误
+                        <div th:if="${param.error}" class="alert alert-danger" th:text="${param.error}">
+
                         </div>
 
                         <!-- 用户名输入 -->
@@ -53,6 +56,23 @@
                             <div class="invalid-feedback" th:errors="*{password}"></div>
                         </div>
 
+                        <div class="form-group">
+                            <label for="captcha">验证码</label>
+                            <div class="row align-items-center">
+                                <div class="col-7 pr-1">
+                                    <input type="text" id="captcha" name="captcha"
+                                           class="form-control flex-grow-1" required
+                                           th:classappend="${#fields.hasErrors('captcha')} ? 'is-invalid'">
+                                    <div class="invalid-feedback" th:errors="*{captcha}"></div>
+                                </div>
+                                <div class="col-5 pl-1">
+                                    <img src="/auth/captcha" class="img-fluid" style="cursor: pointer;"
+                                         onclick="this.src='/auth/captcha?d='+Date.now()"/>
+                                </div>
+                            </div>
+                        </div>
+
+
                         <!-- 辅助功能 -->
                         <div class="form-group d-flex justify-content-between">
                             <div class="custom-control custom-checkbox">
@@ -63,7 +83,9 @@
                             <a th:href="@{/forgot-password}" class="text-muted">忘记密码？</a>
                         </div>
 
-                        <button type="submit" class="btn btn-primary btn-block">
+                        <input type="hidden" name="captchaToken" id="captchaToken">
+
+                        <button class="btn btn-primary btn-block" onclick="openCaptcha()">
                             <i class="fas fa-sign-in-alt mr-2"></i>登录
                         </button>
                     </form>
