@@ -107,4 +107,5 @@ public class Permission {
     public static final String ADMIN_SITE_NEWS = "admin.site.news"; // 管理站点公告
     public static final String USER_UNBAN = "user.unban";
     public static final String ADMIN_TORRENTS_PROMOTIONS = "admin.torrents.promotions"; // 管理种子促销方案
+    public static final String ADMIN_TORRENTS_TAGS = "admin.torrents.tags"; // 管理种子标签
 }

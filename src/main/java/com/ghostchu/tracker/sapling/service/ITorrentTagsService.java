@@ -32,4 +32,6 @@ public interface ITorrentTagsService extends MPJBaseService<TorrentTags> {
 
     @Transactional
     void applyTagString(long torrent, String tagString);
+
+    void removeSpecificTagsFromAllTorrents(Long id);
 }

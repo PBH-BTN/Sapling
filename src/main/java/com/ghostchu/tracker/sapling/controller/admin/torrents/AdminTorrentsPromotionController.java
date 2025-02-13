@@ -18,7 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/admin/torrents/promotions")
 @SaCheckPermission(Permission.ADMIN_TORRENTS_PROMOTIONS)
 @SaCheckDisable
-public class PromotionController {
+public class AdminTorrentsPromotionController {
     @Autowired
     private IPromotionsService promotionService;
     @Autowired

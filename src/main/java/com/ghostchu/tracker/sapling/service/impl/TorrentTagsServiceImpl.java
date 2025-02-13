@@ -118,4 +118,9 @@ public class TorrentTagsServiceImpl extends MPJBaseServiceImpl<TorrentTagsMapper
         }
     }
 
+    @Override
+    public void removeSpecificTagsFromAllTorrents(Long id) {
+        remove(new QueryWrapper<TorrentTags>().eq("tag", id));
+    }
+
 }
