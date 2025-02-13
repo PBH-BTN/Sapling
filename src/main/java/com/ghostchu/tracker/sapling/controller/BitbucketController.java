@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.StringJoiner;
 
@@ -118,17 +120,24 @@ public class BitbucketController {
             }
         }
         String fileName = bitbucket.getDisplayName();
+        ContentDisposition contentDispositionInline = ContentDisposition.inline()
+                .filename(fileName, StandardCharsets.UTF_8)
+                .build();
+        ContentDisposition contentDispositionAttachment = ContentDisposition.attachment()
+                .filename(fileName, StandardCharsets.UTF_8)
+                .build();
+
         for (String s : safeMime) {
             if (mimeType.getType().equals(s)) {
                 return ResponseEntity.ok()
                         .contentType(MediaType.asMediaType(mimeType))
-                        .header("Content-Disposition", "inline;filename=" + fileName + ";filename*=UTF-8" + fileName)
+                        .header("Content-Disposition", contentDispositionInline.toString())
                         .body(new InputStreamResource(inputStream));
             }
         }
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .header("Content-Disposition", "attachment;filename=" + fileName + ";filename*=UTF-8" + fileName)
+                .header("Content-Disposition", contentDispositionAttachment.toString())
                 .body(inputStream);
 
     }

@@ -25,6 +25,7 @@ import jakarta.validation.Valid;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.ContentDisposition;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -195,8 +197,11 @@ public class TorrentsController {
         String siteName = settingsService.getValue(Setting.SITE_NAME).orElseThrow();
         Users user = usersService.getUserById(StpUtil.getLoginIdAsLong());
         String fileName = "[" + siteName + "]" + torrent.getTitle() + ".torrent";
+        ContentDisposition contentDispositionAttachment = ContentDisposition.attachment()
+                .filename(fileName, StandardCharsets.UTF_8)
+                .build();
         return ResponseEntity.ok()
-                .header("Content-Disposition", "attachment;filename=" + fileName + ";filename*=UTF-8" + fileName)
+                .header("Content-Disposition", contentDispositionAttachment.toString())
                 .body(new InputStreamResource(new ByteArrayInputStream(torrentsService.downloadTorrentForUser(torrent, user))));
     }
 
