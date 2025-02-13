@@ -11,4 +11,5 @@ public class LoginFormDTO {
     private String password;
     private boolean rememberMe;
     private String captcha;
+    private String fromUri;
 }

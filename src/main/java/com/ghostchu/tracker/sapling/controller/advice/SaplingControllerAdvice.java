@@ -14,6 +14,7 @@ import com.ghostchu.tracker.sapling.service.IUserStatsService;
 import com.ghostchu.tracker.sapling.service.IUsersService;
 import com.ghostchu.tracker.sapling.vo.UserStatsVO;
 import com.ghostchu.tracker.sapling.vo.UserVO;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @ControllerAdvice
@@ -36,11 +38,12 @@ public class SaplingControllerAdvice {
     private IUserStatsService userStatsService;
 
     @ExceptionHandler(NotLoginException.class)
-    public String handlerNotLoginException(NotLoginException e, Model model, HttpServletResponse response) {
+    public String handlerNotLoginException(NotLoginException e, Model model, HttpServletRequest request, HttpServletResponse response, RedirectAttributes attr) {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        addModelAttributesForExceptionHandler(model);
-        model.addAttribute("err", "您还未登录，请先登录！");
-        return "error";
+        addModelAttributesForExceptionHandler(attr);
+        attr.addAttribute("error", "您还未登录，请先登录！");
+        attr.addAttribute("fromUri", request.getRequestURI());
+        return "redirect:/auth/login";
     }
 
     @ExceptionHandler(NotPermissionException.class)
