@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author Ghost_chu
@@ -201,8 +201,11 @@ public class PeersServiceImpl extends MPJBaseServiceImpl<PeersMapper, Peers> imp
             userStats.setDownloaded(userStats.getDownloaded() + incrementDownloaded);
             userStats.setUploadedReal(userStats.getUploadedReal() + realIncreamentUploaded);
             userStats.setDownloadedReal(userStats.getDownloadedReal() + realIncreamentDownloaded);
-            userStats.setSeedTime(userStats.getSeedTime() + incrementSeedingTime);
-            userStats.setLeechTime(userStats.getLeechTime() + incrementLeechingTime);
+            if (request.left() == 0 && previousToGo == 0) {
+                userStats.setSeedTime(userStats.getSeedTime() + incrementSeedingTime);
+            } else {
+                userStats.setLeechTime(userStats.getLeechTime() + incrementLeechingTime);
+            }
             userStatsService.updateUserStats(userStats);
             log.info("User {} announce {} event {} left {} incrementUpload {} incrementDownload {} ip {}",
                     request.userId(), request.torrentId(), request.peerEvent(), request.left(), realIncreamentUploaded, realIncreamentDownloaded, request.peerIp().getHostAddress());
