@@ -8,6 +8,7 @@ import com.ghostchu.tracker.sapling.mapper.NewsMapper;
 import com.ghostchu.tracker.sapling.service.INewsService;
 import com.ghostchu.tracker.sapling.vo.NewsVO;
 import com.github.yulichang.base.MPJBaseServiceImpl;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -44,6 +45,7 @@ public class NewsServiceImpl extends MPJBaseServiceImpl<NewsMapper, News> implem
     }
 
     @Override
+    @CacheEvict(value = "news", allEntries = true)
     public News saveNews(News news) {
         saveOrUpdate(news);
         return news;

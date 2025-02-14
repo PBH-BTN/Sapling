@@ -11,6 +11,7 @@ import com.ghostchu.tracker.sapling.vo.UserVO;
 import com.github.yulichang.base.MPJBaseServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.ExpressionParser;
@@ -77,6 +78,7 @@ public class PromotionsServiceImpl extends MPJBaseServiceImpl<PromotionsMapper, 
     }
 
     @Override
+    @CacheEvict(value = "promotions", allEntries = true)
     public void saveOrUpdatePromotions(Promotions promotions) {
         saveOrUpdate(promotions);
     }

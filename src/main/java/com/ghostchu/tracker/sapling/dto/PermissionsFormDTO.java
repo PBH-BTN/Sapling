@@ -1,4 +1,4 @@
-package com.ghostchu.tracker.sapling.vo;
+package com.ghostchu.tracker.sapling.dto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +17,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @ToString
-public class PermissionsVO implements Serializable {
+public class PermissionsFormDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

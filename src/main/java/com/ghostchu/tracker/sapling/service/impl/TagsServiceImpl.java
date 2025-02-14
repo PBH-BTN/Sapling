@@ -8,7 +8,6 @@ import com.ghostchu.tracker.sapling.mapper.TagsMapper;
 import com.ghostchu.tracker.sapling.service.ITagsService;
 import com.ghostchu.tracker.sapling.vo.TagsVO;
 import com.github.yulichang.base.MPJBaseServiceImpl;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,13 +24,11 @@ import java.util.List;
 public class TagsServiceImpl extends MPJBaseServiceImpl<TagsMapper, Tags> implements ITagsService {
 
     @Override
-    @Cacheable(value = "tags", key = "'id:' + #id")
     public Tags getTags(long id) {
         return getById(id);
     }
 
     @Override
-    @Cacheable(value = "tags", key = "'namespace:' + #namespace")
     public List<Tags> getTagsByNamespace(String namespace) {
         return list(query().eq("namespace", namespace));
     }

@@ -39,7 +39,7 @@ public class LevelPermissionGroupsServiceImpl extends MPJBaseServiceImpl<LevelPe
     }
 
     @Override
-    @CacheEvict(value = "level_permissions_group", key = "'id:' + #group.id")
+    @CacheEvict(value = "level_permissions_group", allEntries = true)
     public void saveGroup(LevelPermissionGroups group) {
         saveOrUpdate(group);
     }

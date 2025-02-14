@@ -56,7 +56,7 @@ public class PermissionGroupsServiceImpl extends MPJBaseServiceImpl<PermissionGr
     }
 
     @Override
-    @CacheEvict(value = "permissions_group", key = "'id:' + #id")
+    @CacheEvict(value = "permissions", allEntries = true)
     public void saveGroup(PermissionGroups group) {
         saveOrUpdate(group);
     }
