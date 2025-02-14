@@ -1,5 +1,6 @@
 package com.ghostchu.tracker.sapling.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ghostchu.tracker.sapling.entity.PermissionGroups;
 import com.ghostchu.tracker.sapling.vo.PermissionGroupVO;
 import com.github.yulichang.base.MPJBaseService;
@@ -17,4 +18,11 @@ public interface IPermissionGroupsService extends MPJBaseService<PermissionGroup
     PermissionGroups getPermissionGroupById(Long id);
 
     PermissionGroupVO toVO(PermissionGroups groups);
+
+    IPage<PermissionGroups> pageGroups(int page, int size, String search);
+
+    void saveGroup(PermissionGroups group);
+
+    void deleteGroup(Long id);
+
 }

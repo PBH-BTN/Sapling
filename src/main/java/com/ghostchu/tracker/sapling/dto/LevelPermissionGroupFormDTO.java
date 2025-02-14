@@ -1,4 +1,4 @@
-package com.ghostchu.tracker.sapling.vo;
+package com.ghostchu.tracker.sapling.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +9,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LevelPermissionGroupVO implements Serializable {
+public class LevelPermissionGroupFormDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

@@ -2,22 +2,24 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/import :: import(title='客户端管理', headContent=~{::#pageHead})}">
-    <style>
-        .client-table thead th {
-            background: #f8f9fa;
-            white-space: nowrap;
-        }
+    <th:block id="pageHead">
+        <style>
+            .client-table thead th {
+                background: #f8f9fa;
+                white-space: nowrap;
+            }
 
-        .client-status-badge {
-            width: 80px;
-        }
+            .client-status-badge {
+                width: 80px;
+            }
 
-        .pattern-cell {
-            max-width: 300px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-    </style>
+            .pattern-cell {
+                max-width: 300px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        </style>
+    </th:block>
 </head>
 <body>
 

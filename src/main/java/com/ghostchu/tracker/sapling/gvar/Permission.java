@@ -108,4 +108,6 @@ public class Permission {
     public static final String USER_UNBAN = "user.unban";
     public static final String ADMIN_TORRENTS_PROMOTIONS = "admin.torrents.promotions"; // 管理种子促销方案
     public static final String ADMIN_TORRENTS_TAGS = "admin.torrents.tags"; // 管理种子标签
+    public static final String ADMIN_PERMISSIONS_PRIMARY_PERMISSION_GROUPS = "admin.permissions.primarypermissiongroups"; // 管理权限组
+    public static final String ADMIN_PERMISSIONS_LEVEL_PERMISSION_GROUPS = "admin.permissions.levelpermissiongroups"; // 管理等级权限组
 }

@@ -36,13 +36,6 @@ public class AdminController {
     private List<PrimaryMenuVO> buildAdminMenu() {
         List<PrimaryMenuVO> menus = new ArrayList<>();
 
-        // 系统设置菜单
-
-        PrimaryMenuVO siteMenu = new PrimaryMenuVO(4L, "站点管理", null);
-        siteMenu.setSubMenus(Arrays.asList(
-                new SubMenuVO(401L, "站点公告", "/admin/site/news")
-        ));
-
         PrimaryMenuVO userMenu = new PrimaryMenuVO(1L, "用户管理", null);
         userMenu.setSubMenus(Arrays.asList(
                 new SubMenuVO(101L, "用户列表", "/admin/users/list"),
@@ -60,17 +53,33 @@ public class AdminController {
         ));
 
         // 用户管理菜单
-        PrimaryMenuVO trackerMenu = new PrimaryMenuVO(3L, "Tracker", null);
+        PrimaryMenuVO trackerMenu = new PrimaryMenuVO(3L, "Tracker设置", null);
         trackerMenu.setSubMenus(Arrays.asList(
                 new SubMenuVO(301L, "客户端许可", "/admin/tracker/clients"),
                 new SubMenuVO(302L, "H/R", "/admin/tracker/hitandrun"),
                 new SubMenuVO(303L, "Seedbox", "/admin/tracker/seedbox")
         ));
 
+        // 系统设置菜单
+        PrimaryMenuVO siteMenu = new PrimaryMenuVO(4L, "站点管理", null);
+        siteMenu.setSubMenus(Arrays.asList(
+                new SubMenuVO(401L, "站点公告", "/admin/site/news")
+        ));
+
+
+        // 用户管理菜单
+        PrimaryMenuVO permissionMenu = new PrimaryMenuVO(5L, "权限管理", null);
+        permissionMenu.setSubMenus(Arrays.asList(
+                new SubMenuVO(501L, "主用户组", "/admin/permissions/primaryPermissionGroups"),
+                new SubMenuVO(502L, "晋级用户组", "/admin/permissions/levelPermissionGroups"),
+                new SubMenuVO(503L, "权限节点分配", "/admin/permissions/permissionNodes")
+        ));
+
         menus.add(siteMenu);
         menus.add(userMenu);
         menus.add(torrentMenu);
         menus.add(trackerMenu);
+        menus.add(permissionMenu);
         return menus;
     }
 

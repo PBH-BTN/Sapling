@@ -2,17 +2,19 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/import :: import(title='标签管理', headContent=~{::#pageHead})}">
-    <style>
-        .tags-table thead th {
-            background: #f8f9fa;
-            white-space: nowrap;
-        }
+    <th:block id="pageHead">
+        <style>
+            .tags-table thead th {
+                background: #f8f9fa;
+                white-space: nowrap;
+            }
 
-        .namespace-badge {
-            font-family: monospace;
-            background-color: #e9ecef;
-        }
-    </style>
+            .namespace-badge {
+                font-family: monospace;
+                background-color: #e9ecef;
+            }
+        </style>
+    </th:block>
 </head>
 <body>
 

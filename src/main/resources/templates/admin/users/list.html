@@ -1,23 +1,25 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/import :: import(title='用户管理', headContent=~{::#pageHead})}">
-    <style>
-        .user-table thead th {
-            background: #f8f9fa;
-            white-space: nowrap;
-        }
+    <th:block id="pageHead">
+        <style>
+            .user-table thead th {
+                background: #f8f9fa;
+                white-space: nowrap;
+            }
 
-        .permission-badge {
-            display: inline-block;
-            padding: 0.25em 0.4em;
-            font-size: 85%;
-            font-weight: 500;
-        }
+            .permission-badge {
+                display: inline-block;
+                padding: 0.25em 0.4em;
+                font-size: 85%;
+                font-weight: 500;
+            }
 
-        .search-box {
-            max-width: 400px;
-        }
-    </style>
+            .search-box {
+                max-width: 400px;
+            }
+        </style>
+    </th:block>
 </head>
 <body>
 

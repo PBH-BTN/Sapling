@@ -2,21 +2,23 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/import :: import(title='公告管理', headContent=~{::#pageHead})}">
-    <style>
-        .news-table thead th {
-            background: #f8f9fa;
-            white-space: nowrap;
-        }
+    <th:block id="pageHead">
+        <style>
+            .news-table thead th {
+                background: #f8f9fa;
+                white-space: nowrap;
+            }
 
-        .news-content-preview {
-            max-width: 400px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-        }
-    </style>
+            .news-content-preview {
+                max-width: 400px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+        </style>
+    </th:block>
 </head>
 <body>
 

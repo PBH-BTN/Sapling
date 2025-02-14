@@ -1,8 +1,5 @@
-package com.ghostchu.tracker.sapling.entity;
+package com.ghostchu.tracker.sapling.dto;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -20,15 +17,13 @@ import java.io.Serializable;
 @Getter
 @Setter
 @ToString
-@TableName("level_permission_groups")
-public class LevelPermissionGroups implements Serializable {
+public class PermissionGroupsFormDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
      * 权限组 ID
      */
-    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
@@ -45,6 +40,4 @@ public class LevelPermissionGroups implements Serializable {
      * 权限组颜色 #hex
      */
     private String color;
-
-    private String condition;
 }

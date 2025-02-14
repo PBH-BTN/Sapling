@@ -1,21 +1,23 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/import :: import(title='促销管理', headContent=~{::#pageHead})}">
-    <style>
-        .promotion-table thead th {
-            background: #f8f9fa;
-            white-space: nowrap;
-        }
+    <th:block id="pageHead">
+        <style>
+            .promotion-table thead th {
+                background: #f8f9fa;
+                white-space: nowrap;
+            }
 
-        .color-badge {
-            width: 80px;
-            background-color: var(--color);
-        }
+            .color-badge {
+                width: 80px;
+                background-color: var(--color);
+            }
 
-        .modifier-cell {
-            min-width: 100px;
-        }
-    </style>
+            .modifier-cell {
+                min-width: 100px;
+            }
+        </style>
+    </th:block>
 </head>
 <body>
 

@@ -2,20 +2,22 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/import :: import(title='邀请管理', headContent=~{::#pageHead})}">
-    <style>
-        .invite-table thead th {
-            background: #f8f9fa;
-            white-space: nowrap;
-        }
+    <th:block id="pageHead">
+        <style>
+            .invite-table thead th {
+                background: #f8f9fa;
+                white-space: nowrap;
+            }
 
-        .status-badge {
-            width: 80px;
-        }
+            .status-badge {
+                width: 80px;
+            }
 
-        .invite-code {
-            font-family: monospace;
-        }
-    </style>
+            .invite-code {
+                font-family: monospace;
+            }
+        </style>
+    </th:block>
 </head>
 <body>
 
