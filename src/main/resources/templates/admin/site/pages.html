@@ -75,6 +75,11 @@
                         <span th:unless="${page.editedAt}" class="text-muted">从未编辑</span>
                     </td>
                     <td nowrap>
+                        <a class="btn btn-sm btn-outline-secondary mr-2 view-page"
+                           th:href="@{/pages/{slug}(slug=${page.slug})}"
+                           th:attr="data-page-id=${page.id}">
+                            <i class="fas fa-eye"></i>
+                        </a>
                         <button class="btn btn-sm btn-outline-primary mr-2 edit-page"
                                 th:attr="data-page-id=${page.id}">
                             <i class="fas fa-edit"></i>
