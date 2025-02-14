@@ -2,6 +2,7 @@ package com.ghostchu.tracker.sapling.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ghostchu.tracker.sapling.entity.Permissions;
 import com.ghostchu.tracker.sapling.mapper.PermissionsMapper;
 import com.ghostchu.tracker.sapling.service.IPermissionsService;
@@ -32,7 +33,10 @@ public class PermissionsServiceImpl extends MPJBaseServiceImpl<PermissionsMapper
 
     @Override
     public IPage<Permissions> pagePermissions(int page, int size, String search) {
-        return null;
+        QueryWrapper<Permissions> queryWrapper = new QueryWrapper<>();
+        queryWrapper = queryWrapper.like(search != null, "node", search);
+        IPage<Permissions> permissionsIPage = new Page<>(page, size);
+        return page(permissionsIPage, queryWrapper);
     }
 
     @Override

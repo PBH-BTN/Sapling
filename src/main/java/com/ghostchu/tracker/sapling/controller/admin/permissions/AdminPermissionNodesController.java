@@ -8,6 +8,7 @@ import com.ghostchu.tracker.sapling.entity.Permissions;
 import com.ghostchu.tracker.sapling.gvar.Permission;
 import com.ghostchu.tracker.sapling.service.IPermissionsService;
 import com.ghostchu.tracker.sapling.vo.PermissionsVO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,8 @@ import org.springframework.web.bind.annotation.*;
 @SaCheckDisable
 public class AdminPermissionNodesController {
 
-    private final IPermissionsService permissionService;
+    @Autowired
+    private IPermissionsService permissionService;
 
     @GetMapping
     public String permissionList(
