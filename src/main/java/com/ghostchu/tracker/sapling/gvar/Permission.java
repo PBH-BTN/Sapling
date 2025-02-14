@@ -115,4 +115,5 @@ public class Permission {
     public static final String ADMIN_SITE_PAGES = "admin.site.pages"; // 管理站点页面
     public static final String ADMIN_SITE_BITBUCKET = "admin.site.bitbucket";
     public static final String ADMIN_TRACKER_SETTINGS = "admin.tracker.settings";
+    public static final String ADMIN_TORRENTS_CATEGORIES = "admin.torrents.categories";
 }

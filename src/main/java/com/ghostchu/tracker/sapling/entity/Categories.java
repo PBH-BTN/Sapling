@@ -1,6 +1,7 @@
 package com.ghostchu.tracker.sapling.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.OrderBy;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,6 +28,7 @@ public class Categories implements Serializable {
      * 分类 ID
      */
     @TableId(type = IdType.AUTO)
+    @OrderBy(asc = true)
     private Long id;
 
     /**
