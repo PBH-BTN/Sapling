@@ -112,4 +112,5 @@ public class Permission {
     public static final String ADMIN_PERMISSIONS_LEVEL_PERMISSION_GROUPS = "admin.permissions.levelpermissiongroups"; // 管理等级权限组
     public static final String USER_EDIT_PRIMARY_PERMISSION_GROUP = "user.edit.primarypermissiongroup"; // 编辑用户的主权限组
     public static final String ADMIN_PERMISSIONS_PERMISSION_NODES = "admin.permissions.permissionnodes"; // 管理权限节点
+    public static final String ADMIN_SITE_PAGES = "admin.site.pages"; // 管理站点页面
 }

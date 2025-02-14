@@ -63,7 +63,8 @@ public class AdminController {
         // 系统设置菜单
         PrimaryMenuVO siteMenu = new PrimaryMenuVO(4L, "站点管理", null);
         siteMenu.setSubMenus(Arrays.asList(
-                new SubMenuVO(401L, "站点公告", "/admin/site/news")
+                new SubMenuVO(401L, "站点公告", "/admin/site/news"),
+                new SubMenuVO(402L, "静态页面", "/admin/site/pages")
         ));
 
 

@@ -29,12 +29,4 @@ public class Pages implements Serializable {
     private OffsetDateTime createdAt;
 
     private OffsetDateTime editedAt;
-
-    private OffsetDateTime deletedAt;
-
-    private Long createdBy;
-
-    private Long editedBy;
-
-    private Long deletedBy;
 }

@@ -38,7 +38,7 @@ public class PagesController {
             model.addAttribute("err", "请求的页面不存在");
             return "error";
         }
-        model.addAttribute("pages", pagesService.toVO(pages));
+        model.addAttribute("pages", pagesService.toVO(pages, true));
         return "pages/html";
     }
 }

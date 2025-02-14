@@ -1,4 +1,4 @@
-package com.ghostchu.tracker.sapling.vo;
+package com.ghostchu.tracker.sapling.dto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +10,7 @@ import java.time.OffsetDateTime;
 @Getter
 @Setter
 @ToString
-public class PagesVO implements Serializable {
+public class PagesFormDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;
