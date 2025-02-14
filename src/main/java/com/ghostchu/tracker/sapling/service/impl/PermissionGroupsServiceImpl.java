@@ -13,6 +13,8 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务实现类
@@ -36,6 +38,11 @@ public class PermissionGroupsServiceImpl extends MPJBaseServiceImpl<PermissionGr
         permissionGroupVO.setName(groups.getName());
         permissionGroupVO.setColor(groups.getColor());
         return permissionGroupVO;
+    }
+
+    @Override
+    public List<PermissionGroups> listGroups() {
+        return list();
     }
 
     @Override

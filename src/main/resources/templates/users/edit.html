@@ -59,6 +59,18 @@
                             <small class="form-text text-muted">4-20个字符，只能包含字母、数字和下划线</small>
                         </div>
 
+                        <!-- 主权限组 -->
+                        <div class="form-group" sa:hasPermission="user.edit.primarypermissiongroup">
+                            <label class="font-weight-bold">主权限组</label>
+                            <select class="custom-select" name="primaryGroupId" required>
+                                <option th:each="p : ${primaryGroups}"
+                                        th:value="${p.id}"
+                                        th:text="${p.name}"
+                                        th:selected="${p.id == selectedPrimaryGroup}"></option> <!-- 动态设置选中项 -->
+                            </select>
+                            <small class="form-text text-muted">选择用户的主权限组</small>
+                        </div>
+
                         <!-- 头衔 -->
                         <div class="form-group">
                             <label class="font-weight-bold">头衔</label>

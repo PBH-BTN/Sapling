@@ -6,11 +6,13 @@ import cn.dev33.satoken.annotation.SaMode;
 import cn.dev33.satoken.stp.StpUtil;
 import com.ghostchu.tracker.sapling.dto.ProfileUpdateFormDTO;
 import com.ghostchu.tracker.sapling.entity.Bitbucket;
+import com.ghostchu.tracker.sapling.entity.PermissionGroups;
 import com.ghostchu.tracker.sapling.entity.UserStats;
 import com.ghostchu.tracker.sapling.entity.Users;
 import com.ghostchu.tracker.sapling.exception.UserNotExistsException;
 import com.ghostchu.tracker.sapling.gvar.Permission;
 import com.ghostchu.tracker.sapling.service.IBitbucketService;
+import com.ghostchu.tracker.sapling.service.IPermissionGroupsService;
 import com.ghostchu.tracker.sapling.service.IUserStatsService;
 import com.ghostchu.tracker.sapling.service.IUsersService;
 import com.ghostchu.tracker.sapling.util.FileUtil;
@@ -39,6 +41,8 @@ public class UserProfileController {
     private IBitbucketService bitbucketService;
     @Autowired
     private IUserStatsService userStatsService;
+    @Autowired
+    private IPermissionGroupsService permissionGroupsService;
 
     // 查看当前用户资料
     @GetMapping
@@ -76,6 +80,8 @@ public class UserProfileController {
         model.addAttribute("user", currentUser);
         model.addAttribute("isCurrentUser", true);
         model.addAttribute("form", convertToForm(currentUser));
+        model.addAttribute("selectedPrimaryGroup", currentUser.getPrimaryPermissionGroup());
+        model.addAttribute("primaryGroups", permissionGroupsService.listGroups().stream().map(permissionGroupsService::toVO).toList());
         return "users/edit";
     }
 
@@ -123,6 +129,12 @@ public class UserProfileController {
             userStats.setSeedTime(form.getSeedTime());
             userStats.setLeechTime(form.getLeechTime());
             userStatsService.updateUserStats(userStats);
+        }
+        if (StpUtil.hasPermission(Permission.USER_EDIT_PRIMARY_PERMISSION_GROUP)) {
+            PermissionGroups permissionGroups = permissionGroupsService.getPermissionGroupById(form.getPrimaryGroupId());
+            if (permissionGroups != null) {
+                users.setPrimaryPermissionGroup(permissionGroups.getId());
+            }
         }
         userService.updateUser(users);
         return "redirect:/users/profile/" + id;

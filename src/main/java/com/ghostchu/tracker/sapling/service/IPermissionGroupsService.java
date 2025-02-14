@@ -5,6 +5,8 @@ import com.ghostchu.tracker.sapling.entity.PermissionGroups;
 import com.ghostchu.tracker.sapling.vo.PermissionGroupVO;
 import com.github.yulichang.base.MPJBaseService;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务类
@@ -18,6 +20,8 @@ public interface IPermissionGroupsService extends MPJBaseService<PermissionGroup
     PermissionGroups getPermissionGroupById(Long id);
 
     PermissionGroupVO toVO(PermissionGroups groups);
+
+    List<PermissionGroups> listGroups();
 
     IPage<PermissionGroups> pageGroups(int page, int size, String search);
 

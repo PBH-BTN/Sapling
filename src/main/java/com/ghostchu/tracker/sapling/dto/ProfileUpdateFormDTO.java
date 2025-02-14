@@ -31,6 +31,8 @@ public class ProfileUpdateFormDTO {
     @Size(max = 50)
     private String myIsp;
 
+    private long primaryGroupId;
+
     private long uploaded;
     private long uploadedReal;
     private long downloaded;

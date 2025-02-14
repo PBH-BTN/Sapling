@@ -35,7 +35,7 @@ public class StpPermissionManager implements StpInterface {
 
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
-        Users users = usersService.getById(Long.parseLong((String) loginId));
+        Users users = usersService.getUserById(Long.parseLong((String) loginId));
         PermissionGroups primary = permissionGroupsService.getPermissionGroupById(users.getPrimaryPermissionGroup());
         LevelPermissionGroups level = levelPermissionGroupsService.getLevelPermissionGroupById(users.getLevelPermissionGroup());
         return List.of(primary.getName(), level.getName());
