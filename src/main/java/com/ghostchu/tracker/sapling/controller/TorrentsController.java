@@ -129,7 +129,7 @@ public class TorrentsController {
                 .collect(Collectors.groupingBy(t -> t.getTag().getNamespace()));
         model.addAttribute("torrentTags", groupedTags);
         var peers = peersService.fetchPeers(0, torrent.getId(), Short.MAX_VALUE, false, null);
-        model.addAttribute("peers", peers.convert(peersService::toVO).getRecords());
+        model.addAttribute("peers", peers.convert(peersService::toVO));
         return "torrents/detail";
     }
 
