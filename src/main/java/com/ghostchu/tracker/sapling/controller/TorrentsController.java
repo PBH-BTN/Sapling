@@ -5,8 +5,6 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaMode;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.plugins.pagination.PageDTO;
 import com.ghostchu.tracker.sapling.dto.ConfirmFormDTO;
 import com.ghostchu.tracker.sapling.dto.TorrentEditFormDTO;
 import com.ghostchu.tracker.sapling.dto.TorrentUploadFormDTO;
@@ -119,23 +117,19 @@ public class TorrentsController {
         }
         // 准备模型数据
         model.addAttribute("torrent", torrentsService.toVO(torrent));
-        var recentThanks = thanksService.getThanksByPageByTorrent(id, 1, 20);
+        var recentThanks = thanksService.getThanksByPageByTorrent(id, 1, 20).convert(thanksService::toVO);
         model.addAttribute("totalThanks", recentThanks.getTotal());
-        List<ThanksVO> thanksVOList = recentThanks.getRecords().stream().map(thanksService::toVO).filter(Objects::nonNull).toList();
+        List<ThanksVO> thanksVOList = recentThanks.getRecords().stream().filter(Objects::nonNull).toList();
         model.addAttribute("thanks", thanksVOList);
         model.addAttribute("thankedTorrent", thanksService.isUserThankedTorrent(StpUtil.getLoginIdAsLong(), id));
-        var comments = commentsService.getComments(id, page, size);
-        IPage<CommentsVO> commentsPaged = new PageDTO<>(page, size, comments.getTotal(), comments.searchCount());
-        commentsPaged.setRecords(comments.getRecords().stream().map(c -> commentsService.toVO(c, false)).toList());
+        IPage<CommentsVO> commentsPaged = commentsService.getComments(id, page, size).convert(e -> commentsService.toVO(e, false));
         model.addAttribute("comments", commentsPaged);
         var torrentTags = torrentTagsService.getTorrentTags(torrent.getId()).stream().map(t -> torrentTagsService.toVO(t)).toList();
         Map<String, List<TorrentTagsVO>> groupedTags = torrentTags.stream()
                 .collect(Collectors.groupingBy(t -> t.getTag().getNamespace()));
         model.addAttribute("torrentTags", groupedTags);
         var peers = peersService.fetchPeers(0, torrent.getId(), Short.MAX_VALUE, false, null);
-        IPage<PeersVO> peersVOIPage = new Page<>(peers.getCurrent(), peers.getSize(), peers.getTotal(), peers.searchCount());
-        peersVOIPage.setRecords(peers.getRecords().stream().map(peersService::toVO).toList());
-        model.addAttribute("peers", peersVOIPage);
+        model.addAttribute("peers", peers.convert(peersService::toVO).getRecords());
         return "torrents/detail";
     }
 

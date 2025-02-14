@@ -3,11 +3,9 @@ package com.ghostchu.tracker.sapling.controller.admin.users;
 import cn.dev33.satoken.annotation.SaCheckDisable;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ghostchu.tracker.sapling.entity.Invites;
 import com.ghostchu.tracker.sapling.gvar.Permission;
 import com.ghostchu.tracker.sapling.service.IInvitesService;
-import com.ghostchu.tracker.sapling.vo.InvitesVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,9 +28,7 @@ public class AdminUsersInviteController {
             @RequestParam(required = false) String search,
             Model model) {
         IPage<Invites> invitePage = invitesService.listInvites(page, size, search);
-        IPage<InvitesVO> invitesVOIPage = new Page<>(invitePage.getCurrent(), invitePage.getSize(), invitePage.getTotal(), invitePage.searchCount());
-        invitesVOIPage.setRecords(invitePage.getRecords().stream().map(invitesService::toVO).toList());
-        model.addAttribute("invites", invitesVOIPage);
+        model.addAttribute("invites", invitePage.convert(invitesService::toVO).getRecords());
         return "admin/users/invites";
     }
 }
