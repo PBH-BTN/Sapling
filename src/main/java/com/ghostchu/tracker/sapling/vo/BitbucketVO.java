@@ -1,5 +1,7 @@
 package com.ghostchu.tracker.sapling.vo;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,11 +24,13 @@ import java.time.OffsetDateTime;
 @TableName(autoResultMap = true)
 public class BitbucketVO implements Serializable {
 
+
     private static final long serialVersionUID = 1L;
 
     /**
      * 文件上传ID
      */
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
@@ -45,6 +49,11 @@ public class BitbucketVO implements Serializable {
     private String handler;
 
     /**
+     * 文件所属人
+     */
+    private UserVO owner;
+
+    /**
      * 文件上传时间
      */
     private OffsetDateTime createdAt;
@@ -55,16 +64,21 @@ public class BitbucketVO implements Serializable {
     private OffsetDateTime lastAccessAt;
 
     /**
+     * 删除时间，NULL 为未删除
+     */
+    private OffsetDateTime deletedAt;
+
+    /**
      * 允许外部直接访问（通过浏览器）
      */
     private boolean directAccess;
 
     /**
-     * 文件大小 (bytes)
+     * 文件大小
      */
     private long fileSize;
-    /**
-     * MIME 类型
-     */
+
     private String mime;
+
+    private boolean managed;
 }

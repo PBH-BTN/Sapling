@@ -8,10 +8,12 @@ import com.ghostchu.tracker.sapling.gvar.Setting;
 import com.ghostchu.tracker.sapling.mapper.BitbucketMapper;
 import com.ghostchu.tracker.sapling.service.IBitbucketService;
 import com.ghostchu.tracker.sapling.service.ISettingsService;
+import com.ghostchu.tracker.sapling.service.IUsersService;
 import com.ghostchu.tracker.sapling.vo.BitbucketVO;
 import com.github.yulichang.base.MPJBaseServiceImpl;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,13 +38,15 @@ import java.util.UUID;
 public class BitbucketServiceImpl extends MPJBaseServiceImpl<BitbucketMapper, Bitbucket> implements IBitbucketService {
     @Autowired
     private ISettingsService settingsService;
+    @Autowired
+    private IUsersService usersService;
 
     private String getBitbucketPath() {
         return settingsService.getValue(Setting.BITBUCKET_PATH).orElseThrow();
     }
 
     @Override
-    @Cacheable(value = "bitbucket", key = "#bitbucketId")
+    @Cacheable(value = "bitbucket", key = "#bitbucketId", unless = "#result == null")
     public Bitbucket getBitBucket(Long bitbucketId) {
         QueryWrapper<Bitbucket> queryWrapper = new QueryWrapper<>();
         queryWrapper = queryWrapper.eq("id", bitbucketId).isNull("deleted_at");
@@ -67,19 +71,39 @@ public class BitbucketServiceImpl extends MPJBaseServiceImpl<BitbucketMapper, Bi
         vo.setDisplayName(bitbucket.getDisplayName());
         vo.setFilePath(bitbucket.getFilePath());
         vo.setHandler(bitbucket.getHandler());
+        vo.setOwner(usersService.toVO(usersService.getUserById(bitbucket.getOwner())));
         vo.setCreatedAt(bitbucket.getCreatedAt());
         vo.setLastAccessAt(bitbucket.getLastAccessAt());
         vo.setDirectAccess(bitbucket.isDirectAccess());
+        vo.setDeletedAt(bitbucket.getDeletedAt());
         vo.setFileSize(bitbucket.getFileSize());
         vo.setMime(bitbucket.getMime());
+        vo.setManaged(bitbucket.isManaged());
         return vo;
 
     }
 
     @Override
+    @CacheEvict(value = "bitbucket", key = "#id")
     public void deleteById(Long id) {
         Bitbucket bitbucket = getById(id);
         bitbucket.setDeletedAt(OffsetDateTime.now());
+        updateById(bitbucket);
+    }
+
+    @Override
+    public IPage<Bitbucket> pageFiles(int page, int size, String search) {
+        Page<Bitbucket> pageQuery = new Page<>(page, size);
+        QueryWrapper<Bitbucket> queryWrapper = new QueryWrapper<>();
+        queryWrapper = queryWrapper
+                .like(search != null, "display_name", search)
+                .orderByDesc("id");
+        return page(pageQuery, queryWrapper);
+    }
+
+    @Override
+    @CacheEvict(value = "bitbucket", key = "#bitbucket.id")
+    public void updateBitBucket(Bitbucket bitbucket) {
         updateById(bitbucket);
     }
 

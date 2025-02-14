@@ -1,0 +1,247 @@
+<!-- src/main/resources/templates/admin/bitbucket.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/import :: import(title='文件仓库管理', headContent=~{::#pageHead})}">
+    <th:block id="pageHead">
+        <style>
+            .bitbucket-table thead th {
+                background: #f8f9fa;
+                white-space: nowrap;
+            }
+
+            .file-preview {
+                max-width: 100px;
+                max-height: 100px;
+                object-fit: contain;
+            }
+
+            .status-badge {
+                width: 80px;
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+
+<main class="container-fluid my-4 flex-grow-1">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="fas fa-archive mr-2"></i>文件仓库管理</h5>
+            <form th:action="@{/admin/site/bitbucket}" method="get" class="form-inline">
+                <div class="input-group input-group-sm">
+                    <input type="text" class="form-control" name="search"
+                           placeholder="搜索文件" th:value="${param.search}">
+                    <div class="input-group-append">
+                        <button class="btn btn-light" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="card-body">
+            <table class="table bitbucket-table">
+                <thead>
+                <tr>
+                    <th>预览</th>
+                    <th>文件信息</th>
+                    <th>所有者</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="file : ${bitbuckets.records}">
+                    <td>
+                        <img th:if="${file.mime.startsWith('image/') && file.directAccess}"
+                             th:src="@{/bitbucket/file/{id}(id=${file.id})}"
+                             class="file-preview cursor-pointer"
+                             data-toggle="modal" data-target="#previewModal"
+                             th:attr="data-file-type=${file.mime.split('/')[0]}">
+                    </td>
+                    <td>
+                        <div class="font-weight-bold" th:text="${file.displayName}"></div>
+                        <div class="text-muted small">
+                            <span th:text="${unitConverter.autoUnit(file.fileSize)}"></span> ·
+                            <span th:text="${file.mime}"></span>
+                        </div>
+                        <div class="small mr-3">
+                            <span th:text="${timeConverter.formatTime(file.createdAt, timezone)}"></span> ·
+                            <span th:classappend="${file.directAccess} ? 'text-success' : 'text-danger'"
+                                  th:text="${file.directAccess} ? '公开' : '私有'"></span>
+                            <span class="text-danger" th:if="${file.managed}"
+                                  th:text="${file.directAccess} ? '用户' : '系统托管'"></span>
+                        </div>
+                    </td>
+                    <td>
+                        <a th:href="@{/users/profile/{uid}(uid=${file.owner.id})}"
+                           target="_blank" class="text-primary">
+                            <span th:text="${file.owner.name}"></span>
+                            <i class="fas fa-external-link-alt ml-1" style="font-size: 0.8em"></i>
+                        </a>
+                        <span class="badge"
+                              th:style="'background-color:'+${file.owner.primaryPermissionGroup.color}+';color:white'"
+                              th:text="${file.owner.primaryPermissionGroup.name}"></span>
+                    </td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${file.deletedAt} ? 'badge-danger' : 'badge-success'"
+                              th:text="${file.deletedAt} ? '已删除' : '正常'"></span>
+                        <div th:if="${file.deletedAt}" class="text-muted small">
+                            于 <span th:text="${timeConverter.formatTime(file.deletedAt, timezone)}"></span>
+                        </div>
+                    </td>
+                    <td nowrap>
+                        <button class="btn btn-sm btn-outline-primary mr-2"
+                                th:disabled="${file.managed}"
+                                data-toggle="modal" data-target="#editModal"
+                                th:attr="data-file-id=${file.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger"
+                                th:disabled="${file.managed}"
+                                th:attr="data-file-id=${file.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <!-- 分页导航 -->
+            <nav th:if="${bitbuckets.pages > 1}">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${bitbuckets.current == 1} ? 'disabled'">
+                        <a class="page-link" th:href="@{/admin/site/bitbucket(search=${param.search}, page=1)}">首页</a>
+                    </li>
+                    <li class="page-item" th:classappend="${bitbuckets.current == 1} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/site/bitbucket(search=${param.search}, page=${bitbuckets.current - 1})}">上一页</a>
+                    </li>
+                    <li class="page-item" th:each="page : ${#numbers.sequence(1, bitbuckets.pages)}"
+                        th:classappend="${page == bitbuckets.current} ? 'active'">
+                        <a class="page-link" th:href="@{/admin/site/bitbucket(search=${param.search}, page=${page})}"
+                           th:text="${page}"></a>
+                    </li>
+                    <li class="page-item" th:classappend="${bitbuckets.current == bitbuckets.pages} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/site/bitbucket(search=${param.search}, page=${bitbuckets.current+1})}">下一页</a>
+                    </li>
+                    <li class="page-item" th:classappend="${bitbuckets.current == bitbuckets.pages} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/site/bitbucket(search=${param.search}, page=${bitbuckets.pages})}">尾页</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</main>
+
+<!-- 预览模态框 -->
+<div class="modal fade" id="previewModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">文件预览</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="previewImage" class="img-fluid" style="max-height: 70vh;">
+                <video id="previewVideo" class="w-100" controls style="max-height: 70vh;"></video>
+                <audio id="previewAudio" class="w-100" controls></audio>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 编辑模态框 -->
+<div class="modal fade" id="editModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">编辑文件信息</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <form id="editForm" th:action="@{/admin/site/bitbucket}" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="fileId">
+                    <div class="form-group">
+                        <label>显示名称</label>
+                        <input type="text" class="form-control" name="displayName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>处理程序</label>
+                        <input type="text" class="form-control" name="handler">
+                    </div>
+                    <div class="form-group">
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input"
+                                   id="directAccessSwitch" name="directAccess">
+                            <label class="custom-control-label" for="directAccessSwitch">允许公开访问</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 文件预览处理
+    $('#previewModal').on('show.bs.modal', function (event) {
+        const button = $(event.relatedTarget);
+        const fileType = button.data('file-type');
+        const src = button.attr('src');
+
+        $('#previewImage').hide();
+        $('#previewVideo').hide().find('source').remove();
+        $('#previewAudio').hide().find('source').remove();
+
+        if (fileType === 'image') {
+            $('#previewImage').attr('src', src).show();
+        } else if (fileType === 'video') {
+            $('#previewVideo').html(`<source src="${src}" type="${button.data('mime')}">`).show()[0].load();
+        } else if (fileType === 'audio') {
+            $('#previewAudio').html(`<source src="${src}" type="${button.data('mime')}">`).show()[0].load();
+        }
+    });
+
+    // 编辑文件处理
+    document.querySelectorAll('[data-file-id]').forEach(btn => {
+        btn.onclick = function () {
+            const fileId = this.getAttribute('data-file-id');
+            fetch('/admin/site/bitbucket/' + fileId)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('fileId').value = data.id;
+                    document.querySelector('input[name="displayName"]').value = data.displayName;
+                    document.querySelector('input[name="handler"]').value = data.handler;
+                    document.querySelector('#directAccessSwitch').checked = data.directAccess;
+                    $('#editModal').modal('show');
+                });
+        };
+    });
+
+    // 删除文件处理
+    document.querySelectorAll('.btn-outline-danger').forEach(btn => {
+        btn.onclick = function () {
+            const fileId = this.getAttribute('data-file-id');
+            if (confirm('确定要删除此文件吗？')) {
+                fetch('/admin/site/bitbucket/' + fileId, {
+                    method: 'DELETE'
+                }).then(() => window.location.reload());
+            }
+        };
+    });
+</script>
+</body>
+</html>

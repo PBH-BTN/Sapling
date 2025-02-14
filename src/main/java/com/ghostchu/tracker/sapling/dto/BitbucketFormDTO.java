@@ -1,14 +1,12 @@
-package com.ghostchu.tracker.sapling.entity;
+package com.ghostchu.tracker.sapling.dto;
 
-import com.baomidou.mybatisplus.annotation.*;
-import com.ghostchu.tracker.sapling.converter.JsonbTypeHandler;
+import com.ghostchu.tracker.sapling.vo.UserVO;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
-import java.util.Map;
 
 /**
  * <p>
@@ -21,16 +19,14 @@ import java.util.Map;
 @Getter
 @Setter
 @ToString
-@TableName(autoResultMap = true)
-public class Bitbucket implements Serializable {
+public class BitbucketFormDTO implements Serializable {
+
 
     private static final long serialVersionUID = 1L;
 
     /**
      * 文件上传ID
      */
-    @TableId(type = IdType.AUTO)
-    @OrderBy()
     private Long id;
 
     /**
@@ -51,7 +47,7 @@ public class Bitbucket implements Serializable {
     /**
      * 文件所属人
      */
-    private long owner;
+    private UserVO owner;
 
     /**
      * 文件上传时间
@@ -69,6 +65,11 @@ public class Bitbucket implements Serializable {
     private OffsetDateTime deletedAt;
 
     /**
+     * 删除操作者
+     */
+    private Long deletedBy;
+
+    /**
      * 允许外部直接访问（通过浏览器）
      */
     private boolean directAccess;
@@ -79,12 +80,4 @@ public class Bitbucket implements Serializable {
     private long fileSize;
 
     private String mime;
-
-    private boolean managed;
-
-    /**
-     * 扩展信息
-     */
-    @TableField(typeHandler = JsonbTypeHandler.class)
-    private Map<String, Object> extra;
 }

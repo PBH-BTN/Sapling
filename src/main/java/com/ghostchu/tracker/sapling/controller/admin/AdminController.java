@@ -52,23 +52,19 @@ public class AdminController {
 
         ));
 
-        // 用户管理菜单
-        PrimaryMenuVO trackerMenu = new PrimaryMenuVO(3L, "Tracker设置", null);
+        PrimaryMenuVO trackerMenu = new PrimaryMenuVO(3L, "Tracker", null);
         trackerMenu.setSubMenus(Arrays.asList(
-                new SubMenuVO(301L, "客户端许可", "/admin/tracker/clients"),
-                new SubMenuVO(302L, "H/R", "/admin/tracker/hitandrun"),
-                new SubMenuVO(303L, "Seedbox", "/admin/tracker/seedbox")
+                new SubMenuVO(301L, "Tracker 服务器", "/admin/tracker/settings"),
+                new SubMenuVO(302L, "客户端许可", "/admin/tracker/clients")
         ));
 
-        // 系统设置菜单
         PrimaryMenuVO siteMenu = new PrimaryMenuVO(4L, "站点管理", null);
         siteMenu.setSubMenus(Arrays.asList(
                 new SubMenuVO(401L, "站点公告", "/admin/site/news"),
-                new SubMenuVO(402L, "静态页面", "/admin/site/pages")
+                new SubMenuVO(402L, "静态页面", "/admin/site/pages"),
+                new SubMenuVO(403L, "文件仓库", "/admin/site/bitbucket")
         ));
 
-
-        // 用户管理菜单
         PrimaryMenuVO permissionMenu = new PrimaryMenuVO(5L, "权限管理", null);
         permissionMenu.setSubMenus(Arrays.asList(
                 new SubMenuVO(501L, "主用户组", "/admin/permissions/primaryPermissionGroups"),

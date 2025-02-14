@@ -37,4 +37,8 @@ public interface IBitbucketService extends MPJBaseService<Bitbucket> {
     BitbucketVO toVO(Bitbucket bitbucket);
 
     void deleteById(Long id);
+
+    IPage<Bitbucket> pageFiles(int page, int size, String search);
+
+    void updateBitBucket(Bitbucket bitbucket);
 }
