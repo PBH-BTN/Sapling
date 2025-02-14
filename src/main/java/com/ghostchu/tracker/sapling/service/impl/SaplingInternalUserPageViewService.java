@@ -13,7 +13,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SaplingIntervalUserPageViewService {
+public class SaplingInternalUserPageViewService {
     @Autowired
     private ISettingsService settingsService;
     @Autowired
