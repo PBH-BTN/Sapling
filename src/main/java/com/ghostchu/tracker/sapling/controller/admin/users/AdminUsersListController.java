@@ -28,7 +28,7 @@ public class AdminUsersListController {
             @RequestParam(required = false) String search,
             Model model) {
         IPage<Users> userPage = usersService.searchUsers(page, size, search);
-        model.addAttribute("users", userPage.convert(usersService::toVO).getRecords());
+        model.addAttribute("users", userPage.convert(usersService::toVO));
         model.addAttribute("search", search);
         return "admin/users/list";
     }

@@ -28,7 +28,7 @@ public class AdminUsersInviteController {
             @RequestParam(required = false) String search,
             Model model) {
         IPage<Invites> invitePage = invitesService.listInvites(page, size, search);
-        model.addAttribute("invites", invitePage.convert(invitesService::toVO).getRecords());
+        model.addAttribute("invites", invitePage.convert(invitesService::toVO));
         return "admin/users/invites";
     }
 }
