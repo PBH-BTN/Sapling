@@ -11,10 +11,12 @@ import com.ghostchu.tracker.sapling.vo.CurrencyVO;
 import com.ghostchu.tracker.sapling.vo.UserBalancesVO;
 import com.github.yulichang.base.MPJBaseServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,10 +36,11 @@ public class UserBalancesServiceImpl extends MPJBaseServiceImpl<UserBalancesMapp
     private IUsersService usersService;
 
     @Override
-    public Map<Currencies, BigDecimal> getUserBalances(Long id) {
-        Map<Currencies, BigDecimal> map = new HashMap<>();
+    @Cacheable(value = "userBalances", key = "#owner")
+    public Map<Currencies, BigDecimal> getUserBalances(Long owner) {
+        Map<Currencies, BigDecimal> map = new LinkedHashMap<>(); // 需要有序
         List<UserBalances> userBalances = list(new QueryWrapper<UserBalances>()
-                .eq("owner", id));
+                .eq("owner", owner));
         for (Currencies currencies : currenciesService.list()) {
             map.put(currencies, BigDecimal.ZERO);
             for (UserBalances userBalance : userBalances) {
@@ -48,6 +51,33 @@ public class UserBalancesServiceImpl extends MPJBaseServiceImpl<UserBalancesMapp
             }
         }
         return map;
+    }
+
+    @Override
+    public UserBalances selectUserBalanceForUpdate(long userId, long currencyId) {
+        UserBalances userBalances = baseMapper.selectUserBalancesForUpdate(userId, currencyId);
+        if (userBalances == null) {
+            userBalances = new UserBalances();
+            userBalances.setOwner(userId);
+            userBalances.setCurrency(currencyId);
+            userBalances.setBalance(BigDecimal.ZERO);
+            save(userBalances);
+        }
+        return userBalances;
+    }
+
+    @Override
+    @CacheEvict(value = "userBalances", key = "#userBalances.owner")
+    public void saveUserBalance(UserBalances userBalances) {
+        saveOrUpdate(userBalances);
+    }
+
+    @Override
+    @CacheEvict(value = "userBalances", key = "#userBalances.owner")
+    public void addUserBalance(long userId, long currencyId, BigDecimal amount) {
+        UserBalances userBalances = selectUserBalanceForUpdate(userId, currencyId);
+        userBalances.setBalance(userBalances.getBalance().add(amount));
+        saveUserBalance(userBalances);
     }
 
     @Override
@@ -62,7 +92,7 @@ public class UserBalancesServiceImpl extends MPJBaseServiceImpl<UserBalancesMapp
 
     @Override
     public Map<CurrencyVO, BigDecimal> toVO(Map<Currencies, BigDecimal> userBalances) {
-        Map<CurrencyVO, BigDecimal> map = new HashMap<>();
+        Map<CurrencyVO, BigDecimal> map = new LinkedHashMap<>(); // 需要有序
         for (Map.Entry<Currencies, BigDecimal> entry : userBalances.entrySet()) {
             map.put(currenciesService.toVO(entry.getKey()), entry.getValue());
         }

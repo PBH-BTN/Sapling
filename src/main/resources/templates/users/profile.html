@@ -184,6 +184,19 @@
         </div>
     </div>
 
+    <div class="card shadow-lg mb-4">
+        <div class="card-body">
+            <h5 class="card-title mb-3"><i class="fas fa-money-bill mr-2"></i>积分</h5>
+            <div class="d-flex flex-column">
+                <div th:each="entry : ${userBalances}">
+                    <span th:text="${entry.key.name}" th:style="'color: '+${entry.key.color}"></span>: <span
+                        th:text="${entry.value.doubleValue()}"></span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     <!-- 其他操作 -->
     <div class="text-center mt-4" th:unless="${isCurrentUser}">
         <button class="btn btn-outline-primary mr-2">

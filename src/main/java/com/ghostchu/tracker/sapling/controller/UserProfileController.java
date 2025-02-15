@@ -11,10 +11,7 @@ import com.ghostchu.tracker.sapling.entity.UserStats;
 import com.ghostchu.tracker.sapling.entity.Users;
 import com.ghostchu.tracker.sapling.exception.UserNotExistsException;
 import com.ghostchu.tracker.sapling.gvar.Permission;
-import com.ghostchu.tracker.sapling.service.IBitbucketService;
-import com.ghostchu.tracker.sapling.service.IPermissionGroupsService;
-import com.ghostchu.tracker.sapling.service.IUserStatsService;
-import com.ghostchu.tracker.sapling.service.IUsersService;
+import com.ghostchu.tracker.sapling.service.*;
 import com.ghostchu.tracker.sapling.util.FileUtil;
 import com.ghostchu.tracker.sapling.util.HtmlSanitizer;
 import com.ghostchu.tracker.sapling.vo.UserVO;
@@ -43,6 +40,8 @@ public class UserProfileController {
     private IUserStatsService userStatsService;
     @Autowired
     private IPermissionGroupsService permissionGroupsService;
+    @Autowired
+    private IUserBalancesService userBalancesService;
 
     // 查看当前用户资料
     @GetMapping
@@ -63,6 +62,7 @@ public class UserProfileController {
         boolean isCurrentUser = targetUser.getId() == StpUtil.getLoginIdAsLong();
         model.addAttribute("user", targetUser);
         model.addAttribute("userStats", userStatsService.toVO(userStatsService.getUserStats(id)));
+        model.addAttribute("userBalances", userBalancesService.toVO(userBalancesService.getUserBalances(id)));
         model.addAttribute("isCurrentUser", isCurrentUser);
         return "users/profile";
     }
