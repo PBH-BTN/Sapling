@@ -248,7 +248,46 @@
 			<artifactId>commonmark-ext-notifications</artifactId>
 			<version>1.1.0</version>
 		</dependency>
-        <dependency>
+		<!-- https://mvnrepository.com/artifact/org.commonmark/commonmark-ext-gfm-strikethrough -->
+		<dependency>
+			<groupId>org.commonmark</groupId>
+			<artifactId>commonmark-ext-gfm-strikethrough</artifactId>
+			<version>0.24.0</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.commonmark</groupId>
+			<artifactId>commonmark-ext-footnotes</artifactId>
+			<version>0.24.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.commonmark</groupId>
+			<artifactId>commonmark-ext-heading-anchor</artifactId>
+			<version>0.24.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.commonmark</groupId>
+			<artifactId>commonmark-ext-yaml-front-matter</artifactId>
+			<version>0.24.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.commonmark</groupId>
+			<artifactId>commonmark-ext-image-attributes</artifactId>
+			<version>0.24.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.commonmark</groupId>
+			<artifactId>commonmark-ext-task-list-items</artifactId>
+			<version>0.24.0</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.commonmark/commonmark-ext-ins -->
+		<dependency>
+			<groupId>org.commonmark</groupId>
+			<artifactId>commonmark-ext-ins</artifactId>
+			<version>0.24.0</version>
+		</dependency>
+
+		<dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
