@@ -1,6 +1,8 @@
 package com.ghostchu.tracker.sapling.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ghostchu.tracker.sapling.entity.Currencies;
+import com.ghostchu.tracker.sapling.vo.CurrencyVO;
 import com.github.yulichang.base.MPJBaseService;
 
 /**
@@ -13,4 +15,13 @@ import com.github.yulichang.base.MPJBaseService;
  */
 public interface ICurrenciesService extends MPJBaseService<Currencies> {
 
+    IPage<Currencies> pageCurrencies(int page, int size, String search);
+
+    Currencies getCurrency(Long id);
+
+    CurrencyVO toVO(Currencies currency);
+
+    void deleteCurrency(Long id);
+
+    void saveCurrency(Currencies currency);
 }

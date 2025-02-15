@@ -63,7 +63,8 @@ public class AdminController {
         siteMenu.setSubMenus(Arrays.asList(
                 new SubMenuVO(401L, "站点公告", "/admin/site/news"),
                 new SubMenuVO(402L, "静态页面", "/admin/site/pages"),
-                new SubMenuVO(403L, "文件仓库", "/admin/site/bitbucket")
+                new SubMenuVO(403L, "文件仓库", "/admin/site/bitbucket"),
+                new SubMenuVO(403L, "积分货币", "/admin/site/currencies")
         ));
 
         PrimaryMenuVO permissionMenu = new PrimaryMenuVO(5L, "权限管理", null);
