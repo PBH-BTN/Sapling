@@ -1,0 +1,116 @@
+<!-- src/main/resources/templates/messages/detail.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/import :: import(title='站内信详情', headContent=~{::#pageHead})}">
+    <style>
+        .message-meta {
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            padding: 1rem;
+        }
+
+        .status-badge {
+            min-width: 80px;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/header :: header(${user})}"></div>
+
+<main class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0"><i class="fas fa-envelope-open-text mr-2"></i>站内信详情</h3>
+                    <a th:href="@{/messages}" class="btn btn-light btn-sm">
+                        <i class="fas fa-arrow-left mr-1"></i>返回列表
+                    </a>
+                </div>
+
+                <div class="card-body">
+                    <!-- 消息元数据 -->
+                    <div class="message-meta mb-4">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <dl class="row mb-0">
+                                    <dt class="col-sm-4">发件人：</dt>
+                                    <dd class="col-sm-8">
+                                        <a th:href="@{/users/profile/{uid}(uid=${message.sender.id})}"
+                                           class="text-primary">
+                                            <span th:text="${message.sender.name}"></span>
+                                            <i class="fas fa-external-link-alt ml-1" style="font-size: 0.8em"></i>
+                                        </a>
+                                        <span class="badge ml-2"
+                                              th:style="'background-color:'+${message.sender.primaryPermissionGroup.color}+';color:white'"
+                                              th:text="${message.sender.primaryPermissionGroup.name}"></span>
+                                    </dd>
+
+                                    <dt class="col-sm-4">收件人：</dt>
+                                    <dd class="col-sm-8">
+                                        <span th:text="${message.owner.name}"></span>
+                                        <span class="badge ml-2"
+                                              th:style="'background-color:'+${message.owner.primaryPermissionGroup.color}+';color:white'"
+                                              th:text="${message.owner.primaryPermissionGroup.name}"></span>
+                                    </dd>
+                                </dl>
+                            </div>
+
+                            <div class="col-md-6">
+                                <dl class="row mb-0">
+                                    <dt class="col-sm-4">发送时间：</dt>
+                                    <dd class="col-sm-8"
+                                        th:text="${timeConverter.formatTime(message.createdAt, timezone)}"></dd>
+
+                                    <dt class="col-sm-4">阅读状态：</dt>
+                                    <dd class="col-sm-8">
+                                        <span class="badge status-badge"
+                                              th:classappend="${message.readAt} ? 'badge-success' : 'badge-warning'"
+                                              th:text="${message.readAt} ? '已读' : '未读'"></span>
+                                        <span th:if="${message.readAt}" class="ml-2 small"
+                                              th:text="${timeConverter.formatTime(message.readAt, timezone)}"></span>
+                                    </dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 消息内容 -->
+                    <div class="border-top pt-4">
+                        <h4 class="mb-3" th:text="${message.title}"></h4>
+                        <div class="content-box" th:utext="${message.description}"></div>
+                    </div>
+                </div>
+
+                <!-- 操作按钮 -->
+                <div class="card-footer text-right">
+                    <button class="btn btn-outline-danger"
+                            th:if="${message.deletedAt == null}"
+                            onclick="deleteMessage([[${message.id}]])">
+                        <i class="fas fa-trash mr-1"></i>删除消息
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script th:inline="javascript">
+    // 自动标记为已读
+    window.addEventListener('load', () => {
+        if (![[${message.readAt}]]) {
+            fetch(`/messages/[[${message.id}]]/markRead`, {method: 'POST'});
+        }
+    });
+
+    function deleteMessage(id) {
+        if (confirm('确定要删除此消息吗？')) {
+            fetch(`/messages/${id}`, {method: 'DELETE'})
+                .then(() => window.location.href = '/messages');
+        }
+    }
+</script>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

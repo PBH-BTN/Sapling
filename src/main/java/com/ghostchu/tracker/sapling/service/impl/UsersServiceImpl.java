@@ -63,7 +63,7 @@ public class UsersServiceImpl extends MPJBaseServiceImpl<UsersMapper, Users> imp
 
     @Override
     public Users registerUser(String username, String passhash, String email, InetAddress registerIp) {
-        long groupId = Long.parseLong(settingsService.getValue(Setting.USER_DEFAULTGROUP).orElseThrow());
+        long groupId = Long.parseLong(settingsService.getValue(Setting.USER_DEFAULTLEVELGROUP).orElseThrow());
         Users user = new Users();
         user.setName(username);
         user.setPasshash(passhash);

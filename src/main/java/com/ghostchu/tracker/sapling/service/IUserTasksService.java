@@ -2,6 +2,7 @@ package com.ghostchu.tracker.sapling.service;
 
 import com.ghostchu.tracker.sapling.entity.UserTasks;
 import com.ghostchu.tracker.sapling.tracker.PeerEvent;
+import com.ghostchu.tracker.sapling.vo.UserTasksVO;
 import com.github.yulichang.base.MPJBaseService;
 
 import java.time.OffsetDateTime;
@@ -22,4 +23,6 @@ public interface IUserTasksService extends MPJBaseService<UserTasks> {
                                    long realIncrementUploaded,
                                    long realIncrementDownloaded,
                                    long incrementSeedTime, long incrementLeechTime, String userAgent);
+
+    UserTasksVO toVO(UserTasks userTasks);
 }

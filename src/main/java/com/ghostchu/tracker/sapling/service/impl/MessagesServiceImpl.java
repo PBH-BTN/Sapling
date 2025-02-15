@@ -10,16 +10,19 @@ import com.ghostchu.tracker.sapling.mapper.MessagesMapper;
 import com.ghostchu.tracker.sapling.mapper.UsersMapper;
 import com.ghostchu.tracker.sapling.service.IMessagesService;
 import com.ghostchu.tracker.sapling.service.IUsersService;
+import com.ghostchu.tracker.sapling.vo.MessagesVO;
 import com.github.yulichang.base.MPJBaseServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author Ghost_chu
@@ -32,13 +35,6 @@ public class MessagesServiceImpl extends MPJBaseServiceImpl<MessagesMapper, Mess
     @Autowired
     private UsersMapper usersMapper;
 
-    public IPage<Messages> getMessageByUser(long userId, int page, int size, boolean includeUnread) {
-        IPage<Messages> p = new Page<>(page, size);
-        return baseMapper.selectPage(p, new QueryWrapper<Messages>()
-                .eq("owner", userId)
-                .isNull(!includeUnread, "read_at")
-                .orderByDesc("id"));
-    }
 
     public Messages sendMessage(long sender, long receiver, String title, String description) {
         Messages message = new Messages();
@@ -50,43 +46,94 @@ public class MessagesServiceImpl extends MPJBaseServiceImpl<MessagesMapper, Mess
         return message;
     }
 
-    @Transactional
-    public void sendAllMessage(long sender, String title, String description) {
-        int batchSize = 1000;
-        Long lastId = 0L;
-        List<Long> userIds;
-        Messages message = new Messages();
-        message.setSender(sender);
-        message.setTitle(title);
-        message.setDescription(description);
-        do {
-            // 查询本批次的 ID 列表
-            userIds = usersMapper.selectObjs(
-                            new LambdaQueryWrapper<Users>()
-                                    .select(Users::getId)      // 只查询 ID 字段
-                                    .gt(Users::getId, lastId)  // 从上一批的最后一个 ID 开始
-                                    .orderByAsc(Users::getId)  // 按 ID 升序
-                                    .last("LIMIT " + batchSize) // 直接拼接 LIMIT（注意 SQL 注入风险）
-                    ).stream()
-                    .map(id -> (Long) id)
-                    .toList();
-            if (!userIds.isEmpty()) {
-                // 处理本批次的 ID（例如发送站内信）
-                for (Long userId : userIds) {
-                    message.setId(null);
-                    message.setOwner(userId);
-                    baseMapper.insert(message);
-                }
-                // 更新下一批的起始 ID
-                lastId = userIds.getLast();
-            }
-        } while (!userIds.isEmpty());
+    @Override
+    public void markAsRead(long messageId) {
+        Messages messages = getById(messageId);
+        if (messages == null) {
+            return;
+        }
+        messages.setReadAt(OffsetDateTime.now());
+        updateById(messages);
     }
 
-    public void markMessageRead(long userId, long messageId) {
-        baseMapper.update(null, new QueryWrapper<Messages>()
-                .eq("owner", userId)
-                .eq("id", messageId)
-                .isNull("read_at"));
+    @Override
+    public IPage<Messages> pageMessages(int page, int size, Long userId, boolean includeRead, boolean includeDeleted) {
+        IPage<Messages> pa = new Page<>(page, size);
+        QueryWrapper<Messages> queryWrapper = new QueryWrapper<>();
+        queryWrapper = queryWrapper
+                .eq(userId != null, "owner", userId)
+                .isNull(!includeDeleted, "deleted_at")
+                .isNull(!includeRead, "read_at")
+                .orderByDesc("id");
+        return page(pa, queryWrapper);
+    }
+
+    @Override
+    public MessagesVO toVO(Messages messages) {
+        MessagesVO messagesVO = new MessagesVO();
+        messagesVO.setId(messages.getId());
+        messagesVO.setOwner(usersService.toVO(usersService.getById(messages.getOwner())));
+        messagesVO.setSender(usersService.toVO(usersService.getById(messages.getSender())));
+        messagesVO.setTitle(messages.getTitle());
+        messagesVO.setDescription(messages.getDescription());
+        messagesVO.setCreatedAt(messages.getCreatedAt());
+        messagesVO.setReadAt(messages.getReadAt());
+        messagesVO.setDeletedAt(messages.getDeletedAt());
+        return messagesVO;
+    }
+
+    @Override
+    public Messages getMessage(Long id) {
+        return getById(id);
+    }
+
+    @Override
+    public void markAsDeleted(Long id) {
+        Messages messages = getById(id);
+        if (messages == null) {
+            return;
+        }
+        messages.setDeletedAt(OffsetDateTime.now());
+        updateById(messages);
+    }
+
+    @Override
+    @Transactional
+    public void sendMessage(String mode, long sender, List<Long> receivers, String title, String content) {
+        switch (mode) {
+            case "single" -> {
+                for (long receiver : receivers) {
+                    Messages baseMessage = new Messages();
+                    baseMessage.setSender(sender);
+                    baseMessage.setTitle(title);
+                    baseMessage.setDescription(content);
+                    baseMessage.setCreatedAt(OffsetDateTime.now());
+                    baseMessage.setOwner(receiver);
+                    save(baseMessage);
+                }
+            }
+            case "batch" -> {
+                int page = 1;
+                int size = 1000;
+                IPage<Users> usersIPage = usersMapper.selectPage(new Page<>(page, size), new LambdaQueryWrapper<Users>().select(Users::getId));
+                do {
+                    List<Messages> sendInBatch = new ArrayList<>(size);
+                    for (Users record : usersIPage.getRecords()) {
+                        Messages baseMessage = new Messages();
+                        baseMessage.setSender(sender);
+                        baseMessage.setTitle(title);
+                        baseMessage.setDescription(content);
+                        baseMessage.setCreatedAt(OffsetDateTime.now());
+                        baseMessage.setOwner(record.getId());
+                        sendInBatch.add(baseMessage);
+                    }
+                    if (!sendInBatch.isEmpty()) {
+                        saveBatch(sendInBatch);
+                    }
+                    page++;
+                } while (page <= usersIPage.getPages());
+            }
+            default -> throw new IllegalArgumentException("无效的站内信发送模式：" + mode);
+        }
     }
 }

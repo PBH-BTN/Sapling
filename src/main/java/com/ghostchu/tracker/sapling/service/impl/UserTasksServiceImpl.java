@@ -4,6 +4,7 @@ import com.ghostchu.tracker.sapling.entity.UserTasks;
 import com.ghostchu.tracker.sapling.mapper.UserTasksMapper;
 import com.ghostchu.tracker.sapling.service.IUserTasksService;
 import com.ghostchu.tracker.sapling.tracker.PeerEvent;
+import com.ghostchu.tracker.sapling.vo.UserTasksVO;
 import com.github.yulichang.base.MPJBaseServiceImpl;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -43,5 +44,10 @@ public class UserTasksServiceImpl extends MPJBaseServiceImpl<UserTasksMapper, Us
         userTasks.setUserAgent(userAgent);
         saveOrUpdate(userTasks);
         return userTasks;
+    }
+
+    @Override
+    public UserTasksVO toVO(UserTasks userTasks) {
+        return null;
     }
 }

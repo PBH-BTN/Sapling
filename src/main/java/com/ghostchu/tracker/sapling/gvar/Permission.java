@@ -118,4 +118,10 @@ public class Permission {
     public static final String ADMIN_TORRENTS_CATEGORIES = "admin.torrents.categories";
     public static final String ADMIN_SITE_CURRENCIES = "admin.site.currencies";
     public static final String ADMIN_SITE_WIDGETS = "admin.site.widgets";
+    public static final String MESSAGES_VIEW = "messages.view"; // 查看站内信
+    public static final String MESSAGES_VIEW_OTHER = "messages.view.other"; // 查看他人站内信
+    public static final String MESSAGES_DELETE = "messages.delete"; // 删除站内信
+    public static final String MESSAGES_DELETE_OTHER = "messages.delete.other"; // 删除他人站内信
+    public static final String MESSAGES_SEND = "messages.send"; // 发送站内信
+    public static final String MESSAGES_SEND_BATCH = "messages.send.batch"; // 批量发送站内信
 }

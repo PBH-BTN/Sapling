@@ -15,5 +15,5 @@ public class Setting {
     public static final String SITE_TIMEZONE = "site.timezone";
     public static final String TORRENTS_PROMOTIONS_GLOBAL_ENABLED = "torrents.promotions.global.enabled";
     public static final String TORRENTS_PROMOTIONS_GLOBAL_PROMOTION_ID = "torrents.promotions.global.promotion-id";
-    public static final String USER_DEFAULTGROUP = "user.defaultgroup";
+    public static final String USER_DEFAULTLEVELGROUP = "user.defaultlevelgroup";
 }

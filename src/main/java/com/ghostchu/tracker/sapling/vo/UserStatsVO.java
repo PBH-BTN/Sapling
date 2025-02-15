@@ -20,7 +20,7 @@ import java.io.Serializable;
 public class UserStatsVO implements Serializable {
     private static final long serialVersionUID = 1L;
     private Long id;
-    private long owner;
+    private UserVO owner;
     private long uploaded;
     private long downloaded;
     private long uploadedReal;

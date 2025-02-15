@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ghostchu.tracker.sapling.entity.UserStats;
 import com.ghostchu.tracker.sapling.mapper.UserStatsMapper;
 import com.ghostchu.tracker.sapling.service.IUserStatsService;
+import com.ghostchu.tracker.sapling.service.IUsersService;
 import com.ghostchu.tracker.sapling.vo.UserStatsVO;
 import com.github.yulichang.base.MPJBaseServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class UserStatsServiceImpl extends MPJBaseServiceImpl<UserStatsMapper, UserStats> implements IUserStatsService {
+    @Autowired
+    private IUsersService usersService;
     @Override
     @Cacheable(value = "userStats", key = "'uid:' + #userId", unless = "#result == null")
     public UserStats getUserStats(long userId) {
@@ -55,7 +59,7 @@ public class UserStatsServiceImpl extends MPJBaseServiceImpl<UserStatsMapper, Us
     public UserStatsVO toVO(UserStats userStats) {
         UserStatsVO userStatsVO = new UserStatsVO();
         userStatsVO.setId(userStats.getId() == null ? 0 : userStats.getId());
-        userStatsVO.setOwner(userStats.getOwner());
+        userStatsVO.setOwner(usersService.toVO(usersService.getUserById(userStats.getOwner())));
         userStatsVO.setUploaded(userStats.getUploaded());
         userStatsVO.setDownloaded(userStats.getDownloaded());
         userStatsVO.setUploadedReal(userStats.getUploadedReal());

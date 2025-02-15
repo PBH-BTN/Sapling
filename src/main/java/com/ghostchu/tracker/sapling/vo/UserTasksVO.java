@@ -20,7 +20,7 @@ import java.time.OffsetDateTime;
 @Setter
 @ToString
 @TableName("user_task_records")
-public class UserTaskRecordsVO implements Serializable {
+public class UserTasksVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

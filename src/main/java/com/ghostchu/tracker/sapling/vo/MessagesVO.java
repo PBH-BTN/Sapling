@@ -1,8 +1,5 @@
-package com.ghostchu.tracker.sapling.entity;
+package com.ghostchu.tracker.sapling.vo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.OrderBy;
-import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -21,26 +18,24 @@ import java.time.OffsetDateTime;
 @Getter
 @Setter
 @ToString
-public class Messages implements Serializable {
+public class MessagesVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
      * 站内信ID
      */
-    @TableId(type = IdType.AUTO)
-    @OrderBy
     private Long id;
 
     /**
      * 收件用户ID
      */
-    private long owner;
+    private UserVO owner;
 
     /**
      * 发件用户ID
      */
-    private long sender;
+    private UserVO sender;
 
     /**
      * 信件标题
@@ -66,4 +61,5 @@ public class Messages implements Serializable {
      * 删除时间，NULL 为未删除
      */
     private OffsetDateTime deletedAt;
+
 }

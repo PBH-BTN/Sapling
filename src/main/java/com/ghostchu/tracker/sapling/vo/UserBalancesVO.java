@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 public class UserBalancesVO implements Serializable {
     private static final long serialVersionUID = 1L;
     private Long id;
-    private long owner;
-    private long currency;
+    private UserVO owner;
+    private CurrencyVO currency;
     private BigDecimal balance;
 }
