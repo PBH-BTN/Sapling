@@ -70,7 +70,7 @@ public class UsersServiceImpl extends MPJBaseServiceImpl<UsersMapper, Users> imp
         user.setEmail(email);
         user.setRegisterAt(OffsetDateTime.now());
         user.setLanguage("zh-CN");
-        user.setLevelPermissionGroup(1L);
+        user.setLevelPermissionGroup(11L);
         user.setRegisterIp(registerIp);
         user.setRegisterAt(OffsetDateTime.now());
         user.setAllowLogin(true);
