@@ -73,9 +73,9 @@ public class UserBalancesServiceImpl extends MPJBaseServiceImpl<UserBalancesMapp
     }
 
     @Override
-    @CacheEvict(value = "userBalances", key = "#userBalances.owner")
-    public void addUserBalance(long userId, long currencyId, BigDecimal amount) {
-        UserBalances userBalances = selectUserBalanceForUpdate(userId, currencyId);
+    @CacheEvict(value = "userBalances", key = "#owner")
+    public void addUserBalance(long owner, long currencyId, BigDecimal amount) {
+        UserBalances userBalances = selectUserBalanceForUpdate(owner, currencyId);
         userBalances.setBalance(userBalances.getBalance().add(amount));
         saveUserBalance(userBalances);
     }
