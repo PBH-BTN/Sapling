@@ -6,11 +6,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ghostchu.tracker.sapling.entity.UserBans;
 import com.ghostchu.tracker.sapling.entity.Users;
+import com.ghostchu.tracker.sapling.gvar.Setting;
 import com.ghostchu.tracker.sapling.mapper.UsersMapper;
-import com.ghostchu.tracker.sapling.service.ILevelPermissionGroupsService;
-import com.ghostchu.tracker.sapling.service.IPermissionGroupsService;
-import com.ghostchu.tracker.sapling.service.IUserBansService;
-import com.ghostchu.tracker.sapling.service.IUsersService;
+import com.ghostchu.tracker.sapling.service.*;
 import com.ghostchu.tracker.sapling.vo.UserBansVO;
 import com.ghostchu.tracker.sapling.vo.UserVO;
 import com.github.yulichang.base.MPJBaseServiceImpl;
@@ -28,7 +26,7 @@ import java.util.UUID;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author Ghost_chu
@@ -42,6 +40,8 @@ public class UsersServiceImpl extends MPJBaseServiceImpl<UsersMapper, Users> imp
     private ILevelPermissionGroupsService levelPermissionGroupsService;
     @Autowired
     private IUserBansService userBansService;
+    @Autowired
+    private ISettingsService settingsService;
 
     @Override
     public Users getUserByUsernameAndPasswordHash(String username, String passhash) {
@@ -63,6 +63,7 @@ public class UsersServiceImpl extends MPJBaseServiceImpl<UsersMapper, Users> imp
 
     @Override
     public Users registerUser(String username, String passhash, String email, InetAddress registerIp) {
+        long groupId = Long.parseLong(settingsService.getValue(Setting.USER_DEFAULTGROUP).orElseThrow());
         Users user = new Users();
         user.setName(username);
         user.setPasshash(passhash);
@@ -79,6 +80,11 @@ public class UsersServiceImpl extends MPJBaseServiceImpl<UsersMapper, Users> imp
         user.setPrimaryPermissionGroup(1L);
         user.setAvatar("/assets/img/avatar.png");
         user.setPasskey(UUID.randomUUID().toString());
+        var group = permissionGroupsService.getPermissionGroupById(groupId);
+        if (group == null) {
+            throw new IllegalStateException("默认用户组不存在");
+        }
+        user.setPrimaryPermissionGroup(groupId);
         if (!this.save(user)) {
             throw new IllegalStateException("用户注册过程中出现了非预期错误");
         }
