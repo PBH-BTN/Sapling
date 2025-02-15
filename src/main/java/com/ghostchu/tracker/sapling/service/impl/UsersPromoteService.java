@@ -84,7 +84,7 @@ public class UsersPromoteService {
                     log.info("更改用户晋级权限组 {}: {} => {}", readOnlyUser.getName(), oldName, newApplicableGroup.getName());
                     Users writeUser = usersService.getUserByIdForUpdate(readOnlyUser.getId());
                     writeUser.setLevelPermissionGroup(newApplicableGroup.getId());
-                    usersService.saveOrUpdate(writeUser);
+                    usersService.updateUser(writeUser);
                     messagesService.sendMessage("single", 1, List.of(readOnlyUser.getId()),
                             "用户等级等级发生变化",
                             "根据最新的统计数据，您的晋级权限组已调整为" + newApplicableGroup.getName() + "。阅读站点规则以了解您的新晋级权限组可使用的功能。");
