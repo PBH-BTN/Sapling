@@ -117,4 +117,5 @@ public class Permission {
     public static final String ADMIN_TRACKER_SETTINGS = "admin.tracker.settings";
     public static final String ADMIN_TORRENTS_CATEGORIES = "admin.torrents.categories";
     public static final String ADMIN_SITE_CURRENCIES = "admin.site.currencies";
+    public static final String ADMIN_SITE_WIDGETS = "admin.site.widgets";
 }

@@ -12,6 +12,6 @@ import com.ghostchu.tracker.sapling.entity.Widgets;
  * @since 2025-02-04
  */
 public interface WidgetsMapper extends SaplingMapper<Widgets> {
-
+    Widgets selectWidgetsByIdForUpdate(long id);
 }
 

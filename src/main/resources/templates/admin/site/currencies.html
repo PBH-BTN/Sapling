@@ -2,21 +2,23 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/import :: import(title='积分单位管理', headContent=~{::#pageHead})}">
-    <style>
-        .currency-table thead th {
-            background: #f8f9fa;
-            white-space: nowrap;
-        }
+    <th:block th:fragment="pageHead">
+        <style>
+            .currency-table thead th {
+                background: #f8f9fa;
+                white-space: nowrap;
+            }
 
-        .color-preview {
-            width: 24px;
-            height: 24px;
-            border-radius: 4px;
-            display: inline-block;
-            vertical-align: middle;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-    </style>
+            .color-preview {
+                width: 24px;
+                height: 24px;
+                border-radius: 4px;
+                display: inline-block;
+                vertical-align: middle;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+        </style>
+    </th:block>
 </head>
 <body>
 

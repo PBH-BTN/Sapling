@@ -64,7 +64,8 @@ public class AdminController {
                 new SubMenuVO(401L, "站点公告", "/admin/site/news"),
                 new SubMenuVO(402L, "静态页面", "/admin/site/pages"),
                 new SubMenuVO(403L, "文件仓库", "/admin/site/bitbucket"),
-                new SubMenuVO(403L, "积分货币", "/admin/site/currencies")
+                new SubMenuVO(404L, "积分货币", "/admin/site/currencies"),
+                new SubMenuVO(405L, "道具管理", "/admin/site/widgets")
         ));
 
         PrimaryMenuVO permissionMenu = new PrimaryMenuVO(5L, "权限管理", null);
