@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ghostchu.tracker.sapling.dto.WidgetsFormDTO;
 import com.ghostchu.tracker.sapling.entity.Widgets;
 import com.ghostchu.tracker.sapling.gvar.Permission;
+import com.ghostchu.tracker.sapling.service.ICurrenciesService;
 import com.ghostchu.tracker.sapling.service.IWidgetsService;
 import com.ghostchu.tracker.sapling.vo.WidgetsVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,8 @@ import java.time.OffsetDateTime;
 public class AdminSiteWidgetsController {
     @Autowired
     private IWidgetsService widgetsService;
+    @Autowired
+    private ICurrenciesService currenciesService;
 
 
     @GetMapping
@@ -34,6 +37,7 @@ public class AdminSiteWidgetsController {
 
         IPage<Widgets> widgetPage = widgetsService.pageWidgets(page, size, search);
         model.addAttribute("widgets", widgetPage.convert(widgetsService::toVO));
+        model.addAttribute("currencies", currenciesService.pageCurrencies(1, 10000, null).convert(currenciesService::toVO).getRecords());
         return "admin/site/widgets";
     }
 
