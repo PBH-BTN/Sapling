@@ -43,11 +43,9 @@ public class UsersPromoteService {
     private IMessagesService messagesService;
 
     @Transactional
-    @Scheduled(cron = "*/30 * * * * ?")
+    @Scheduled(cron = "0 */30 * * * ?")
     public void handleUsersPromote() {
         log.info("执行用户晋级权限组更新计划任务……");
-
-
         List<LevelPermissionGroups> levelPermissionGroups = levelPermissionGroupsService.list(new QueryWrapper<LevelPermissionGroups>().orderByAsc("priority"));
         LevelPermissionGroups userDefaultGroup = levelPermissionGroupsService.getLevelPermissionGroupById(Long.parseLong(settingsService.getValue(Setting.USER_DEFAULTLEVELGROUP).orElseThrow()));
         if (userDefaultGroup == null) throw new IllegalArgumentException("默认用户等级组不存在，用户提升无法继续");
