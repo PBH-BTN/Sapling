@@ -46,7 +46,6 @@ public class AdminController {
 
         PrimaryMenuVO torrentMenu = new PrimaryMenuVO(2L, "种子管理", null);
         torrentMenu.setSubMenus(Arrays.asList(
-                new SubMenuVO(201L, "种子列表", "/admin/torrents/list"),
                 new SubMenuVO(202L, "种子促销", "/admin/torrents/promotions"),
                 new SubMenuVO(203L, "分类管理", "/admin/torrents/categories"),
                 new SubMenuVO(204L, "标签管理", "/admin/torrents/tags")
