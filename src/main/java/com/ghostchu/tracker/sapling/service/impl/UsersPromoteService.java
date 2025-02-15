@@ -81,7 +81,7 @@ public class UsersPromoteService {
                     if (userGroup != null) {
                         oldName = userGroup.getName();
                     }
-                    log.info("更改用户晋级权限组 {} => {}", oldName, newApplicableGroup.getName());
+                    log.info("更改用户晋级权限组 {}: {} => {}", readOnlyUser.getName(), oldName, newApplicableGroup.getName());
                     Users writeUser = usersService.getUserByIdForUpdate(readOnlyUser.getId());
                     writeUser.setLevelPermissionGroup(newApplicableGroup.getId());
                     usersService.saveOrUpdate(writeUser);
