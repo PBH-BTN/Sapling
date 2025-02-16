@@ -84,6 +84,7 @@ public class TorrentsController {
         IPage<Torrents> pageResult = torrentsService.getTorrentsByPage(page,
                 size,
                 keyword,
+                null,
                 StpUtil.hasPermission(Permission.TORRENT_VIEW_INVISIBLE),
                 StpUtil.hasPermission(Permission.TORRENT_VIEW_DELETED));
         // 准备模型数据

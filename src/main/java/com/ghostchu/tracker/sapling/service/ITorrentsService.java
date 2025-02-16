@@ -20,7 +20,7 @@ import java.io.IOException;
 public interface ITorrentsService extends MPJBaseService<Torrents> {
     Torrents getTorrentById(Long id);
 
-    IPage<Torrents> getTorrentsByPage(long page, int size, String keyword, boolean includeInvisible, boolean includeDeleted);
+    IPage<Torrents> getTorrentsByPage(long page, int size, String keyword, Long categoryId, boolean includeInvisible, boolean includeDeleted);
 
     TorrentsVO toVO(Torrents torrent);
 
