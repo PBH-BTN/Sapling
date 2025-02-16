@@ -43,7 +43,7 @@ public class AdminTorrentsTagsController {
         if (tag.getId() != null)
             tags = tagService.getTags(tag.getId());
         if (tags == null) {
-            tags = tagService.getTagByString(tag.getNamespace() + ":" + tag.getTagname());
+            tags = tagService.getTagByString(tag.getNamespace() + ":" + tag.getTagname(), false);
         }
         if (tags == null) {
             tags = new Tags();

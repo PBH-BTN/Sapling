@@ -176,7 +176,7 @@ public class TorrentsController {
                     HtmlSanitizer.sanitize(form.getDescription()), form.isAnonymous(), false);
             torrentReviewQueueService.queueTorrent(newTorrent.getId());
         }
-        torrentTagsService.applyTagString(newTorrent.getId(), form.getTags());
+        torrentTagsService.applyTagString(newTorrent.getId(), form.getTags(), StpUtil.hasPermission(Permission.TAG_CREATE));
         return "redirect:/torrents/" + newTorrent.getId();
     }
 
@@ -244,7 +244,7 @@ public class TorrentsController {
             return "redirect:/torrents/" + id + "/edit";
         }
         torrentsService.updateTorrent(id, StpUtil.getLoginIdAsLong(), form.getCategoryId(), form.getTitle(), form.getSubtitle(), HtmlSanitizer.sanitize(form.getDescription()));
-        torrentTagsService.applyTagString(id, form.getTags());
+        torrentTagsService.applyTagString(id, form.getTags(), StpUtil.hasPermission(Permission.TAG_CREATE));
         return "redirect:/torrents/" + id;
     }
 

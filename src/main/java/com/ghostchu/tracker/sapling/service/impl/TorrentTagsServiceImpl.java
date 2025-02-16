@@ -26,7 +26,7 @@ import java.util.StringJoiner;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author Ghost_chu
@@ -99,11 +99,11 @@ public class TorrentTagsServiceImpl extends MPJBaseServiceImpl<TorrentTagsMapper
 
     @Transactional
     @Override
-    public void applyTagString(long torrent, String tagString) {
+    public void applyTagString(long torrent, String tagString, boolean createNewTag) {
         var strTags = tagString.split(";");
         Set<Tags> foundTags = new HashSet<>();
         for (String strTag : strTags) {
-            var tag = tagsService.getTagByString(strTag);
+            var tag = tagsService.getTagByString(strTag, createNewTag);
             if (tag == null) {
                 continue;
             }

@@ -31,7 +31,7 @@ public interface ITorrentTagsService extends MPJBaseService<TorrentTags> {
     String createTagString(List<TorrentTags> torrentTags);
 
     @Transactional
-    void applyTagString(long torrent, String tagString);
+    void applyTagString(long torrent, String tagString, boolean createNewTag);
 
     void removeSpecificTagsFromAllTorrents(Long id);
 }

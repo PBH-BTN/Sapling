@@ -30,7 +30,7 @@ import java.util.Map;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author Ghost_chu
@@ -59,10 +59,13 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
     @Override
     public IPage<Torrents> getTorrentsByPage(long page, int size, String keyword, boolean includeInvisible, boolean includeDeleted) {
         IPage<Torrents> iPage = new Page<>(page, size);
-        return baseMapper.selectPage(iPage, new QueryWrapper<Torrents>()
-                .like(keyword != null, "title", "%" + keyword + "%")
-                .or()
-                .like(keyword != null, "subtitle", "%" + keyword + "%")
+        return page(iPage, new QueryWrapper<Torrents>()
+                .eq(!includeInvisible, "visible", true)
+                .and(!includeDeleted, i -> i.isNull("deleted_at"))
+                .and(keyword != null, i ->
+                        i.like(keyword != null, "title", "%" + keyword + "%")
+                                .or()
+                                .like(keyword != null, "subtitle", "%" + keyword + "%"))
                 .orderBy(true, false, "created_at")
         );
     }

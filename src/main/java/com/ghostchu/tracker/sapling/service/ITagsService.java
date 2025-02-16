@@ -23,7 +23,7 @@ public interface ITagsService extends MPJBaseService<Tags> {
 
     TagsVO toVO(Tags tags);
 
-    Tags getTagByString(String strTag);
+    Tags getTagByString(String strTag, boolean autoCreate);
 
     IPage<Tags> fetchTags(int page, int size, String search);
 

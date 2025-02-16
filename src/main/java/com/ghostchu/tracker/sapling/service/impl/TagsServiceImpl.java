@@ -43,13 +43,20 @@ public class TagsServiceImpl extends MPJBaseServiceImpl<TagsMapper, Tags> implem
     }
 
     @Override
-    public Tags getTagByString(String strTag) {
+    public Tags getTagByString(String strTag, boolean autoCreate) {
         var exploded = strTag.split(":");
         if (exploded.length == 2) {
             var wrapper = new QueryWrapper<Tags>()
                     .eq("namespace", exploded[0].trim())
                     .and((q) -> q.eq("tagname", exploded[1].trim()));
-            return getOne(wrapper);
+            var tags = getOne(wrapper);
+            if (tags == null && autoCreate) {
+                tags = new Tags();
+                tags.setNamespace(exploded[0].trim());
+                tags.setTagname(exploded[1].trim());
+                save(tags);
+            }
+            return tags;
         }
         return null;
     }
@@ -71,4 +78,5 @@ public class TagsServiceImpl extends MPJBaseServiceImpl<TagsMapper, Tags> implem
     public void removeTagsById(Long id) {
         removeById(id);
     }
+
 }
