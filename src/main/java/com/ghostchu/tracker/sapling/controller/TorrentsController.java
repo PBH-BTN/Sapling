@@ -130,6 +130,7 @@ public class TorrentsController {
         model.addAttribute("torrentTags", groupedTags);
         var peers = peersService.fetchPeers(0, torrent.getId(), Short.MAX_VALUE, false, null);
         model.addAttribute("peers", peers.convert(peersService::toVO));
+        model.addAttribute("userCanEdit", (StpUtil.hasPermission(Permission.TORRENT_EDIT) && torrent.getOwner() == StpUtil.getLoginIdAsLong()) || StpUtil.hasPermission(Permission.TORRENT_EDIT_OTHER));
         return "torrents/detail";
     }
 
