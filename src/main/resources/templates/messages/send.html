@@ -39,7 +39,7 @@
                         <div class="form-group" id="receiverGroup">
                             <label class="font-weight-bold">收件人<span class="text-danger">*</span></label>
                             <input type="text" class="form-control" name="receivers"
-                                   placeholder="输入用户ID，多个用逗号分隔">
+                                   placeholder="输入用户ID，多个用逗号分隔" th:value="${param.id}">
                         </div>
 
                         <!-- 群发选项（默认隐藏） -->
