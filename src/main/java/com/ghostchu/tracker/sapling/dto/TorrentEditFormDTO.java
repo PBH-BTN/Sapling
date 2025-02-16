@@ -20,4 +20,5 @@ public class TorrentEditFormDTO {
     private String description;
     private boolean anonymous;
     private String tags;
+    private Long promotion;
 }

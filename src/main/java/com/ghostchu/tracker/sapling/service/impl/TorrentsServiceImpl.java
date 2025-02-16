@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -57,7 +58,7 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
     }
 
     @Override
-    public IPage<Torrents> getTorrentsByPage(long page, int size, String keyword, Long categoryId, boolean includeInvisible, boolean includeDeleted) {
+    public IPage<Torrents> getTorrentsByPage(long page, int size, String keyword, List<Long> categoryIds, boolean includeInvisible, boolean includeDeleted) {
         IPage<Torrents> iPage = new Page<>(page, size);
         return page(iPage, new QueryWrapper<Torrents>()
                 .eq(!includeInvisible, "visible", true)
@@ -66,7 +67,7 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
                         i.like(keyword != null, "title", "%" + keyword + "%")
                                 .or()
                                 .like(keyword != null, "subtitle", "%" + keyword + "%"))
-                .and(categoryId != null, i -> i.eq("category", categoryId))
+                .and(categoryIds != null && !categoryIds.isEmpty(), i -> i.in("category", categoryIds))
                 .orderBy(true, false, "created_at")
         );
     }
@@ -164,18 +165,16 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
             @CacheEvict(value = "torrents", key = "'infoHash:' + #result.hashV1"),
             @CacheEvict(value = "torrents", key = "'infoHash:' + #result.hashV2"),
     })
-    public Torrents updateTorrent(Long id, Long userId, Long categoryId, String title, String subtitle, String description) {
+    public Torrents updateTorrent(Long id, Long userId, Long categoryId, String title, String subtitle, String description, Long promotions) {
         if (categoriesService.getCategoryById(categoryId) == null) {
             throw new IllegalArgumentException("指定的分类不存在");
         }
         Torrents torrents = baseMapper.selectById(id);
-        if (torrents.getOwner() != userId) {
-            throw new IllegalArgumentException("只有种子的所有者才能编辑种子");
-        }
         torrents.setCategory(categoryId);
         torrents.setTitle(title);
         torrents.setSubtitle(subtitle);
         torrents.setDescription(description);
+        torrents.setPromotion(promotions);
         baseMapper.updateById(torrents);
         return torrents;
     }

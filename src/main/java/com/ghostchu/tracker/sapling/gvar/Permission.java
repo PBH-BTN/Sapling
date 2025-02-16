@@ -124,4 +124,5 @@ public class Permission {
     public static final String MESSAGES_DELETE_OTHER = "messages.delete.other"; // 删除他人站内信
     public static final String MESSAGES_SEND = "messages.send"; // 发送站内信
     public static final String MESSAGES_SEND_BATCH = "messages.send.batch"; // 批量发送站内信
+    public static final String TORRENT_EDIT_PROMOTION = "torrent.edit.promotion";
 }

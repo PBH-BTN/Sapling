@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author Ghost_chu
@@ -72,6 +72,8 @@ public class TorrentsController {
     private ITorrentTagsService torrentTagsService;
     @Autowired
     private ISettingsService settingsService;
+    @Autowired
+    private IPromotionsService promotionsService;
 
     @GetMapping
     @SaCheckPermission(value = {Permission.TORRENT_VIEW})
@@ -79,12 +81,13 @@ public class TorrentsController {
             @RequestParam(defaultValue = "1") long page,
             @RequestParam(defaultValue = "50") int size,
             @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) List<Long> categoryIds,
             Model model) {
         // 获取分页数据
         IPage<Torrents> pageResult = torrentsService.getTorrentsByPage(page,
                 size,
                 keyword,
-                null,
+                categoryIds,
                 StpUtil.hasPermission(Permission.TORRENT_VIEW_INVISIBLE),
                 StpUtil.hasPermission(Permission.TORRENT_VIEW_DELETED));
         // 准备模型数据
@@ -102,6 +105,8 @@ public class TorrentsController {
         model.addAttribute("torrents", pageResult.getRecords().stream().map(torrentsService::toVO).toList());
         model.addAttribute("torrentPreviewMap", torrentPreviewMap);
         model.addAttribute("pagination", pageResult);
+        model.addAttribute("categories", categoriesService.getAllCategories().stream().map(categoriesService::toVO).toList());
+        model.addAttribute("selectedCategories", categoryIds);
         model.addAttribute("keyword", keyword);
         return "torrents";
     }
@@ -213,7 +218,7 @@ public class TorrentsController {
             throw new TorrentNotExistsException(null, id, "种子不存在或已被删除");
         }
         if (StpUtil.getLoginIdAsLong() != torrent.getOwner().getId()) {
-            return "redirect:/torrents/" + id; // 权限不足
+            StpUtil.checkPermission(Permission.TORRENT_EDIT_OTHER);
         }
         var form = new TorrentEditFormDTO();
         form.setCategoryId(torrent.getCategory().getId());
@@ -221,11 +226,13 @@ public class TorrentsController {
         form.setSubtitle(torrent.getSubtitle());
         form.setDescription(torrent.getDescription());
         form.setAnonymous(torrent.isAnonymous());
+        form.setPromotion(torrent.getPromotions() == null ? null : torrent.getPromotions().getId());
         form.setTags(torrentTagsService.createTagString(torrentTagsService.getTorrentTags(torrent.getId())));
         // 获取分类列表
         List<CategoryVO> categories = categoriesService.getAllCategories().stream().map(categoriesService::toVO).toList();
         model.addAttribute("torrent", torrent);
         model.addAttribute("categories", categories);
+        model.addAttribute("promotions", promotionsService.getPromotions().stream().map(promotionsService::toVO).toList());
         model.addAttribute("form", form);
         return "torrents/edit";
     }
@@ -244,7 +251,16 @@ public class TorrentsController {
             model.addAttribute("categories", categoriesService.getAllCategories());
             return "redirect:/torrents/" + id + "/edit";
         }
-        torrentsService.updateTorrent(id, StpUtil.getLoginIdAsLong(), form.getCategoryId(), form.getTitle(), form.getSubtitle(), HtmlSanitizer.sanitize(form.getDescription()));
+        Torrents tor = torrentsService.getTorrentById(id);
+        if (tor == null) throw new IllegalArgumentException("要编辑的种子不存在");
+        Long promotionId = tor.getPromotion();
+        if (StpUtil.hasPermission(Permission.TORRENT_EDIT_PROMOTION)) {
+            promotionId = form.getPromotion();
+            if (promotionId == -1)
+                promotionId = null;
+        }
+        torrentsService.updateTorrent(id, StpUtil.getLoginIdAsLong(), form.getCategoryId(), form.getTitle(),
+                form.getSubtitle(), HtmlSanitizer.sanitize(form.getDescription()), promotionId);
         torrentTagsService.applyTagString(id, form.getTags(), StpUtil.hasPermission(Permission.TAG_CREATE));
         return "redirect:/torrents/" + id;
     }

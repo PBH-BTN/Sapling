@@ -8,6 +8,7 @@ import com.github.yulichang.base.MPJBaseService;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * <p>
@@ -20,7 +21,7 @@ import java.io.IOException;
 public interface ITorrentsService extends MPJBaseService<Torrents> {
     Torrents getTorrentById(Long id);
 
-    IPage<Torrents> getTorrentsByPage(long page, int size, String keyword, Long categoryId, boolean includeInvisible, boolean includeDeleted);
+    IPage<Torrents> getTorrentsByPage(long page, int size, String keyword, List<Long> categoryId, boolean includeInvisible, boolean includeDeleted);
 
     TorrentsVO toVO(Torrents torrent);
 
@@ -30,7 +31,7 @@ public interface ITorrentsService extends MPJBaseService<Torrents> {
 
     Torrents createTorrent(Long owner, MultipartFile file, Long categoryId, String title, String subtitle, String description, boolean anonymous, boolean visible) throws IOException;
 
-    Torrents updateTorrent(Long id, Long userId, Long categoryId, String title, String subtitle, String description);
+    Torrents updateTorrent(Long id, Long userId, Long categoryId, String title, String subtitle, String description, Long promotions);
 
     Torrents getTorrentByInfoHash(byte[] infoHash);
 

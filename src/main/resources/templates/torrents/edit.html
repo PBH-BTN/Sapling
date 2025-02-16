@@ -69,6 +69,18 @@
                                       rows="10"></textarea>
                         </div>
 
+                        <!-- 种子促销 -->
+                        <div class="form-group">
+                            <label class="font-weight-bold">种子促销</label>
+                            <select class="custom-select" th:field="*{promotion}" required>
+                                <option th:value="-1">不使用</option>
+                                <option th:each="pro : ${promotions}"
+                                        th:value="${pro.id}"
+                                        th:selected="${pro.id == torrent.promotions?.id}"
+                                        th:text="${pro.name}"></option>
+                            </select>
+                        </div>
+
                         <!-- 匿名状态 -->
                         <div class="form-group form-check">
                             <input type="checkbox" class="form-check-input"
