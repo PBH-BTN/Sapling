@@ -57,6 +57,7 @@ public class AdminTrackerClientsController {
         c.setAgentPattern(client.getAgentPattern());
         c.setPeerPattern(client.getPeerPattern());
         c.setComment(client.getComment());
+        c.setAllowed(client.isAllowed());
         clientsService.updateClient(c);
         return "redirect:/admin/tracker/clients";
     }
