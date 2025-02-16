@@ -137,7 +137,7 @@
                                               th:text="${torrent.promotions.name}"></span>
                                         <small class="text-muted" th:if="${torrent.deleted}">[已删除]</small>
                                         <small class="text-muted text-truncate d-block mr-2"
-                                               th:if="${torrent.promotionUntil && torrent.promotionUntil.isAfter(T(java.time.OffsetDateTime).now())}"
+                                               th:if="${torrent.promotionUntil != null && torrent.promotionUntil.isAfter(T(java.time.OffsetDateTime).now())}"
                                                th:text="${'剩余时间：'+ timeConverter.formatDuration(T(java.time.OffsetDateTime).now().until(torrent.promotionUntil, T(java.time.temporal.ChronoUnit).MILLIS))}"></small>
                                         <small class="text-muted" th:unless="${torrent.visible}">[不可见]</small>
                                     </h6>
