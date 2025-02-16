@@ -122,7 +122,7 @@
                             <div class="card-content-wrapper">
                                 <!-- 标题区域 -->
                                 <div class="mb-1">  <!-- 减少底部间距 -->
-                                    <h6 class="card-title d-flex mb-0">
+                                    <h6 class="d-flex mb-0">
                                         <small class="text-muted flex-shrink-0 mr-2"
                                                style="font-size:0.9rem"
                                                th:text="'['+${torrent.category.name}+']'"></small>
@@ -136,8 +136,12 @@
                                               th:data-bg-color="${torrent.promotions.color}"
                                               th:text="${torrent.promotions.name}"></span>
                                         <small class="text-muted" th:if="${torrent.deleted}">[已删除]</small>
+                                        <small class="text-muted text-truncate d-block mr-2"
+                                               th:if="${torrent.promotionUntil && torrent.promotionUntil.isAfter(T(java.time.OffsetDateTime).now())}"
+                                               th:text="${'剩余时间：'+ timeConverter.formatDuration(T(java.time.OffsetDateTime).now().until(torrent.promotionUntil, T(java.time.temporal.ChronoUnit).MILLIS))}"></small>
                                         <small class="text-muted" th:unless="${torrent.visible}">[不可见]</small>
                                     </h6>
+
                                     <small class="text-muted text-truncate d-block"
                                            th:text="${torrent.subtitle}"
                                            style="font-size:0.85rem"></small>
