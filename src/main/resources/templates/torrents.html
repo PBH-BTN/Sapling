@@ -24,28 +24,6 @@
                 height: 64px;
                 object-fit: cover; /* 保持图片比例 */
             }
-
-            /* 分类筛选区域 */
-            .category-item {
-                transition: transform 0.15s ease;
-            }
-
-            .category-item:hover {
-                transform: translateY(-3px);
-            }
-
-            .category-item input:checked + label {
-                box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25);
-            }
-
-            .category-item label {
-                cursor: pointer;
-                transition: all 0.2s ease;
-            }
-
-            .category-item label:hover {
-                background-color: rgba(0, 0, 0, 0.03);
-            }
         </style>
     </th:block>
 </head>
@@ -65,8 +43,6 @@
     <div class="card mb-4 shadow-sm">
         <div class="card-body">
             <form th:action="@{/torrents}" method="get">
-                <input type="hidden" name="page" value="1">
-
                 <div class="input-group">
                     <input type="search" name="keyword" class="form-control"
                            placeholder="搜索种子..." th:value="${keyword}" aria-label="搜索">
@@ -76,44 +52,32 @@
                         </button>
                     </div>
                 </div>
-
-                <!-- 筛选条件切换 -->
-                <div class="mt-3">
-                    <a href="#categoryFilter"
+                <div class="mt-2">
+                    <a href="#advancedSearch"
                        data-toggle="collapse"
                        aria-expanded="false"
-                       aria-controls="categoryFilter"
-                       class="btn btn-sm btn-outline-secondary">
-                        <i class="fas fa-filter"></i> 分类筛选
+                       aria-controls="advancedSearch"
+                       class="small">
+                        <i class="fas fa-filter"></i> 更多筛选条件
                     </a>
                 </div>
 
                 <!-- 分类选择区域 -->
-                <div id="categoryFilter" class="collapse mt-2">
-                    <div class="d-flex flex-wrap align-items-center gap-2 border-top pt-2">
-                        <div th:each="category : ${categories}"
-                             class="category-item position-relative"
-                             style="width: 120px; height: 120px;">
+                <div id="advancedSearch" class="collapse">
+                    <div class="category-checkboxes d-flex">
+                        <div th:each="category : ${categories}" class="category-checkbox-item mr-2">
                             <input type="checkbox"
                                    name="categoryIds"
                                    th:value="${category.id}"
                                    th:id="'category_' + ${category.id}"
-                                   th:checked="${selectedCategories != null && selectedCategories.contains(category.id)}"
-                                   class="position-absolute"
-                                   style="left: 5px; top: 5px; z-index: 1;">
-
+                                   th:checked="${selectedCategories != null && selectedCategories.contains(category.id)}">
                             <label th:for="'category_' + ${category.id}"
-                                   class="d-block h-100 w-100 card shadow-sm p-1"
-                                   th:style="'border-color:' + ${category.color} + '!important'">
-                                <div class="category-image ratio ratio-1x1">
-                                    <img th:src="${category.icon}"
-                                         class="img-fluid rounded"
-                                         alt="分类图标"
-                                         style="object-fit: cover;">
-                                </div>
-                                <div class="text-center mt-1 small text-truncate"
-                                     th:style="'color:' + ${category.color}"
-                                     th:text="${category.name}"></div>
+                                   class="mb-0 small"
+                                   th:style="'color: ' + ${category.color}">
+                                <img th:if="${category.icon}"
+                                     th:src="${category.icon}"
+                                     class="mr-1"/>
+                                <!--                                <span th:text="${category.name}"></span>-->
                             </label>
                         </div>
                     </div>
