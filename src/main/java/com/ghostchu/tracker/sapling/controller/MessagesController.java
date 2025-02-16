@@ -88,15 +88,18 @@ public class MessagesController {
             @RequestParam String content) {
         if ("batch".equals(mode)) {
             StpUtil.checkPermission(Permission.MESSAGES_SEND_BATCH);
-        }
-        String[] rece = receivers.split(",");
-        for (String s : rece) {
-            if (!s.matches("\\d+")) {
-                throw new IllegalArgumentException("一个或者多个站内信接收者 ID 格式错误");
+            messageService.sendMessage(mode, StpUtil.getLoginIdAsLong(), List.of(), title, HtmlSanitizer.sanitize(content));
+        } else {
+            String[] rece = receivers.split(",");
+            for (String s : rece) {
+                if (!s.matches("\\d+")) {
+                    throw new IllegalArgumentException("一个或者多个站内信接收者 ID 格式错误");
+                }
             }
+            List<Long> receIds = Arrays.stream(rece).map(Long::parseLong).distinct().toList();
+            messageService.sendMessage(mode, StpUtil.getLoginIdAsLong(), receIds, title, HtmlSanitizer.sanitize(content));
         }
-        List<Long> receIds = Arrays.stream(rece).map(Long::parseLong).distinct().toList();
-        messageService.sendMessage(mode, StpUtil.getLoginIdAsLong(), receIds, title, HtmlSanitizer.sanitize(content));
+
         return "redirect:/messages";
     }
 }

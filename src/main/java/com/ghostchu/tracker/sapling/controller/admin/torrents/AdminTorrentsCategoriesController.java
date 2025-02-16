@@ -35,9 +35,11 @@ public class AdminTorrentsCategoriesController {
 
     @PostMapping
     public String saveCategory(@ModelAttribute CategoryFormDTO categoryVO) {
-        Categories category = categoryService.getCategoryById(categoryVO.getId());
-        if (category == null) {
+        Categories category;
+        if (categoryVO.getId() == null) {
             category = new Categories();
+        } else {
+            category = categoryService.getCategoryById(categoryVO.getId());
         }
         category.setName(categoryVO.getName());
         category.setIcon(categoryVO.getIcon());
