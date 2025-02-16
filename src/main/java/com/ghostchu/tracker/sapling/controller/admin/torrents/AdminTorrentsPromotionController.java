@@ -36,7 +36,7 @@ public class AdminTorrentsPromotionController {
     // 处理全局设置更新
     @PostMapping("/global")
     public String updateGlobalPromotion(
-            @RequestParam boolean enabled,
+            @RequestParam(required = false) boolean enabled,
             @RequestParam Long promotionId,
             RedirectAttributes redirectAttributes) {
         settingsService.setValue(Setting.TORRENTS_PROMOTIONS_GLOBAL_ENABLED, String.valueOf(enabled));
