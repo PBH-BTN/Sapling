@@ -6,6 +6,19 @@
             .centered-td {
                 align-items: center;
             }
+
+            #content img {
+                max-width: 100%; /* 限制图片最大宽度为容器宽度 */
+                height: auto; /* 高度自动保持比例 */
+                display: block; /* 消除图片下方间隙 */
+                margin: 1rem auto; /* 添加垂直外边距并水平居中 */
+            }
+
+            /* 可选：为超宽表格等元素添加约束 */
+            #content {
+                overflow-x: auto; /* 允许横向滚动 */
+                max-width: 100%; /* 防止内容溢出 */
+            }
         </style>
         <script th:src="@{/js/tinymce/tinymce.min.js}"></script>
     </th:block>
