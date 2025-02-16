@@ -141,9 +141,11 @@ public class AuthController {
                 invite == null ? regFormDTO.getEmail() : invite.getInviteEmail(),
                 ServletUtil.inet(request)
         );
-        if (!invitesService.markInviteAsUsed(invite, registered)) {
-            // 抛出运行时异常，触发事务回滚
-            throw new IllegalStateException("邀请码使用失败，可能已经过期或者被使用（并发注册？）");
+        if (invite != null) {
+            if (!invitesService.markInviteAsUsed(invite, registered)) {
+                // 抛出运行时异常，触发事务回滚
+                throw new IllegalStateException("邀请码使用失败，可能已经过期或者被使用（并发注册？）");
+            }
         }
         StpUtil.login(registered.getId());
         return "redirect:/";

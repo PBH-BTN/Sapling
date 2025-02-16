@@ -80,6 +80,7 @@ public class UsersServiceImpl extends MPJBaseServiceImpl<UsersMapper, Users> imp
         user.setPrimaryPermissionGroup(1L);
         user.setAvatar("/assets/img/avatar.png");
         user.setPasskey(UUID.randomUUID().toString());
+        user.setTimeZone("Asia/Shanghai");
         var group = permissionGroupsService.getPermissionGroupById(groupId);
         if (group == null) {
             throw new IllegalStateException("默认用户组不存在");

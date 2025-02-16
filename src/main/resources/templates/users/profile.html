@@ -1,6 +1,6 @@
 <!-- src/main/resources/templates/user/profile.html -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sa="http://www.thymeleaf.org/extras/sa-token">
 <head th:replace="~{fragments/import :: import(title=${user.name + ' - 个人资料'}, headContent=~{::#pageHead})}">
     <th:block id="pageHead">
         <!-- Markdown 渲染 -->
@@ -85,6 +85,7 @@
                                 <i class="fas fa-envelope mr-2"></i>站内信
                             </a>
                             <a class="btn btn-outline-danger"
+                               sa:hasPermission="user.ban"
                                th:if="${!user.banned}"
                                th:classappend="${user.banned} ? 'active' : ''"
                                th:href="@{/users/{id}/ban(id=${user.id})}">
@@ -92,6 +93,7 @@
                                 封禁
                             </a>
                             <a class="btn btn-outline-danger active"
+                               sa:hasPermission="user.ban"
                                th:if="${user.banned}"
                                th:href="@{/users/{id}/unban(id=${user.id})}">
                                 <i class="fas fa-ban mr-2"></i>
