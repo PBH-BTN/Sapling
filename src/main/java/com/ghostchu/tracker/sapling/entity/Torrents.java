@@ -132,8 +132,6 @@ public class Torrents implements Serializable {
 
     private OffsetDateTime promotionUntil;
 
-    private OffsetDateTime pickupUntil;
-
     public boolean isDeleted() {
         return deletedAt != null;
     }

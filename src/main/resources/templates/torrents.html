@@ -52,6 +52,36 @@
                         </button>
                     </div>
                 </div>
+                <div class="mt-2">
+                    <a href="#advancedSearch"
+                       data-toggle="collapse"
+                       aria-expanded="false"
+                       aria-controls="advancedSearch"
+                       class="small">
+                        <i class="fas fa-filter"></i> 更多筛选条件
+                    </a>
+                </div>
+
+                <!-- 分类选择区域 -->
+                <div id="advancedSearch" class="collapse">
+                    <div class="category-checkboxes">
+                        <div th:each="category : ${categories}" class="category-checkbox-item">
+                            <input type="checkbox"
+                                   name="categoryIds"
+                                   th:value="${category.id}"
+                                   th:id="'category_' + ${category.id}"
+                                   th:checked="${selectedCategories != null && selectedCategories.contains(category.id)}">
+                            <label th:for="'category_' + ${category.id}"
+                                   class="mb-0 small"
+                                   th:style="'color: ' + ${category.color}">
+                                <i th:if="${category.icon}"
+                                   th:classappend="${category.icon}"
+                                   class="mr-1"></i>
+                                <span th:text="${category.name}"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
             </form>
         </div>
     </div>
@@ -166,25 +196,26 @@
         </div>
     </div>
 
-    <!-- 分页控件-->
+    <!-- 分页控件修改（保持参数传递） -->
     <nav th:if="${pagination.pages > 1}" class="mt-4">
         <ul class="pagination justify-content-center">
             <li class="page-item" th:classappend="${pagination.current == 1} ? 'disabled'">
                 <a class="page-link"
-                   th:href="@{/torrents(page=${pagination.current - 1}, size=${pagination.size}, keyword=${keyword})}">
+                   th:href="@{/torrents(page=${pagination.current - 1}, size=${pagination.size}, keyword=${keyword}, categoryIds=${selectedCategories})}">
                     <i class="fas fa-angle-left"></i>
                 </a>
             </li>
+            <!-- 分页项添加categoryIds参数 -->
             <li th:each="pageNum : ${#numbers.sequence(1, pagination.pages)}"
                 class="page-item"
                 th:classappend="${pageNum == pagination.current} ? 'active'">
                 <a class="page-link"
-                   th:href="@{/torrents(page=${pageNum}, size=${pagination.size}, keyword=${keyword})}"
+                   th:href="@{/torrents(page=${pageNum}, size=${pagination.size}, keyword=${keyword}, categoryIds=${selectedCategories})}"
                    th:text="${pageNum}"></a>
             </li>
             <li class="page-item" th:classappend="${pagination.current == pagination.pages} ? 'disabled'">
                 <a class="page-link"
-                   th:href="@{/torrents(page=${pagination.current + 1}, size=${pagination.size}, keyword=${keyword})}">
+                   th:href="@{/torrents(page=${pagination.current + 1}, size=${pagination.size}, keyword=${keyword}, categoryIds=${selectedCategories})}">
                     <i class="fas fa-angle-right"></i>
                 </a>
             </li>

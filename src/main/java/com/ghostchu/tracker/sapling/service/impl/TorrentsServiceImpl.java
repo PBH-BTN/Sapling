@@ -91,7 +91,6 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
         vo.setPromotions(promotion == null ? null : promotionsService.toVO(promotion));
         vo.setDeleted(torrent.getDeletedAt() != null);
         vo.setPromotionUntil(torrent.getPromotionUntil());
-        vo.setPickupUntil(torrent.getPickupUntil());
         return vo;
     }
 

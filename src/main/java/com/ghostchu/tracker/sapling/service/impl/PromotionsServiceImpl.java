@@ -53,8 +53,10 @@ public class PromotionsServiceImpl extends MPJBaseServiceImpl<PromotionsMapper, 
         if (id == null) {
             return null;
         }
-        if (OffsetDateTime.now().isAfter(promotionUntil)) {
-            return null;
+        if (promotionUntil != null) {
+            if (OffsetDateTime.now().isAfter(promotionUntil)) {
+                return null;
+            }
         }
         return baseMapper.selectById(id);
     }
