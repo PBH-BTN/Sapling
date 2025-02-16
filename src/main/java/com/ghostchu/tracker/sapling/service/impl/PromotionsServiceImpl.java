@@ -19,6 +19,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -44,12 +45,15 @@ public class PromotionsServiceImpl extends MPJBaseServiceImpl<PromotionsMapper, 
     }
 
     @Override
-    public Promotions getPromotionsByIdAndPromotionStatus(Long id) {
+    public Promotions getPromotionsByIdAndPromotionStatus(Long id, OffsetDateTime promotionUntil) {
         boolean useGlobalPromotion = Boolean.parseBoolean(settingsService.getValue(Setting.TORRENTS_PROMOTIONS_GLOBAL_ENABLED).orElse("false"));
         if (useGlobalPromotion) {
             return getById(Long.parseLong(settingsService.getValue(Setting.TORRENTS_PROMOTIONS_GLOBAL_PROMOTION_ID).orElseThrow()));
         }
         if (id == null) {
+            return null;
+        }
+        if (OffsetDateTime.now().isAfter(promotionUntil)) {
             return null;
         }
         return baseMapper.selectById(id);

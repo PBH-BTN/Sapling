@@ -87,9 +87,11 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
         vo.setAnonymous(torrent.isAnonymous());
         vo.setInfo(torrent.getInfo());
         vo.setVisible(torrent.isVisible());
-        var promotion = promotionsService.getPromotionsByIdAndPromotionStatus(torrent.getPromotion());
+        var promotion = promotionsService.getPromotionsByIdAndPromotionStatus(torrent.getPromotion(), torrent.getPromotionUntil());
         vo.setPromotions(promotion == null ? null : promotionsService.toVO(promotion));
         vo.setDeleted(torrent.getDeletedAt() != null);
+        vo.setPromotionUntil(torrent.getPromotionUntil());
+        vo.setPickupUntil(torrent.getPickupUntil());
         return vo;
     }
 

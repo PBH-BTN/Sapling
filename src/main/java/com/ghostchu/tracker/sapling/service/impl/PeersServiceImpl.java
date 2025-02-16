@@ -142,7 +142,7 @@ public class PeersServiceImpl extends MPJBaseServiceImpl<PeersMapper, Peers> imp
             long incrementDownloaded = realIncreamentDownloaded;
 
             Torrents torrents = torrentsService.getTorrentById(request.torrentId());
-            Promotions promotions = promotionsService.getPromotionsByIdAndPromotionStatus(torrents.getPromotion());
+            Promotions promotions = promotionsService.getPromotionsByIdAndPromotionStatus(torrents.getPromotion(), torrents.getPromotionUntil());
 
             if (promotions != null) {
                 incrementUploaded = (long) (realIncreamentUploaded * promotions.getUploadModifier());

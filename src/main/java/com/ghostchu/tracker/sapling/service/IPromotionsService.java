@@ -6,6 +6,7 @@ import com.ghostchu.tracker.sapling.vo.TorrentsVO;
 import com.ghostchu.tracker.sapling.vo.UserVO;
 import com.github.yulichang.base.MPJBaseService;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 /**
@@ -19,7 +20,7 @@ import java.util.List;
 public interface IPromotionsService extends MPJBaseService<Promotions> {
     Promotions getPromotionsById(Long id);
 
-    Promotions getPromotionsByIdAndPromotionStatus(Long id);
+    Promotions getPromotionsByIdAndPromotionStatus(Long id, OffsetDateTime promotionUntil);
 
     PromotionsVO toVO(Promotions promotionsById);
 

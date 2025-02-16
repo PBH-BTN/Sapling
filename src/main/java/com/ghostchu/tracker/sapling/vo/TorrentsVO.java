@@ -69,4 +69,8 @@ public class TorrentsVO implements Serializable {
 
     private PromotionsVO promotions;
 
+    private OffsetDateTime promotionUntil;
+
+    private OffsetDateTime pickupUntil;
+
 }
