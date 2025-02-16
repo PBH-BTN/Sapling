@@ -91,6 +91,7 @@
                                    class="text-danger"
                                    th:data-id="${cc.id}"
                                    sa:hasPermissionOr="comment.delete, comment.delete.other"
+                                   th:if="${cc.deletedAt == null}"
                                    onclick="deleteComment(this)">
                                     删除
                                 </a>
