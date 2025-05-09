@@ -20,10 +20,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.OffsetDateTime;
@@ -105,12 +103,13 @@ public class AuthController {
             regFormDTO.setUsername(invite.getInviteUsername());
         }
         model.addAttribute("registerForm", regFormDTO);
+        model.addAttribute("username", regFormDTO.getUsername());
         return "register";
     }
 
     @PostMapping("/register")
     @Transactional
-    public String register(@Valid RegFormDTO regFormDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpServletRequest request, Model model) {
+    public String register(@ModelAttribute("registerForm") @Valid RegFormDTO regFormDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpServletRequest request, Model model) {
         Invites invite = null;
         if (regFormDTO.getInviteCode() != null) {
             invite = invitesService.getInviteByCode(regFormDTO.getInviteCode());
@@ -119,19 +118,27 @@ public class AuthController {
             return disallowPublicRegister(model);
         }
         if (bindingResult.hasErrors()) {
+            for (ObjectError allError : bindingResult.getAllErrors()) {
+                System.out.println(allError.toString());
+            }
+
+            model.addAttribute("registerForm", regFormDTO);
             return "register";
         }
         if (!CaptchaJakartaUtil.ver(regFormDTO.getCaptcha(), request)) {
-            redirectAttributes.addAttribute("error", "验证码无效或已过期");
+            bindingResult.rejectValue("inviteCode","inviteCode.invalid", "验证码无效或已过期");
+            model.addAttribute("registerForm", regFormDTO);
             CaptchaJakartaUtil.clear(request);
             return "register";
         }
         if (usersService.userEmailExists(regFormDTO.getEmail())) {
-            redirectAttributes.addAttribute("error", "电子邮件地址已被使用。已经注册？尝试登录。");
+            bindingResult.rejectValue("email","email.invalid", "电子邮件地址已被使用。已经注册？尝试登录。");
+            model.addAttribute("registerForm", regFormDTO);
             return "register";
         }
         if (usersService.userNameExists(regFormDTO.getUsername())) {
-            redirectAttributes.addAttribute("error", "用户名已被占用，换个名字吧！");
+            bindingResult.rejectValue("username","username.invalid", "用户名已被占用，换个名字吧！");
+            model.addAttribute("registerForm", regFormDTO);
             return "register";
         }
         var passhash = SecretUtil.hashPassword(regFormDTO.getPassword());
