@@ -20,11 +20,11 @@ public class ProfileUpdateFormDTO {
 
     private String avatar;
 
-    @Min(1)
+    @Min(0)
     @Max(1000)
     private long myBandwidthUpload;
 
-    @Min(1)
+    @Min(0)
     @Max(1000)
     private long myBandwidthDownload;
 
