@@ -113,6 +113,10 @@ public class AuthController {
         Invites invite = null;
         if (regFormDTO.getInviteCode() != null) {
             invite = invitesService.getInviteByCode(regFormDTO.getInviteCode());
+            if(invite != null){
+                invite.setInviteEmail(invite.getInviteEmail().trim());
+                invite.setInviteUsername(invite.getInviteUsername().trim());
+            }
         }
         if (!isPublicRegisterAllowed() && (invite == null || !invite.isInviteValid())) {
             return disallowPublicRegister(model);
@@ -121,10 +125,11 @@ public class AuthController {
             for (ObjectError allError : bindingResult.getAllErrors()) {
                 System.out.println(allError.toString());
             }
-
             model.addAttribute("registerForm", regFormDTO);
             return "register";
         }
+        regFormDTO.setUsername(regFormDTO.getUsername().trim());
+        regFormDTO.setEmail(regFormDTO.getEmail().trim());
         if (!CaptchaJakartaUtil.ver(regFormDTO.getCaptcha(), request)) {
             bindingResult.rejectValue("inviteCode","inviteCode.invalid", "验证码无效或已过期");
             model.addAttribute("registerForm", regFormDTO);

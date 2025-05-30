@@ -99,8 +99,10 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
         return baseMapper.selectCount(new QueryWrapper<Torrents>()
                 .nested(q -> q.eq("hash_v1", infoHash)
                         .or()
-                        .eq("hash_v2", infoHash))
-                .and(q -> q.eq("deleted_at", null))
+                        .eq("hash_v2", infoHash)
+                        .or()
+                        .eq("hash_v2_short", infoHash))
+                .and(q -> q.isNull("deleted_at"))
         ) > 0;
     }
 
@@ -194,7 +196,7 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
                         .eq("hash_v2_short", infoHash)
                         .or()
                         .eq("hash_v2", infoHash))
-                .and(q -> q.eq("deleted_at", null)));
+                .and(q -> q.isNull("deleted_at")));
     }
 
     @Override
