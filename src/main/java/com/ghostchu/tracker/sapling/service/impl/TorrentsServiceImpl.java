@@ -97,10 +97,9 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
     @Override
     public boolean isTorrentExists(byte[] infoHash) {
         return baseMapper.selectCount(new QueryWrapper<Torrents>()
-                .eq("hash_v1", infoHash)
-                .and(q -> q.eq("deleted_at", null))
-                .or()
-                .eq("hash_v2", infoHash)
+                .nested(q -> q.eq("hash_v1", infoHash)
+                        .or()
+                        .eq("hash_v2", infoHash))
                 .and(q -> q.eq("deleted_at", null))
         ) > 0;
     }
@@ -190,13 +189,11 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
     @Cacheable(value = "torrents", key = "'infoHash:' + #infoHash")
     public Torrents getTorrentByInfoHash(byte[] infoHash) {
         return getOne(new QueryWrapper<Torrents>()
-                .eq("hash_v1", infoHash)
-                .and(q -> q.eq("deleted_at", null))
-                .or()
-                .eq("hash_v2_short", infoHash)
-                .and(q -> q.eq("deleted_at", null))
-                .or()
-                .eq("hash_v2", infoHash)
+                .nested(q -> q.eq("hash_v1", infoHash)
+                        .or()
+                        .eq("hash_v2_short", infoHash)
+                        .or()
+                        .eq("hash_v2", infoHash))
                 .and(q -> q.eq("deleted_at", null)));
     }
 
