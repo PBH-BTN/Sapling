@@ -60,7 +60,7 @@ public class UserProfileController {
         }
         UserVO targetUser = userService.toVO(userService.getUserById(id));
         boolean isCurrentUser = targetUser.getId() == StpUtil.getLoginIdAsLong();
-        model.addAttribute("user", targetUser);
+        model.addAttribute("userProfile", targetUser);
         model.addAttribute("userStats", userStatsService.toVO(userStatsService.getUserStats(id)));
         model.addAttribute("userBalances", userBalancesService.toVO(userBalancesService.getUserBalances(id)));
         model.addAttribute("isCurrentUser", isCurrentUser);
@@ -77,7 +77,7 @@ public class UserProfileController {
             StpUtil.checkPermission(Permission.USER_EDIT_OTHER);
         }
         UserVO currentUser = userService.toVO(userService.getUserById(id));
-        model.addAttribute("user", currentUser);
+        model.addAttribute("userProfile", currentUser);
         model.addAttribute("isCurrentUser", true);
         model.addAttribute("form", convertToForm(currentUser));
         model.addAttribute("selectedPrimaryGroup", currentUser.getPrimaryPermissionGroup());

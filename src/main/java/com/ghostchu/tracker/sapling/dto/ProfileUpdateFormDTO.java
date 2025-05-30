@@ -8,8 +8,8 @@ public class ProfileUpdateFormDTO {
 
     private long id;
 
-    @NotBlank
-    @Pattern(regexp = "^[a-zA-Z0-9_]{4,20}$", message = "用户名格式不正确")
+    @NotBlank(message = "用户名不能为空")
+    @Size(min = 3, max = 20, message = "用户名长度需在3-20个字符之间")
     private String name;
 
     @Size(max = 50)
