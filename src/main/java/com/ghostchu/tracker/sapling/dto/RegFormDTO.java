@@ -19,8 +19,7 @@ public class RegFormDTO {
     @Email(message = "邮箱格式不正确")
     private String email;
 
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$",
-            message = "密码必须至少8个字符，包含字母和数字")
+    @Size(min = 3, max = 64, message = "密码长度需在3-64个字符之间")
     private String password;
     private String confirmPassword;
     private String inviteCode;

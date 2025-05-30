@@ -96,7 +96,13 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
 
     @Override
     public boolean isTorrentExists(byte[] infoHash) {
-        return baseMapper.selectCount(new QueryWrapper<Torrents>().eq("hash_v1", infoHash).or().eq("hash_v2", infoHash)) > 0;
+        return baseMapper.selectCount(new QueryWrapper<Torrents>()
+                .eq("hash_v1", infoHash)
+                .and(q -> q.eq("deleted_at", null))
+                .or()
+                .eq("hash_v2", infoHash)
+                .and(q -> q.eq("deleted_at", null))
+        ) > 0;
     }
 
     @Override
@@ -185,8 +191,13 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
     public Torrents getTorrentByInfoHash(byte[] infoHash) {
         return getOne(new QueryWrapper<Torrents>()
                 .eq("hash_v1", infoHash)
+                .and(q -> q.eq("deleted_at", null))
                 .or()
-                .eq("hash_v2_short", infoHash));
+                .eq("hash_v2_short", infoHash)
+                .and(q -> q.eq("deleted_at", null))
+                .or()
+                .eq("hash_v2", infoHash)
+                .and(q -> q.eq("deleted_at", null)));
     }
 
     @Override
@@ -211,6 +222,9 @@ public class TorrentsServiceImpl extends MPJBaseServiceImpl<TorrentsMapper, Torr
     })
     public Torrents unDeleteTorrent(long id) {
         Torrents torrents = baseMapper.selectById(id);
+        if(isTorrentExists(torrents.getHashV1()) || isTorrentExists(torrents.getHashV2())) {
+            throw new IllegalArgumentException("反删除操作失败，种子已经反删除或者已有相同 InfoHash 值的种子存在");
+        }
         torrents.setDeletedAt(null);
         if (baseMapper.updateById(torrents) == 0) {
             throw new IllegalArgumentException("反删除操作失败，种子已经反删除或者已有相同 InfoHash 值的种子存在");
