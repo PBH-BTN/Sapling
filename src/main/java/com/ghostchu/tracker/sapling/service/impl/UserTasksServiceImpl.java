@@ -1,5 +1,6 @@
 package com.ghostchu.tracker.sapling.service.impl;
 
+import com.baomidou.lock.annotation.Lock4j;
 import com.ghostchu.tracker.sapling.entity.UserTasks;
 import com.ghostchu.tracker.sapling.mapper.UserTasksMapper;
 import com.ghostchu.tracker.sapling.service.IUserTasksService;
@@ -23,6 +24,7 @@ import java.time.OffsetDateTime;
 public class UserTasksServiceImpl extends MPJBaseServiceImpl<UserTasksMapper, UserTasks> implements IUserTasksService {
     @Override
     @Retryable
+    @Lock4j(name="UserTasksService@updateUserTaskRecord", keys = {"#owner", "#torrent"})
     public UserTasks updateUserTaskRecord(long owner, long torrent, long toGo, OffsetDateTime announceAt, PeerEvent event, long incrementUploaded,
                                           long incrementDownloaded, long realIncrementUploaded, long realIncrementDownloaded, long incrementSeedTime, long incrementLeechTime, String userAgent) {
         UserTasks userTasks = this.baseMapper.selectUserTaskRecordsForUpdate(owner, torrent);

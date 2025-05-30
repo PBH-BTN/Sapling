@@ -26,7 +26,7 @@ public interface IPeersService extends MPJBaseService<Peers> {
 
     ScrapePeers scrape(long torrentId);
 
-    void announce(List<AnnounceRequest> requests);
+    void announce(AnnounceRequest requests);
 
     PeerStats countPeersByTorrent(@Param("torrent") Long torrentId);
 

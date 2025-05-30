@@ -14,6 +14,7 @@ import com.ghostchu.tracker.sapling.tracker.PeerEvent;
 import com.ghostchu.tracker.sapling.util.ExternalSwitch;
 import com.ghostchu.tracker.sapling.util.ServletUtil;
 import com.google.common.net.HostAndPort;
+import com.google.common.net.InetAddresses;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -171,16 +172,8 @@ public class TrackerController {
         }
         List<InetAddress> peerIps = getPossiblePeerIps(req)
                 .stream()
-                .map(s -> {
-                    try {
-                        return InetAddress.getByName(s.getHost());
-                    } catch (UnknownHostException e) {
-                        //log.warn("Failed to parse peer IP: {}", s.getHost());
-                        return null;
-                    }
-                })
+                .map(s -> InetAddresses.forString(s.getHost()))
                 .distinct()
-                .filter(Objects::nonNull)
                 .filter(ip -> {
                     if (ExternalSwitch.parseBoolean("sapling.tracker.ignore-local-address", true)) {
                         return !ip.isSiteLocalAddress() && !ip.isLoopbackAddress() && !ip.isAnyLocalAddress() && !ip.isMulticastAddress();
@@ -189,9 +182,8 @@ public class TrackerController {
                     }
                 })
                 .toList();
-        List<AnnounceRequest> requests = new ArrayList<>(8);
         for (InetAddress ip : peerIps) {
-            requests.add(new AnnounceRequest(
+            peersService.announce(new AnnounceRequest(
                     torrents.getId(),
                     users.getId(),
                     peerId,
@@ -204,7 +196,7 @@ public class TrackerController {
                     peerEvent,
                     ServletUtil.ua(req)));
         }
-        peersService.announce(requests);
+
         TrackedPeers peers;
         if (peerEvent != PeerEvent.STOPPED) {
             peers = new TrackedPeers(peersService.fetchPeers(users.getId(), torrents.getId(), Math.min(Integer.parseInt(settingsService.getValue(Setting.TRACKER_ANNOUNCE_MAX_RETURNS).orElseThrow()), numWant), true, null).getRecords());
@@ -218,22 +210,26 @@ public class TrackerController {
         map.put("complete", peers.getSeeds());
         map.put("incomplete", peers.getLeeches());
         map.put("external ip", ServletUtil.ip(req));
-        map.put("tracker id", settingsService.getValue(Setting.TRACKER_ID));
+        map.put("tracker id", settingsService.getValue(Setting.TRACKER_ID).orElse("undefined"));
 
-        if (compact) {
+        if (false) {
             map.put("peers", compactPeers(peers.getIpv4(), false));
             if (!peers.getIpv6().isEmpty())
                 map.put("peers6", compactPeers(peers.getIpv6(), true));
         } else {
             List<Peers> allPeers = new ArrayList<>(peers.getIpv4());
             allPeers.addAll(peers.getIpv6());
-            map.put("peers", new HashMap<>() {{
-                for (Peers p : allPeers) {
-                    put("peer id", new String(p.getPeerId(), StandardCharsets.ISO_8859_1));
-                    put("ip", p.getIp());
-                    put("port", p.getPort());
+            List<Map<String, Object>> peerList = new ArrayList<>();
+            for (Peers peer : allPeers) {
+                Map<String, Object> peerMap = new LinkedHashMap<>();
+                if (!compact) {
+                    peerMap.put("peer id", peer.getPeerId());
                 }
-            }});
+                peerMap.put("ip", peer.getIp().getHostAddress());
+                peerMap.put("port", peer.getPort());
+                peerList.add(peerMap);
+            }
+            map.put("peers", peerList);
         }
         return ResponseEntity
                 .status(HttpStatus.OK)

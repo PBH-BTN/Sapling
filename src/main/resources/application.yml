@@ -23,7 +23,7 @@ spring:
     driver-class-name: org.postgresql.Driver
     password: N7tzj6857pwWWcFA
     username: sapling
-    url: jdbc:postgresql://nahida:5432/sapling
+    url: jdbc:postgresql://49.232.183.249:5432/sapling
   servlet:
     multipart:
       enabled: true
@@ -51,6 +51,8 @@ server:
     max-connections: 10240
     threads:
       max: 500
+    relaxed-path-chars: "[,],|,"
+    relaxed-query-chars: "[,],{,},"
   address: 0.0.0.0
   port: 18800
   compression:

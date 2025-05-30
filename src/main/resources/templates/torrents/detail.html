@@ -135,7 +135,7 @@
                 <!-- 显示感谢列表 -->
                 <div class="card-body">
                     <span th:each="thank : ${thanks}">
-                        <a th:href="@{/profile/{id}(id=${thank.owner.id})}"
+                        <a th:href="@{/users/profile/{id}(id=${thank.owner.id})}"
                            class="badge badge-pill"
                            th:style="'background-color:' + ${thank.owner.primaryPermissionGroup.color} + ';color:white'"
                            th:text="${thank.owner.name}">

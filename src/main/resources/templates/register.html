@@ -32,7 +32,7 @@
                     <form th:action="@{/auth/register}" method="post" th:object="${registerForm}">
                         <!-- 用户名 -->
                         <div class="form-group">
-                            <label for="username">用户名(*)</label>
+                            <label for="username">用户名(*) (3-30个字符)</label>
                             <input type="text" id="username" th:field="*{username}"
                                    class="form-control" required
                                    th:readonly="*{username}"
@@ -52,7 +52,7 @@
 
                         <!-- 密码 -->
                         <div class="form-group">
-                            <label for="password">密码(*)</label>
+                            <label for="password">密码(*) (至少8个字符，包含字母和数字)</label>
                             <input type="password" id="password" th:field="*{password}"
                                    class="form-control" required
                                    th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'">
@@ -79,7 +79,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="captcha">验证码</label>
+                            <label for="captcha">验证码(*)</label>
                             <div class="row align-items-center">
                                 <div class="col-7 pr-1">
                                     <input type="text" id="captcha" name="captcha"

@@ -47,7 +47,7 @@ public class SaplingControllerAdvice {
     }
 
     @ExceptionHandler(NotPermissionException.class)
-    public String handlerNotLoginException(NotPermissionException e, Model model, HttpServletResponse response) {
+    public String handlerNotPermissionException(NotPermissionException e, Model model, HttpServletResponse response) {
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         addModelAttributesForExceptionHandler(model);
         model.addAttribute("err", "您没有足够的权限访问此模块的内容：" + e.getMessage());

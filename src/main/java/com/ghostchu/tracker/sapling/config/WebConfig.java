@@ -21,4 +21,5 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**")          // 拦截所有路径
                 .excludePathPatterns("/static/**"); // 排除静态资源（可选）
     }
+
 }
