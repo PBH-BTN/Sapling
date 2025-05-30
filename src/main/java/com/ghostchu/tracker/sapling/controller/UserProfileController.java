@@ -60,9 +60,9 @@ public class UserProfileController {
         }
         UserVO targetUser = userService.toVO(userService.getUserById(id));
         boolean isCurrentUser = targetUser.getId() == StpUtil.getLoginIdAsLong();
-        model.addAttribute("userProfile", targetUser);
-        model.addAttribute("userStats", userStatsService.toVO(userStatsService.getUserStats(id)));
-        model.addAttribute("userBalances", userBalancesService.toVO(userBalancesService.getUserBalances(id)));
+        model.addAttribute("viewUser", targetUser);
+        model.addAttribute("viewUserStats", userStatsService.toVO(userStatsService.getUserStats(id)));
+        model.addAttribute("viewUserBalances", userBalancesService.toVO(userBalancesService.getUserBalances(id)));
         model.addAttribute("isCurrentUser", isCurrentUser);
         return "users/profile";
     }
@@ -77,11 +77,11 @@ public class UserProfileController {
             StpUtil.checkPermission(Permission.USER_EDIT_OTHER);
         }
         UserVO currentUser = userService.toVO(userService.getUserById(id));
-        model.addAttribute("userProfile", currentUser);
+        model.addAttribute("viewUser", currentUser);
         model.addAttribute("isCurrentUser", true);
-        model.addAttribute("form", convertToForm(currentUser));
-        model.addAttribute("selectedPrimaryGroup", currentUser.getPrimaryPermissionGroup());
-        model.addAttribute("primaryGroups", permissionGroupsService.listGroups().stream().map(permissionGroupsService::toVO).toList());
+        model.addAttribute("viewUserForm", convertToForm(currentUser));
+        model.addAttribute("viewSelectedPrimaryGroup", currentUser.getPrimaryPermissionGroup());
+        model.addAttribute("viewPrimaryGroups", permissionGroupsService.listGroups().stream().map(permissionGroupsService::toVO).toList());
         return "users/edit";
     }
 

@@ -63,7 +63,7 @@ public class BitbucketController {
     @Value("${spring.servlet.multipart.max-request-size}")
     private String maxRequestSize;
 
-    private static final String[] safeMime = new String[]{"image", "audio", "video", "font", "text"};
+    private static final String[] safeMime = new String[]{"image/", "audio/", "video/", "font/", "text/plain"};
 
     @GetMapping("/upload")
     @SaCheckPermission(Permission.BITBUCKET_UPLOAD)
@@ -128,7 +128,7 @@ public class BitbucketController {
                 .build();
 
         for (String s : safeMime) {
-            if (mimeType.getType().equals(s)) {
+            if (mimeType.toString().startsWith(s)) {
                 return ResponseEntity.ok()
                         .contentType(MediaType.asMediaType(mimeType))
                         .header("Content-Disposition", contentDispositionInline.toString())

@@ -1,7 +1,7 @@
 <!-- src/main/resources/templates/user/profile.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sa="http://www.thymeleaf.org/extras/sa-token">
-<head th:replace="~{fragments/import :: import(title=${user.name + ' - 个人资料'}, headContent=~{::#pageHead})}">
+<head th:replace="~{fragments/import :: import(title=${viewUser.name + ' - 个人资料'}, headContent=~{::#pageHead})}">
     <th:block id="pageHead">
         <!-- Markdown 渲染 -->
         <script th:src="@{/assets/js/commonmark.min.js}"></script>
@@ -22,14 +22,14 @@
 </head>
 
 <body>
-<div th:replace="~{fragments/header :: header(${userProfile})}"></div>
+<div th:replace="~{fragments/header :: header(${user})}"></div>
 
 <main class="container my-4">
     <!-- 面包屑导航 -->
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb bg-light">
             <li class="breadcrumb-item"><a th:href="@{/}">首页</a></li>
-            <li class="breadcrumb-item active" th:text="${userProfile.name}"></li>
+            <li class="breadcrumb-item active" th:text="${viewUser.name}"></li>
         </ol>
     </nav>
 
@@ -40,15 +40,15 @@
             <div class="row align-items-center">
                 <!-- 头像 -->
                 <div class="col-md-3 text-center">
-                    <img th:src="@{${userProfile.avatar}}"
+                    <img th:src="@{${viewUser.avatar}}"
                          width="200px"
                          height="200px"
                          class="rounded-circle mb-3 avatar-preview"
                          alt="用户头像">
-                    <div th:if="${userProfile.banned}" class="alert alert-danger">
+                    <div th:if="${viewUser.banned}" class="alert alert-danger">
                         <i class="fas fa-ban"></i> 此用户当前处于封禁状态
                     </div>
-                    <div th:if="${userProfile.warned}" class="alert alert-warning">
+                    <div th:if="${viewUser.warned}" class="alert alert-warning">
                         <i class="fas fa-ban"></i> 此用户因违规处于警告状态
                     </div>
                 </div>
@@ -58,44 +58,44 @@
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
                             <h2 class="mb-1">
-                                <span class="mr-2" th:text="${userProfile.name}"></span><small th:if="${userProfile.title}"
+                                <span class="mr-2" th:text="${viewUser.name}"></span><small th:if="${viewUser.title}"
                                                                                         class="text-muted"
-                                                                                        th:text="${userProfile.title}"></small>
+                                                                                        th:text="${viewUser.title}"></small>
                             </h2>
                             <div class="mb-2">
                                 <span class="badge text-contrast"
-                                      th:style="'background-color:' + ${userProfile.primaryPermissionGroup.color}"
-                                      th:data-bg-color="${userProfile.primaryPermissionGroup.color}"
-                                      th:text="${userProfile.primaryPermissionGroup.name}"></span>
-                                <span th:if="${userProfile.levelPermissionGroup}"
+                                      th:style="'background-color:' + ${viewUser.primaryPermissionGroup.color}"
+                                      th:data-bg-color="${viewUser.primaryPermissionGroup.color}"
+                                      th:text="${viewUser.primaryPermissionGroup.name}"></span>
+                                <span th:if="${viewUser.levelPermissionGroup}"
                                       class="badge ml-2 text-contrast"
-                                      th:style="'background-color:' + ${userProfile.levelPermissionGroup.color}"
-                                      th:data-bg-color="${userProfile.levelPermissionGroup.color}"
-                                      th:text="${userProfile.levelPermissionGroup.name}"></span>
+                                      th:style="'background-color:' + ${viewUser.levelPermissionGroup.color}"
+                                      th:data-bg-color="${viewUser.levelPermissionGroup.color}"
+                                      th:text="${viewUser.levelPermissionGroup.name}"></span>
                             </div>
                         </div>
                         <div th:if="${isCurrentUser || stp.hasPermission('user.edit.other')}" class="btn-group">
                             <!-- 原有的编辑资料按钮 -->
-                            <a th:href="@{/users/profile/edit/{id}(id=${userProfile.id})}"
+                            <a th:href="@{/users/profile/edit/{id}(id=${viewUser.id})}"
                                class="btn btn-outline-primary">
                                 <i class="fas fa-cog mr-2"></i>编辑
                             </a>
                             <a class="btn btn-outline-info"
-                               th:href="@{/messages/send(id=${userProfile.id})}">
+                               th:href="@{/messages/send(id=${viewUser.id})}">
                                 <i class="fas fa-envelope mr-2"></i>站内信
                             </a>
                             <a class="btn btn-outline-danger"
                                sa:hasPermission="user.ban"
-                               th:if="${!userProfile.banned}"
-                               th:classappend="${userProfile.banned} ? 'active' : ''"
-                               th:href="@{/users/{id}/ban(id=${userProfile.id})}">
+                               th:if="${!viewUser.banned}"
+                               th:classappend="${viewUser.banned} ? 'active' : ''"
+                               th:href="@{/users/{id}/ban(id=${viewUser.id})}">
                                 <i class="fas fa-ban mr-2"></i>
                                 封禁
                             </a>
                             <a class="btn btn-outline-danger active"
                                sa:hasPermission="user.ban"
-                               th:if="${userProfile.banned}"
-                               th:href="@{/users/{id}/unban(id=${userProfile.id})}">
+                               th:if="${viewUser.banned}"
+                               th:href="@{/users/{id}/unban(id=${viewUser.id})}">
                                 <i class="fas fa-ban mr-2"></i>
                                 解除封禁
                             </a>
@@ -107,7 +107,7 @@
                                 <div class="card-body">
                                     <h5 class="card-title">
                                         <i class="fas fa-arrow-up text-success"></i>
-                                        <span th:text="${unitConverter.autoUnit(userStats.uploaded)}"></span>
+                                        <span th:text="${unitConverter.autoUnit(viewUserStats.uploaded)}"></span>
                                     </h5>
                                     <p class="card-text text-muted small">上传量</p>
                                 </div>
@@ -118,7 +118,7 @@
                                 <div class="card-body">
                                     <h5 class="card-title">
                                         <i class="fas fa-arrow-down text-danger"></i>
-                                        <span th:text="${unitConverter.autoUnit(userStats.downloaded)}"></span>
+                                        <span th:text="${unitConverter.autoUnit(viewUserStats.downloaded)}"></span>
                                     </h5>
                                     <p class="card-text text-muted small">下载量</p>
                                 </div>
@@ -129,7 +129,7 @@
                                 <div class="card-body">
                                     <h5 class="card-title">
                                         <i class="fas fa-percentage text-primary"></i>
-                                        <span th:text="${userStats.shareRatioStr}"></span>
+                                        <span th:text="${viewUserStats.shareRatioStr}"></span>
                                     </h5>
                                     <p class="card-text text-muted small">分享率</p>
                                 </div>
@@ -140,7 +140,7 @@
                                 <div class="card-body">
                                     <h5 class="card-title">
                                         <i class="fas fa-seedling text-success"></i>
-                                        <span th:text="${timeConverter.formatDuration(userStats.seedTime)}"></span>
+                                        <span th:text="${timeConverter.formatDuration(viewUserStats.seedTime)}"></span>
                                     </h5>
                                     <p class="card-text text-muted small">总做种时间</p>
                                 </div>
@@ -151,7 +151,7 @@
                                 <div class="card-body">
                                     <h5 class="card-title">
                                         <i class="fas fa-download text-info"></i>
-                                        <span th:text="${timeConverter.formatDuration(userStats.seedTime)}"></span>
+                                        <span th:text="${timeConverter.formatDuration(viewUserStats.seedTime)}"></span>
                                     </h5>
                                     <p class="card-text text-muted small">总下载时间</p>
                                 </div>
@@ -164,10 +164,10 @@
     </div>
 
     <!-- 签名档 -->
-    <div class="card shadow-lg mb-4" th:if="${userProfile.signature}">
+    <div class="card shadow-lg mb-4" th:if="${viewUser.signature}">
         <div class="card-body">
             <h5 class="card-title mb-3"><i class="fas fa-pen-fancy mr-2"></i>签名档</h5>
-            <div id="signatureContent" th:utext="${userProfile.signature}"></div>
+            <div id="signatureContent" th:utext="${viewUser.signature}"></div>
         </div>
     </div>
 
@@ -177,10 +177,10 @@
             <h5 class="card-title mb-3"><i class="fas fa-network-wired mr-2"></i>网络配置</h5>
             <div class="d-flex flex-column">
                 <span><i class="fas fa-arrow-up text-success"></i>上传带宽：<span
-                        th:text="${userProfile.myBandwidthUpload}"></span> Mbps</span>
+                        th:text="${viewUser.myBandwidthUpload}"></span> Mbps</span>
                 <span><i class="fas fa-arrow-down text-danger"></i>下载带宽：<span
-                        th:text="${userProfile.myBandwidthDownload}"></span> Mbps</span>
-                <span>网络提供商：<span th:text="${userProfile.myIsp}"></span></span>
+                        th:text="${viewUser.myBandwidthDownload}"></span> Mbps</span>
+                <span>网络提供商：<span th:text="${viewUser.myIsp}"></span></span>
             </div>
 
         </div>
@@ -190,7 +190,7 @@
         <div class="card-body">
             <h5 class="card-title mb-3"><i class="fas fa-money-bill mr-2"></i>积分</h5>
             <div class="d-flex flex-column">
-                <div th:each="entry : ${userBalances}">
+                <div th:each="entry : ${viewUserBalances}">
                     <span th:text="${entry.key.name}" th:style="'color: '+${entry.key.color}"></span>: <span
                         th:text="${entry.value.doubleValue()}"></span>
                 </div>

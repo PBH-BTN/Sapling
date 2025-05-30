@@ -25,14 +25,14 @@
                 </div>
 
                 <div class="card-body">
-                    <form th:action="@{/users/profile/edit/{id}(id=${form.id})}" method="post"
+                    <form th:action="@{/users/profile/edit/{id}(id=${viewUserForm.id})}" method="post"
                           enctype="multipart/form-data"
-                          th:object="${form}">
+                          th:object="${viewUserForm}">
 
                         <!-- 头像上传 -->
                         <div class="form-group text-center mb-4">
                             <label for="avatarFile" class="d-block cursor-pointer">
-                                <img th:src="@{${form.avatar}}"
+                                <img th:src="@{${viewUserForm.avatar}}"
                                      id="avatarPreview"
                                      width="128px"
                                      height="128px"
@@ -63,10 +63,10 @@
                         <div class="form-group" sa:hasPermission="user.edit.primarypermissiongroup">
                             <label class="font-weight-bold">主权限组</label>
                             <select class="custom-select" name="primaryGroupId" required>
-                                <option th:each="p : ${primaryGroups}"
+                                <option th:each="p : ${viewPrimaryGroups}"
                                         th:value="${p.id}"
                                         th:text="${p.name}"
-                                        th:selected="${p.id == selectedPrimaryGroup}"></option> <!-- 动态设置选中项 -->
+                                        th:selected="${p.id == viewSelectedPrimaryGroup}"></option> <!-- 动态设置选中项 -->
                             </select>
                             <small class="form-text text-muted">选择用户的主权限组</small>
                         </div>
