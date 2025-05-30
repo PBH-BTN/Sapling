@@ -22,6 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.util.MimeTypeUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -107,12 +108,14 @@ public class UserProfileController {
             return "users/edit";
         }
         if (!(avatarFile.getContentType() == null || StringUtils.isBlank(avatarFile.getOriginalFilename()))) {
-            Bitbucket bitbucket = bitbucketService.uploadToBitbucket(
-                    avatarFile,
-                    StpUtil.getLoginIdAsLong(),
-                    FileUtil.mime(avatarFile.getOriginalFilename(), MediaType.IMAGE_PNG).toString(),
-                    true, true);
-            users.setAvatar("/bitbucket/file/" + bitbucket.getId());
+            if (MimeTypeUtils.parseMimeType(avatarFile.getContentType()).getType().equals("image")) {
+                Bitbucket bitbucket = bitbucketService.uploadToBitbucket(
+                        avatarFile,
+                        StpUtil.getLoginIdAsLong(),
+                        FileUtil.mime(avatarFile.getOriginalFilename(), MediaType.IMAGE_PNG).toString(),
+                        true, true);
+                users.setAvatar("/bitbucket/file/" + bitbucket.getId());
+            }
         }
         users.setMyBandwidthUpload(form.getMyBandwidthUpload());
         users.setMyBandwidthDownload(form.getMyBandwidthDownload());
