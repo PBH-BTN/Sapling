@@ -1,0 +1,94 @@
+<!-- 发送站内信页面 src/main/resources/templates/messages/send.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/import :: import(title='发送站内信', headContent=~{::#pageHead})}">
+    <th:block id="pageHead">
+        <script src="/js/tinymce/tinymce.min.js"></script>
+    </th:block>
+</head>
+
+<body>
+<div th:replace="~{fragments/header :: header(${user})}"></div>
+
+<main class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0"><i class="fas fa-paper-plane mr-2"></i>发送站内信</h3>
+                </div>
+
+                <div class="card-body">
+                    <form th:action="@{/messages/send}" method="post">
+                        <!-- 发送模式选择 -->
+                        <div class="form-group">
+                            <label class="font-weight-bold">发送模式</label>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" id="modeSingle" name="mode"
+                                       class="custom-control-input" value="single" checked>
+                                <label class="custom-control-label" for="modeSingle">单发</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" id="modeBatch" name="mode"
+                                       class="custom-control-input" value="batch">
+                                <label class="custom-control-label" for="modeBatch">群发</label>
+                            </div>
+                        </div>
+
+                        <!-- 收件人输入 -->
+                        <div class="form-group" id="receiverGroup">
+                            <label class="font-weight-bold">收件人<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="receivers"
+                                   placeholder="输入用户ID，多个用逗号分隔" th:value="${param.id}">
+                        </div>
+
+                        <!-- 群发选项（默认隐藏） -->
+                        <div class="form-group" id="batchGroup" style="display: none;">
+                            <label class="font-weight-bold">群发对象</label>
+                            <select class="custom-select" name="batchType">
+                                <option value="all">全部用户</option>
+                            </select>
+                        </div>
+
+                        <!-- 标题 -->
+                        <div class="form-group">
+                            <label class="font-weight-bold">标题<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="title" required>
+                        </div>
+
+                        <!-- 内容编辑器 -->
+                        <div class="form-group">
+                            <label class="font-weight-bold">内容<span class="text-danger">*</span></label>
+                            <textarea id="messageEditor" name="content" class="form-control tinymce-editor"></textarea>
+                        </div>
+
+                        <!-- 操作按钮 -->
+                        <div class="mt-4 d-flex justify-content-between">
+                            <a th:href="@{/messages}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times mr-2"></i>取消
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-paper-plane mr-2"></i>发送
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    // 切换发送模式
+    document.querySelectorAll('input[name="mode"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+            const isBatch = document.getElementById('modeBatch').checked;
+            document.getElementById('receiverGroup').style.display = isBatch ? 'none' : 'block';
+            document.getElementById('batchGroup').style.display = isBatch ? 'block' : 'none';
+        });
+    });
+</script>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

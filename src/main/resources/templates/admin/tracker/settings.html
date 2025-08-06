@@ -1,0 +1,109 @@
+<!-- src/main/resources/templates/admin/tracker-settings.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/import :: import(title='Tracker 服务器设置', headContent=~{::#pageHead})}">
+    <style>
+        .settings-card {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .millis-hint {
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+    </style>
+    <script>
+        function toggleMaintenanceFields() {
+            const maintenance = document.getElementById('maintenanceSwitch').checked;
+            document.getElementById('maintenanceMessageGroup').style.display = maintenance ? 'block' : 'none';
+        }
+
+        // 初始化时检查维护模式状态
+        window.addEventListener('load', () => {
+            toggleMaintenanceFields();
+        });
+    </script>
+</head>
+<body>
+
+<main class="container-fluid my-4 flex-grow-1">
+    <div class="card shadow-lg settings-card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="fas fa-cogs mr-2"></i>Tracker 服务器设置</h5>
+        </div>
+
+        <form th:action="@{/admin/tracker/settings}" method="post" class="card-body">
+            <div class="form-group">
+                <label>Tracker 服务器地址</label>
+                <input type="url" class="form-control"
+                       name="announceUrl"
+                       th:value="${trackerSettings.announceUrl}"
+                       required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>常规宣告间隔（毫秒）</label>
+                    <input type="number" class="form-control"
+                           name="announceIntervalMillis"
+                           th:value="${trackerSettings.announceIntervalMillis}"
+                           min="1000" required>
+                    <small class="millis-hint">1000 毫秒 = 1 秒</small>
+                </div>
+                <div class="form-group col-md-6">
+                    <label>随机偏移量（用来平滑宣告尖峰）（毫秒）</label>
+                    <input type="number" class="form-control"
+                           name="announceIntervalRandomOffsetMillis"
+                           th:value="${trackerSettings.announceIntervalRandomOffsetMillis}"
+                           min="0" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input"
+                           id="maintenanceSwitch"
+                           name="maintenance"
+                           th:checked="${trackerSettings.maintenance}"
+                           onchange="toggleMaintenanceFields()">
+                    <label class="custom-control-label" for="maintenanceSwitch">维护模式</label>
+                </div>
+            </div>
+
+            <div class="form-group" id="maintenanceMessageGroup" style="display: none;">
+                <label>维护模式提示信息（显示在 BT 客户端）</label>
+                <textarea class="form-control"
+                          name="maintenanceMessage"
+                          rows="3"
+                          th:text="${trackerSettings.maintenanceMessage}"></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>单次宣告返回最大 Peers 数量（不建议超过 300）</label>
+                    <input type="number" class="form-control"
+                           name="announceMaxReturns"
+                           th:value="${trackerSettings.announceMaxReturns}"
+                           min="1" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Tracker ID（客户端下次请求将附带的查询参数，可用于标识和负载均衡）</label>
+                    <input type="text" class="form-control"
+                           name="trackerId"
+                           th:value="${trackerSettings.trackerId}"
+                           required>
+                </div>
+            </div>
+
+            <div class="text-right mt-4">
+                <button type="submit" class="btn btn-primary px-4">
+                    <i class="fas fa-save mr-2"></i>保存设置
+                </button>
+            </div>
+        </form>
+    </div>
+</main>
+
+</body>
+</html>

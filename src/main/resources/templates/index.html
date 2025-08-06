@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/import :: import(title='首页', headContent=~{::#pageHead})}">
+    <th:block id="pageHead">
+        <style>
+            /* 新闻板块专属样式 */
+            .news-header {
+                border-left: 4px solid #dc3545;
+                padding-left: 1rem;
+                margin: 1rem 0 1rem;
+            }
+
+            .news-item {
+                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+                padding: 1rem 0;
+            }
+
+            .news-title {
+                font-size: 1.1rem;
+                font-weight: 500;
+            }
+
+            .news-time {
+                font-size: 0.85rem;
+                color: #6c757d;
+            }
+
+            .news-content {
+                font-size: 0.95rem;
+                line-height: 1.6;
+                margin-top: 0.5rem;
+            }
+
+            /* 折叠图标动画 */
+            .transition-all {
+                transition: all 0.3s ease;
+            }
+
+            /* 展开时旋转图标 */
+            [aria-expanded="true"] .fa-angle-down {
+                transform: rotate(-180deg);
+            }
+
+            /* 鼠标悬停手型 */
+            .news-title a:hover {
+                cursor: pointer;
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: header(${user})}"></div>
+
+<main class="container my-4">
+    <!-- 新闻板块 -->
+    <div class="card shadow-sm" style="margin-bottom: 2rem">
+        <div class="card-header">
+            <div class="d-flex">
+                <h4 class="news-header text-danger">
+                    <i class="fas fa-bullhorn mr-2"></i>最新公告
+                </h4>
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- 标题栏 -->
+            <div th:if="${not #lists.isEmpty(news)}" class="news-list">
+                <div th:each="item,itemStat : ${news}" class="news-item">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <h5 class="news-title mb-0">
+                                <a href="javascript:void(0)"
+                                   class="text-dark text-decoration-none d-flex align-items-center"
+                                   data-toggle="collapse"
+                                   th:attr="data-target='#collapse'+${itemStat.index}"
+                                   aria-expanded="${itemStat.first} ? 'true' : 'false'"
+                                   aria-controls="collapse${itemStat.index}">
+                                    <i class="fas fa-angle-down ms-2 transition-all mr-2"></i>
+                                    <span th:text="${item.title}"></span>
+                                </a>
+                            </h5>
+                        </div>
+                    </div>
+                    <div th:attr="id='collapse'+${itemStat.index}"
+                         th:classappend="${itemStat.first} ? 'show' : ''"
+                         class="collapse">
+                        <div class="news-time">
+                            <i class="fas fa-clock"></i>
+                            <span th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+                        </div>
+                        <div class="news-content mt-2" th:utext="${item.description}"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- 空状态 -->
+            <div th:if="${#lists.isEmpty(news)}" class="text-center text-muted py-4">
+                <i class="fas fa-inbox fa-2x mb-2"></i>
+                <p class="mb-0">暂无最新公告</p>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="card shadow-sm mb-4" style="margin-bottom: 2rem">
+        <div class="card-header">
+            <div class="d-flex">
+                <h4 class="news-header text-danger">
+                    <i class="fas fa-chart-simple mr-2"></i>服务器负载
+                </h4>
+            </div>
+        </div>
+        <div class="card-body">
+            <table class="table table-sm table-bordered ">
+                <thead>
+                <tr>
+                    <th>类型</th>
+                    <td>用户进程</td>
+                    <td>系统进程</td>
+                    <td>空闲</td>
+                    <td>I/O 等待</td>
+                    <td>硬件中断</td>
+                    <td>软件中断</td>
+                    <td>邻居窃取</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th>百分比(%)</th>
+                    <td th:text="${#numbers.formatDecimal(cpuUsage.us,1,'COMMA',2,'POINT')}"></td>
+                    <td th:text="${#numbers.formatDecimal(cpuUsage.sy,1,'COMMA',2,'POINT')}"></td>
+                    <td th:text="${#numbers.formatDecimal(cpuUsage.id,1,'COMMA',2,'POINT')}"></td>
+                    <td th:text="${#numbers.formatDecimal(cpuUsage.wa,1,'COMMA',2,'POINT')}"></td>
+                    <td th:text="${#numbers.formatDecimal(cpuUsage.hi,1,'COMMA',2,'POINT')}"></td>
+                    <td th:text="${#numbers.formatDecimal(cpuUsage.si,1,'COMMA',2,'POINT')}"></td>
+                    <td th:text="${#numbers.formatDecimal(cpuUsage.st,1,'COMMA',2,'POINT')}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4" style="margin-bottom: 2rem">
+        <div class="card-header">
+            <div class="d-flex">
+                <h4 class="news-header text-danger">
+                    <i class="fas fa-scale-balanced mr-2"></i>免责声明
+                </h4>
+            </div>
+        </div>
+        <div class="card-body">
+            <p th:text="${'本站列出的文件并没有保存在本站的服务器上。本站仅负责连接，我们对被传播文件的内容一无所知。本站的链接均由用户自发提供。'+siteName+'的管理员无法对用户的提交内容或其他行为负责。您不能使用'+siteName+'传播或下载任何您没有使用许可的文件或材料，由此引起的后果由您自己承担。'}">
+                免责声明</p>
+        </div>
+    </div>
+
+</main>
+
+<!-- 使用通用 Footer -->
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

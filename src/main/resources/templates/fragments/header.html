@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en" xmlns:sa="http://www.thymeleaf.org/extras/sa-token">
+<head th:replace="~{import :: import(title=${pageTitle})}"></head>
+<body>
+<!-- 导航栏 Header 组件 -->
+<header th:fragment="header(user)">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <!-- 品牌标识 -->
+            <a class="navbar-brand" th:href="@{/}">
+                <i class="fas fa-seedling mr-2"></i><span th:text="${siteName}"></span>
+            </a>
+
+            <!-- 响应式折叠按钮 -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- 导航项 -->
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/torrents}">
+                            <i class="fas fa-magnet mr-1"></i>种子库
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/torrents/upload}">
+                            <i class="fas fa-upload mr-1"></i>上传
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/pages/rules}">
+                            <i class="fas fa-book mr-1"></i>规则
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/pages/test}">
+                            <i class="fas fa-circle-question mr-1"></i>常见问题
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
+                            更多
+                        </a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" th:href="@{/top}">排行榜</a>
+                            <a class="dropdown-item" th:href="@{/forums}">论坛</a>
+                        </div>
+                    </li>
+                </ul>
+
+                <!-- 用户控制区 -->
+                <ul class="navbar-nav" th:if="${user != null}">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
+                            <img th:src="${user.avatar}" width="30" height="30"
+                                 class="rounded-circle avatar-preview mr-2">
+                            <span th:text="${user.name}"></span>
+                            <span class="badge badge-success ml-2" ></span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" th:href="@{/users/profile}">
+                                <i class="fas fa-user-circle mr-2"></i>个人资料
+                            </a>
+                            <a class="dropdown-item" th:href="@{/messages}">
+                                <i class="fas fa-envelope mr-2"></i>消息
+                                <span class="badge badge-primary ml-2"></span>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" th:href="@{/bonus}">
+                                <i class="fas fa-coins mr-2"></i>积分
+                                <span class="badge badge-warning ml-2"></span>
+                            </a>
+                            <a class="dropdown-item" th:href="@{/invite}">
+                                <i class="fas fa-user-plus mr-2"></i>邀请
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a sa:hasPermission="bitbucket.view" class="dropdown-item" th:href="@{/bitbucket}">
+                                <i class="fas fa-hdd mr-2"></i>文件仓库
+                            </a>
+                            <a sa:hasPermission="admin.dashboard" class="dropdown-item text-danger" th:href="@{/admin}">
+                                <i class="fas fa-tools mr-2"></i>管理面板
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" th:href="@{/auth/logout}">
+                                <i class="fas fa-sign-out-alt mr-2"></i>退出登录
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 统计信息栏 -->
+    <div class="bg-light py-2 border-bottom" th:if="${user != null}">
+        <div class="container d-flex justify-content-between">
+            <div>
+                    <span class="text-muted small">
+                        <i class="fas fa-arrow-up text-success"></i>
+                        上传: <span
+                            th:text="${unitConverter.autoUnit(userStats.uploaded)}"></span>
+                    </span>
+                <span class="text-muted small ml-3">
+                        <i class="fas fa-arrow-down text-danger"></i>
+                        下载: <span
+                        th:text="${unitConverter.autoUnit(userStats.downloaded)}"></span>
+                    </span>
+                <span class="text-muted small ml-3">
+                        <i class="fas fa-percentage text-info"></i>
+                        分享率: <span
+                        th:text="${userStats.shareRatioStr}"></span>
+                    </span>
+            </div>
+<!--            <div class="text-muted small">-->
+<!--                <i class="fas fa-users"></i>-->
+<!--                当前在线: <span th:text="${siteStats.onlineUsers}"></span>-->
+<!--            </div>-->
+        </div>
+    </div>
+    <div th:replace="~{fragments/siteEvent :: event(${siteEvents})}"></div>
+</header>
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/import :: import(title='促销管理', headContent=~{::#pageHead})}">
+    <th:block id="pageHead">
+        <style>
+            .promotion-table thead th {
+                background: #f8f9fa;
+                white-space: nowrap;
+            }
+
+            .color-badge {
+                width: 80px;
+                background-color: var(--color);
+            }
+
+            .modifier-cell {
+                min-width: 100px;
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+
+<main class="container-fluid my-4 flex-grow-1">
+    <!-- 全站促销设置 -->
+    <div class="card shadow-lg mb-4">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0"><i class="fas fa-bullhorn mr-2"></i>全站促销设置</h5>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/admin/torrents/promotions/global}" method="post">
+                <div class="form-row align-items-center">
+                    <div class="col-auto">
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input"
+                                   id="globalSwitch" name="enabled"
+                                   th:checked="${globalEnabled}"> <!-- 动态绑定开关状态 -->
+                            <label class="custom-control-label" for="globalSwitch">启用全站促销</label>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <select class="custom-select" name="promotionId" required>
+                            <option th:each="p : ${promotions}"
+                                    th:value="${p.id}"
+                                    th:text="${p.name}"
+                                    th:selected="${p.id == selectedPromotionId}"></option> <!-- 动态设置选中项 -->
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary">应用设置</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 促销方案管理 -->
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="fas fa-tags mr-2"></i>促销方案管理</h5>
+            <button class="btn btn-light btn-sm" data-toggle="modal" data-target="#promotionModal">
+                <i class="fas fa-plus mr-1"></i>新增方案
+            </button>
+        </div>
+
+        <div class="card-body">
+            <table class="table promotion-table">
+                <thead>
+                <tr>
+                    <th>名称</th>
+                    <th>上传倍数</th>
+                    <th>下载倍数</th>
+                    <th>颜色标识</th>
+                    <th>应用条件</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="promotion : ${promotions}">
+                    <td th:text="${promotion.name}"></td>
+                    <td class="modifier-cell"
+                        th:text="${#numbers.formatDecimal(promotion.uploadModifier, 1, 2)} + 'x'"></td>
+                    <td class="modifier-cell"
+                        th:text="${#numbers.formatDecimal(promotion.downloadModifier, 1, 2)} + 'x'"></td>
+                    <td>
+                        <span class="badge color-badge"
+                              th:style="'background-color: ' + ${promotion.color}">
+                            &nbsp;&nbsp;&nbsp;
+                        </span>
+                    </td>
+                    <td style="max-width: 300px;" class="text-truncate" th:text="${promotion.condition}"></td>
+                    <td nowrap>
+                        <button class="btn btn-sm btn-outline-primary mr-2 promotion-edit"
+                                th:attr="data-promotion-id=${promotion.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger promotion-delete"
+                                th:attr="data-promotion-id=${promotion.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<!-- 编辑/新增模态框 -->
+<div class="modal fade" id="promotionModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">促销方案</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <form id="promotionForm" th:action="@{/admin/torrents/promotions}" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="promotionId">
+                    <div class="form-group">
+                        <label>方案名称</label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label>上传倍数</label>
+                            <input type="number" class="form-control"
+                                   name="uploadModifier" step="0.1" min="0" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>下载倍数</label>
+                            <input type="number" class="form-control"
+                                   name="downloadModifier" step="0.1" min="0" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>颜色标识</label>
+                        <input type="color" class="form-control" name="color" required>
+                    </div>
+                    <div class="form-group">
+                        <label>应用条件（<a
+                                href="https://docs.springframework.org.cn/spring-framework/reference/core/expressions.html">SpEL
+                            表达式</a>）</label>
+                        <textarea class="form-control" name="condition"
+                                  rows="3" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function editPromotion(id) {
+        fetch('/admin/torrents/promotions/' + id)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('promotionId').value = data.id;
+                document.querySelector('input[name="name"]').value = data.name;
+                document.querySelector('input[name="uploadModifier"]').value = data.uploadModifier;
+                document.querySelector('input[name="downloadModifier"]').value = data.downloadModifier;
+                document.querySelector('input[name="color"]').value = data.color;
+                document.querySelector('textarea[name="condition"]').value = data.condition;
+
+                document.getElementById('promotionForm').action = '/admin/torrents/promotions/' + data.id;
+                $('#promotionModal').modal('show');
+            });
+    }
+
+    function deletePromotion(id) {
+        if (confirm('确定要删除此促销方案吗？')) {
+            fetch('/admin/torrents/promotions/' + id, {
+                method: 'DELETE'
+            }).then(() => window.location.reload());
+        }
+    }
+
+    // 重置新建表单
+    $('#promotionModal').on('hidden.bs.modal', function () {
+        document.getElementById('promotionForm').reset();
+        document.getElementById('promotionForm').action = '/admin/torrents/promotions';
+    });
+
+    document.querySelectorAll('.promotion-edit').forEach(btn => {
+        btn.onclick = () => editPromotion(btn.dataset.promotionId);
+    });
+
+    document.querySelectorAll('.promotion-delete').forEach(btn => {
+        btn.onclick = () => deletePromotion(btn.dataset.promotionId);
+    });
+</script>
+</body>
+</html>

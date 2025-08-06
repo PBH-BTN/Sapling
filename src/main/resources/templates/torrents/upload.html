@@ -1,0 +1,116 @@
+<!-- src/main/resources/templates/torrents/upload.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/import :: import(title='发布新种子', headContent=~{::#pageHead})}">
+    <th:block id="pageHead">
+
+    </th:block>
+</head>
+<!-- TinyMCE Markdown 编辑器 -->
+
+<body>
+<div th:replace="~{fragments/header :: header(${user})}"></div>
+
+<main class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0"><i class="fas fa-upload mr-2"></i>发布新种子</h3>
+                </div>
+
+                <div class="card-body">
+                    <form th:action="@{/torrents/upload}" method="post" enctype="multipart/form-data"
+                          th:object="${torrent}">
+                        <!-- .torrent 文件上传 -->
+                        <div class="form-group">
+                            <label class="font-weight-bold">种子文件<span class="text-danger">*</span></label>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input"
+                                       id="torrentFile" name="torrentFile"
+                                       accept=".torrent" required>
+                                <label class="custom-file-label" for="torrentFile">选择 .torrent 文件</label>
+                            </div>
+                            <small class="form-text text-muted">
+                                最大 2MB，仅支持标准 BitTorrent 文件
+                            </small>
+                        </div>
+
+                        <!-- 分类选择 -->
+                        <div class="form-group">
+                            <label class="font-weight-bold">分类<span class="text-danger">*</span></label>
+                            <select class="custom-select" th:field="*{categoryId}" required>
+                                <option value="">请选择分类...</option>
+                                <option th:each="cat : ${categories}"
+                                        th:value="${cat.id}"
+                                        th:text="${cat.name}"></option>
+                            </select>
+                        </div>
+
+                        <!-- 主标题 -->
+                        <div class="form-group">
+                            <label class="font-weight-bold">主标题<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control"
+                                   th:field="*{title}"
+                                   placeholder="输入清晰明确的标题" required>
+                        </div>
+
+                        <!-- 副标题 -->
+                        <div class="form-group">
+                            <label class="font-weight-bold">副标题</label>
+                            <input type="text" class="form-control"
+                                   th:field="*{subtitle}"
+                                   placeholder="补充说明（可选）">
+                        </div>
+
+                        <!-- 标签 -->
+                        <div class="form-group">
+                            <label class="font-weight-bold">标签</label>
+                            <input type="text" class="form-control"
+                                   th:field="*{tags}"
+                                   placeholder="使用命名空间格式 “key:value”，不同标签之间使用英文分号(;) 隔开">
+                        </div>
+
+                        <!-- Markdown 编辑器 -->
+                        <div class="form-group">
+                            <label class="font-weight-bold">详细描述</label>
+                            <textarea id="descriptionEditor"
+                                      th:field="*{description}"
+                                      class="form-control tinymce-editor"
+                                      rows="10"></textarea>
+                        </div>
+
+                        <!-- 匿名发布 -->
+                        <div class="form-group form-check">
+                            <input type="checkbox" class="form-check-input"
+                                   id="anonymous" th:field="*{anonymous}" th:checked="${anonymous}">
+                            <label class="form-check-label" for="anonymous">
+                                匿名发布（隐藏我的用户名）
+                            </label>
+                        </div>
+
+                        <!-- 提交按钮 -->
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg btn-block">
+                                <i class="fas fa-check-circle mr-2"></i>确认发布
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<!-- 文件上传预览脚本 -->
+<script>
+    document.querySelector('.custom-file-input').addEventListener('change', function (e) {
+        const fileName = e.target.files[0].name;
+        const label = this.nextElementSibling;
+        label.textContent = fileName;
+    });
+</script>
+</body>
+</html>

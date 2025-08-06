@@ -1,0 +1,252 @@
+<!-- src/main/resources/templates/admin/widgets.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/import :: import(title='道具管理', headContent=~{::#pageHead})}">
+    <th:block th:fragment="pageHead">
+        <style>
+            .widget-table thead th {
+                background: #f8f9fa;
+                white-space: nowrap;
+            }
+
+            .color-preview {
+                width: 24px;
+                height: 24px;
+                border-radius: 4px;
+                display: inline-block;
+                vertical-align: middle;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .currency-badge {
+                display: inline-block;
+                padding: 0.25em 0.4em;
+                font-size: 85%;
+                font-weight: 500;
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+
+<main class="container-fluid my-4 flex-grow-1">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="fas fa-cube mr-2"></i>道具管理</h5>
+            <div class="d-flex">
+                <form th:action="@{/admin/site/widgets}" method="get" class="form-inline mr-3">
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" name="search"
+                               placeholder="搜索道具" th:value="${param.search}">
+                        <div class="input-group-append">
+                            <button class="btn btn-light" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <button class="btn btn-light btn-sm" data-toggle="modal" data-target="#widgetModal">
+                    <i class="fas fa-plus mr-1"></i>新增道具
+                </button>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <table class="table widget-table">
+                <thead>
+                <tr>
+                    <th>名称</th>
+                    <th>图标</th>
+                    <th>颜色</th>
+                    <th>购买信息</th>
+                    <th>库存</th>
+                    <th>自动补货</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="widget : ${widgets.records}">
+                    <td th:text="${widget.name}"></td>
+                    <td th:text="${widget.icon}"></td>
+                    <td>
+                        <div class="color-preview"
+                             th:style="'background-color:'+${widget.color}"></div>
+                        <span class="ml-2" th:text="${widget.color}"></span>
+                    </td>
+                    <td>
+                        <span th:if="${widget.buyable}">
+                            <span th:text="${widget.buyBalance}"></span>
+                            <span class="currency-badge"
+                                  th:style="'background-color:'+${widget.buyCurrency.color}+';color:white'"
+                                  th:text="${widget.buyCurrency.name}"></span>
+                        </span>
+                        <span th:unless="${widget.buyable}" class="text-muted">不可购买</span>
+                    </td>
+                    <td th:text="${widget.stock}"></td>
+                    <td>
+                        <div th:text="${widget.restockCronExpression}"></div>
+                        <small class="text-muted"
+                               th:text="${#temporals.format(widget.lastRestock, 'yyyy-MM-dd HH:mm')}"></small>
+                    </td>
+                    <td nowrap>
+                        <button class="btn btn-sm btn-outline-primary mr-2 edit-widget"
+                                th:attr="data-widget-id=${widget.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger delete-widget"
+                                th:attr="data-widget-id=${widget.id}"
+                                th:disabled="${widget.managed}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <!-- 分页导航 -->
+            <nav th:if="${widgets.pages > 1}">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${widgets.current == 1} ? 'disabled'">
+                        <a class="page-link" th:href="@{/admin/site/widgets(search=${param.search}, page=1)}">首页</a>
+                    </li>
+                    <li class="page-item" th:classappend="${widgets.current == 1} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/site/widgets(search=${param.search}, page=${widgets.current-1})}">上一页</a>
+                    </li>
+                    <li class="page-item" th:each="page : ${#numbers.sequence(1, widgets.pages)}"
+                        th:classappend="${page == widgets.current} ? 'active'">
+                        <a class="page-link" th:href="@{/admin/site/widgets(search=${param.search}, page=${page})}"
+                           th:text="${page}"></a>
+                    </li>
+                    <li class="page-item" th:classappend="${widgets.current == widgets.pages} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/site/widgets(search=${param.search}, page=${widgets.current+1})}">下一页</a>
+                    </li>
+                    <li class="page-item" th:classappend="${widgets.current == widgets.pages} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/site/widgets(search=${param.search}, page=${widgets.pages})}">尾页</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</main>
+
+<!-- 编辑/新增模态框 -->
+<div class="modal fade" id="widgetModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">道具编辑</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <form id="widgetForm" th:action="@{/admin/site/widgets}" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="widgetId">
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label>道具名称</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>图标样式</label>
+                            <input type="text" class="form-control" name="icon">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label>颜色代码</label>
+                            <input type="text" class="form-control" name="color"
+                                   placeholder="#RRGGBB" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <div class="custom-control custom-switch pt-4">
+                                <input type="checkbox" class="custom-control-input"
+                                       id="buyableSwitch" name="buyable">
+                                <label class="custom-control-label" for="buyableSwitch">允许购买</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row buyable-fields">
+                        <div class="form-group col-md-6">
+                            <label>购买货币</label>
+                            <select class="custom-select" name="buyCurrency" required>
+                                <option th:each="c : ${currencies}"
+                                        th:value="${c.id}"
+                                        th:text="${c.name}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>购买价格</label>
+                            <input type="number" class="form-control" name="buyBalance"
+                                   step="0.01" min="0">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label>库存数量</label>
+                            <input type="number" class="form-control" name="stock" min="0">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>补货表达式</label>
+                            <input type="text" class="form-control" name="restockCronExpression"
+                                   placeholder="Cron 表达式">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 编辑道具
+    document.querySelectorAll('.edit-widget').forEach(btn => {
+        btn.onclick = function () {
+            const widgetId = this.getAttribute('data-widget-id');
+            fetch('/admin/site/widgets/' + widgetId)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('widgetId').value = data.id;
+                    document.querySelector('input[name="name"]').value = data.name;
+                    document.querySelector('input[name="icon"]').value = data.icon;
+                    document.querySelector('input[name="color"]').value = data.color;
+                    document.querySelector('#buyableSwitch').checked = data.buyable;
+                    document.querySelector('select[name="buyCurrency"]').value = data.buyCurrency?.id || '';
+                    document.querySelector('input[name="buyBalance"]').value = data.buyBalance;
+                    document.querySelector('input[name="stock"]').value = data.stock;
+                    document.querySelector('input[name="restockCronExpression"]').value = data.restockCronExpression;
+                    $('#widgetModal').modal('show');
+                });
+        };
+    });
+
+    // 删除道具
+    document.querySelectorAll('.delete-widget').forEach(btn => {
+        btn.onclick = function () {
+            const widgetId = this.getAttribute('data-widget-id');
+            if (confirm('确定要删除此道具吗？')) {
+                fetch('/admin/site/widgets/' + widgetId, {
+                    method: 'DELETE'
+                }).then(() => window.location.reload());
+            }
+        };
+    });
+
+    // 重置表单
+    $('#widgetModal').on('hidden.bs.modal', function () {
+        document.getElementById('widgetForm').reset();
+        document.getElementById('widgetForm').action = '/admin/site/widgets';
+    });
+</script>
+</body>
+</html>

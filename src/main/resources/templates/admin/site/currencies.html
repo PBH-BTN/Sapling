@@ -1,0 +1,183 @@
+<!-- src/main/resources/templates/admin/currencies.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/import :: import(title='积分货币管理', headContent=~{::#pageHead})}">
+    <th:block th:fragment="pageHead">
+        <style>
+            .currency-table thead th {
+                background: #f8f9fa;
+                white-space: nowrap;
+            }
+
+            .color-preview {
+                width: 24px;
+                height: 24px;
+                border-radius: 4px;
+                display: inline-block;
+                vertical-align: middle;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+
+<main class="container-fluid my-4 flex-grow-1">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="fas fa-coins mr-2"></i>积分单位管理</h5>
+            <div class="d-flex">
+                <form th:action="@{/admin/site/currencies}" method="get" class="form-inline mr-3">
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" name="search"
+                               placeholder="搜索单位" th:value="${param.search}">
+                        <div class="input-group-append">
+                            <button class="btn btn-light" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <button class="btn btn-light btn-sm" data-toggle="modal" data-target="#currencyModal">
+                    <i class="fas fa-plus mr-1"></i>新增单位
+                </button>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <table class="table currency-table">
+                <thead>
+                <tr>
+                    <th style="width: 30%">单位名称</th>
+                    <th style="width: 30%">颜色标识</th>
+                    <th style="width: 20%">状态</th>
+                    <th style="width: 20%">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="currency : ${currencies.records}">
+                    <td th:text="${currency.name}"></td>
+                    <td>
+                        <div class="color-preview"
+                             th:style="'background-color:'+${currency.color}"></div>
+                        <span class="ml-2" th:text="${currency.color}"></span>
+                    </td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${currency.managed} ? 'badge-secondary' : 'badge-success'"
+                              th:text="${currency.managed} ? '系统管理' : '自定积分'"></span>
+                    </td>
+                    <td nowrap>
+                        <button class="btn btn-sm btn-outline-primary mr-2 edit-currency"
+                                th:attr="data-currency-id=${currency.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger delete-currency"
+                                th:attr="data-currency-id=${currency.id}"
+                                th:disabled="${currency.managed}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <!-- 分页导航 -->
+            <nav th:if="${currencies.pages > 1}">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${currencies.current == 1} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/site/currencies(search=${param.search}, page=1)}">首页</a>
+                    </li>
+                    <li class="page-item" th:classappend="${currencies.current == 1} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/site/currencies(search=${param.search}, page=${currencies.current-1})}">上一页</a>
+                    </li>
+                    <li class="page-item" th:each="page : ${#numbers.sequence(1, currencies.pages)}"
+                        th:classappend="${page == currencies.current} ? 'active'">
+                        <a class="page-link" th:href="@{/admin/site/currencies(search=${param.search}, page=${page})}"
+                           th:text="${page}"></a>
+                    </li>
+                    <li class="page-item" th:classappend="${currencies.current == currencies.pages} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/site/currencies(search=${param.search}, page=${currencies.current+1})}">下一页</a>
+                    </li>
+                    <li class="page-item" th:classappend="${currencies.current == currencies.pages} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/site/currencies(search=${param.search}, page=${currencies.pages})}">尾页</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</main>
+
+<!-- 编辑/新增模态框 -->
+<div class="modal fade" id="currencyModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">积分单位编辑</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <form id="currencyForm" th:action="@{/admin/site/currencies}" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="currencyId">
+                    <div class="form-group">
+                        <label>单位名称</label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>颜色代码（十六进制）</label>
+                        <input type="text" class="form-control" name="color"
+                               placeholder="#RRGGBB" required>
+                        <small class="form-text text-muted">示例：#4e73df</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 编辑单位
+    document.querySelectorAll('.edit-currency').forEach(btn => {
+        btn.onclick = function () {
+            const currencyId = this.getAttribute('data-currency-id');
+            fetch('/admin/site/currencies/' + currencyId)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('currencyId').value = data.id;
+                    document.querySelector('input[name="name"]').value = data.name;
+                    document.querySelector('input[name="color"]').value = data.color;
+                    $('#currencyModal').modal('show');
+                });
+        };
+    });
+
+    // 删除单位
+    document.querySelectorAll('.delete-currency').forEach(btn => {
+        btn.onclick = function () {
+            const currencyId = this.getAttribute('data-currency-id');
+            if (confirm('确定要删除此积分单位吗？')) {
+                fetch('/admin/site/currencies/' + currencyId, {
+                    method: 'DELETE'
+                }).then(() => window.location.reload());
+            }
+        };
+    });
+
+    // 重置表单
+    $('#currencyModal').on('hidden.bs.modal', function () {
+        document.getElementById('currencyForm').reset();
+        document.getElementById('currencyForm').action = '/admin/site/currencies';
+    });
+</script>
+</body>
+</html>

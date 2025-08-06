@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/import :: import(title='用户登录', headContent=~{::#pageHead})}">
+    <th:block id="pageHead">
+    </th:block>
+</head>
+<body>
+<!-- 使用简化的 Header -->
+<header>
+    <!-- 登录页特殊 Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/}">
+                <i class="fas fa-seedling mr-2"></i>Sapling
+            </a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/auth/register}">注册</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<main class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-sign-in-alt mr-2"></i>用户登录</h4>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/auth/login}" method="post" id="loginForm">
+                        <!-- 错误提示 -->
+                        <div th:if="${param.error}" class="alert alert-danger" th:text="${param.error}">
+
+                        </div>
+
+                        <!-- 用户名输入 -->
+                        <div class="form-group">
+                            <label for="username">用户名/邮箱</label>
+                            <input type="text" id="username" name="username"
+                                   class="form-control" required autofocus
+                                   th:classappend="${#fields.hasErrors('username')} ? 'is-invalid'">
+                            <div class="invalid-feedback" th:errors="*{username}"></div>
+                        </div>
+
+                        <!-- 密码输入 -->
+                        <div class="form-group">
+                            <label for="password">密码</label>
+                            <input type="password" id="password" name="password"
+                                   class="form-control" required
+                                   th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'">
+                            <div class="invalid-feedback" th:errors="*{password}"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="captcha">验证码</label>
+                            <div class="row align-items-center">
+                                <div class="col-7 pr-1">
+                                    <input type="text" id="captcha" name="captcha"
+                                           class="form-control flex-grow-1" required
+                                           th:classappend="${#fields.hasErrors('captcha')} ? 'is-invalid'">
+                                    <div class="invalid-feedback" th:errors="*{captcha}"></div>
+                                </div>
+                                <div class="col-5 pl-1">
+                                    <img src="/auth/captcha" class="img-fluid" style="cursor: pointer;"
+                                         onclick="this.src='/auth/captcha?d='+Date.now()"/>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- 辅助功能 -->
+                        <div class="form-group d-flex justify-content-between">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input"
+                                       id="rememberMe" name="remember-me" checked>
+                                <label class="custom-control-label" for="rememberMe">记住我</label>
+                            </div>
+<!--                            <a th:href="@{/forgot-password}" class="text-muted">忘记密码？</a>-->
+                        </div>
+
+                        <input type="hidden" name="captchaToken" id="captchaToken">
+                        <input type="hidden" name="fromUri" id="fromUri" th:value="${fromUri}">
+
+                        <button class="btn btn-primary btn-block" onclick="openCaptcha()">
+                            <i class="fas fa-sign-in-alt mr-2"></i>登录
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- 使用通用 Footer -->
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

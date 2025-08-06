@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/import :: import(title='管理后台', headContent=~{::#pageHead})}">
+    <th:block id="pageHead">
+        <style>
+            /* 管理后台专用样式 */
+            #admin-container {
+                display: grid;
+                grid-template-rows: 56px 1fr;
+                height: 100vh;
+            }
+
+            #main-nav {
+                background: var(--header-bg);
+                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+                padding: 0 1rem;
+            }
+
+            #sidebar {
+                width: 200px;
+                background: #f8f9fa;
+                border-right: 1px solid #dee2e6;
+                overflow-y: auto;
+            }
+
+            #content-frame {
+                flex-grow: 1;
+                border: none;
+            }
+
+            .nav-link-primary {
+                color: white !important;
+                transition: all 0.2s;
+            }
+
+            .nav-link-primary.active {
+                color: white !important;
+                background: rgba(255, 255, 255, 0.1);
+            }
+
+            .submenu-item {
+                border-radius: 4px;
+                transition: background 0.2s;
+            }
+
+            .submenu-item:hover {
+                background: #e9ecef;
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+<div id="admin-container">
+    <!-- 顶部主菜单 -->
+    <nav id="main-nav" class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="d-flex align-items-center">
+            <a class="navbar-brand mr-4" href="#">Sapling 管理后台</a>
+            <div class="d-flex" id="primary-menu">
+                <div th:each="menu, iter : ${menuMap}"
+                     class="nav-item"
+                     th:attr="data-menu-index=${iter.index}">
+                    <a class="nav-link nav-link-primary px-3 py-2"
+                       href="javascript:"
+                       th:text="${menu.name}"
+                       th:data-index="${iter.index}"></a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="d-flex flex-grow-1">
+        <!-- 左侧边栏 -->
+        <aside id="sidebar">
+            <div class="p-3">
+                <div id="submenu-list" class="list-group list-group-flush">
+                    <a th:each="submenu : ${menuMap[0].subMenus}"
+                       class="list-group-item list-group-item-action submenu-item py-2"
+                       href="javascript:;"
+                       th:text="${submenu.name}"
+                       th:data-url="${submenu.url}"></a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 右侧内容区域 -->
+        <iframe id="content-frame"
+                th:src="${menuMap[0].subMenus[0].url}"></iframe>
+    </div>
+</div>
+
+<script>
+    // 初始化全局变量喵～
+    window.adminApp = {
+        currentMenu: 0,
+        menuData: JSON.parse('[(${menuMapJson})]') // 需要Controller返回JSON序列化数据喵～
+    };
+
+    // 初始化第一个主菜单的激活状态
+    document.querySelector('#primary-menu .nav-link-primary:first-child').classList.add('active');
+
+    // 加载内容到右侧iframe
+    function loadContent(url) {
+        document.getElementById('content-frame').src = url;
+    }
+
+    // 更新子菜单列表，根据主菜单索引更新子菜单
+    function updateSubMenu(index) {
+        const submenuList = document.getElementById('submenu-list');
+        submenuList.innerHTML = '';
+
+        adminApp.menuData[index].subMenus.forEach(sub => {
+            const item = document.createElement('a');
+            item.className = 'list-group-item list-group-item-action submenu-item py-2';
+            item.href = 'javascript:;';
+            item.textContent = sub.name;
+            // 子菜单点击事件喵～
+            item.setAttribute('data-url', sub.url);
+            item.onclick = () => loadContent(sub.url);
+            submenuList.appendChild(item);
+        });
+    }
+
+    // 切换主菜单，并更新子菜单及内容
+    function changePrimaryMenu(index) {
+        adminApp.currentMenu = index;
+
+        // 更新主菜单激活状态
+        document.querySelectorAll('#primary-menu .nav-link-primary')
+            .forEach(link => link.classList.remove('active'));
+        event.target.classList.add('active');
+
+        // 更新子菜单列表
+        updateSubMenu(index);
+
+        // 加载第一个子菜单的内容
+        const firstSub = adminApp.menuData[index].subMenus[0];
+        loadContent(firstSub.url);
+    }
+
+    // 新增 changeSubMenu 函数喵～负责处理子菜单点击事件
+    function changeSubMenu(url) {
+        loadContent(url);
+    }
+
+    // 绑定主菜单点击事件
+    document.querySelectorAll('#primary-menu .nav-link-primary').forEach(link => {
+        link.onclick = function () {
+            changePrimaryMenu(link.getAttribute('data-index'));
+        };
+    });
+
+    // 绑定子菜单点击事件
+    document.querySelectorAll('.submenu-item').forEach(item => {
+        item.onclick = function () {
+            changeSubMenu(item.getAttribute('data-url'));
+        };
+    });
+</script>
+</body>
+</html>

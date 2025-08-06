@@ -1,0 +1,68 @@
+<!-- src/main/resources/templates/torrents/upload.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/import :: import(title='用户停权页面', headContent=~{::#pageHead})}">
+
+</head>
+
+<body>
+<div th:if="${user} != null" th:replace="~{fragments/header :: header(${user})}"></div>
+
+<main class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="mb-0"><i class="fas fa-ban mr-2"></i>用户服务受限</h3>
+                </div>
+                <div class="card-body">
+                    <p>非常抱歉，由于当前用户状态异常，因此操作已被拒绝：</p>
+                    <div class="alert alert-warning">
+                        <h5 class="alert-heading">用户停权<small class="text-muted"
+                                                                 th:text="${'(ID:'+userBan.id+')'}"></small></h5>
+                        <hr>
+                        <dl class="row mb-0">
+                            <dt class="col-sm-3">用户</dt>
+                            <dd class="col-sm-9">
+                                 <span th:style="'color: ' + ${userBan.owner.primaryPermissionGroup.color}"
+                                       th:text="${userBan.owner.name}"></span>
+                                <span class="permission-badge text-contrast"
+                                      th:style="'background-color:'+${userBan.owner.primaryPermissionGroup.color}+';color:white'"
+                                      th:text="${userBan.owner.primaryPermissionGroup.name}"></span>
+                                <span class="permission-badge text-contrast"
+                                      th:style="'background-color:'+${userBan.owner.levelPermissionGroup.color}+';color:white'"
+                                      th:text="${userBan.owner.levelPermissionGroup.name}"></span>
+                                <small class="text-muted" th:text="${'(UID:'+userBan.owner.id+')'}"></small>
+                            </dd>
+                            <dt class="col-sm-3">操作员</dt>
+                            <dd class="col-sm-9">
+                                 <span th:style="'color: ' + ${userBan.operator.primaryPermissionGroup.color}"
+                                       th:text="${userBan.operator.name}"></span>
+                                <span class="permission-badge text-contrast"
+                                      th:style="'background-color:'+${userBan.operator.primaryPermissionGroup.color}+';color:white'"
+                                      th:text="${userBan.operator.primaryPermissionGroup.name}"></span>
+                                <span class="permission-badge text-contrast"
+                                      th:style="'background-color:'+${userBan.operator.levelPermissionGroup.color}+';color:white'"
+                                      th:text="${userBan.operator.levelPermissionGroup.name}"></span>
+                                <small class="text-muted" th:text="${'(UID:'+userBan.operator.id+')'}"></small>
+                            </dd>
+                            <dt class="col-sm-3">起始时间</dt>
+                            <dd class="col-sm-9"
+                                th:text="${timeConverter.formatTime(userBan.createdAt, timezone)}"></dd>
+                            <dt class="col-sm-3">结束时间</dt>
+                            <dd class="col-sm-9" th:text="${timeConverter.formatTime(userBan.endedAt, timezone)}"></dd>
+                            <dt class="col-sm-3">停权原因</dt>
+                            <dd class="col-sm-9" th:text="${userBan.description}"></dd>
+                        </dl>
+
+                    </div>
+                    <p>对您造成的不便，敬请谅解。如需帮助，请携带上方的完整信息联系站点管理员。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sa="http://www.thymeleaf.org/extras/sa-token">
+<head th:replace="~{fragments/import :: import(title='文件仓库', headContent=~{::#pageHead})}">
+    <th:block id="pageHead">
+        <style>
+            .file-card:hover {
+                transform: translateY(-3px);
+                transition: transform 0.2s ease;
+            }
+
+            .file-preview-btn {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.85rem;
+            }
+
+            .compact-card .card-body {
+                padding: 1rem;
+            }
+
+            .file-size-badge {
+                min-width: 80px;
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+<div th:replace="~{fragments/header :: header(${user})}"></div>
+
+<main class="container my-4">
+    <!-- 面包屑导航 -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-light">
+            <li class="breadcrumb-item"><a th:href="@{/}">首页</a></li>
+            <li class="breadcrumb-item active">文件仓库</li>
+        </ol>
+    </nav>
+
+    <div class="container-fluid d-flex justify-content-between align-items-center mb-4">
+        <a class="btn btn-primary justify-content-between align-items-center"
+           style="width: 100%"
+           th:href="@{/bitbucket/upload}">
+            <i class="fas fa-upload"></i>
+            上传新文件
+        </a>
+    </div>
+
+    <!-- 文件列表 -->
+    <div class="row">
+        <div th:each="file : ${files.records}" class="col-md-12 mb-3">
+            <div class="card file-card shadow-sm compact-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <!-- 文件信息 -->
+                        <div class="flex-grow-1" style="min-width: 0;">
+                            <div class="d-flex align-items-center">
+                                <div class="mr-3">
+                                    <i class="fas fa-image" th:if="${#strings.startsWith(file.mime,'image/')}"></i>
+                                    <i class="fas fa-file-audio" th:if="${#strings.startsWith(file.mime,'audio/')}"></i>
+                                    <i class="fas fa-file-video" th:if="${#strings.startsWith(file.mime,'video/')}"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">
+                                        <span th:text="${file.displayName}" class="text-truncate d-block"></span>
+                                        <small class="text-muted" th:text="${file.filePath}"></small>
+                                    </h6>
+                                    <div class="text-muted" style="font-size:0.85rem">
+                                        <span class="mr-2">
+                                            <i class="fas fa-database"></i>
+                                            <span th:text="${T(com.ghostchu.tracker.sapling.util.UnitConverter).autoUnit(file.fileSize)}"></span>
+                                        </span>
+                                        <span class="mr-2">
+                                            <i class="fas fa-clock"></i>
+                                            <span th:text="${timeConverter.formatTime(file.createdAt, timezone)}"></span>
+                                        </span>
+                                        <span class="badge"
+                                              th:classappend="${file.directAccess} ? 'badge-success' : 'badge-secondary'">
+                                            <span th:text="${file.directAccess} ? '公开访问' : '私有访问'"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 操作按钮 -->
+                        <div class="d-flex align-items-center">
+                            <button th:if="${#strings.startsWith(file.mime, 'image/') ||
+                                        #strings.startsWith(file.mime, 'audio/') ||
+                                        #strings.startsWith(file.mime, 'video/')}"
+                                    class="btn btn-outline-info btn-sm file-preview-btn mr-2"
+                                    data-toggle="modal" data-target="#previewModal"
+                                    th:data-id="${file.id}" th:data-mime="${file.mime}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button type="submit" class="btn btn-outline-dark btn-sm copy-button mr-2"
+                                    th:data-id="${file.id}">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <form th:action="@{/bitbucket/delete/{id}(id=${file.id})}" method="post"
+                                  class="d-inline" onsubmit="return confirm('确定要删除此文件吗？');">
+                                <button type="submit" class="btn btn-danger btn-sm"
+                                        sa:hasPermission="bitbucket.delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 分页 -->
+    <nav th:if="${files.pages > 1}" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${files.current == 1} ? 'disabled'">
+                <a class="page-link" th:href="@{/bitbucket(page=${files.current - 1}, size=${files.size})}">
+                    <i class="fas fa-angle-left"></i>
+                </a>
+            </li>
+            <li th:each="pageNum : ${#numbers.sequence(1, files.pages)}"
+                class="page-item"
+                th:classappend="${pageNum == files.current} ? 'active'">
+                <a class="page-link"
+                   th:href="@{/bitbucket(page=${pageNum}, size=${files.size})}"
+                   th:text="${pageNum}"></a>
+            </li>
+            <li class="page-item" th:classappend="${files.current == files.pages} ? 'disabled'">
+                <a class="page-link" th:href="@{/bitbucket(page=${files.current + 1}, size=${files.size})}">
+                    <i class="fas fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</main>
+
+<!-- 预览模态框 -->
+<div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">文件预览</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center" id="previewContent">
+                <!-- 动态加载预览内容 -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('.copy-button').on('click', function () {
+        const fileId = $(this).data('id');
+        const url = window.location.origin + '/bitbucket/file/' + fileId;
+        navigator.clipboard.writeText(url).then(() => {
+            alert('已复制文件链接到剪贴板');
+        });
+    });
+    $('#previewModal').on('show.bs.modal', function (event) {
+        const button = $(event.relatedTarget);
+        const fileId = button.data('id');
+        const mimeType = button.data('mime');
+        const modal = $(this);
+        let content = '';
+        const dataUrl = '/bitbucket/file/' + fileId;
+        if (mimeType.startsWith('image/')) {
+            content = `<img src="${dataUrl}" class="img-fluid" alt="Preview">`;
+        } else if (mimeType.startsWith('audio/')) {
+            content = `<audio controls class="w-100">
+                              <source src="${dataUrl}" type="${mimeType}">
+                           </audio>`;
+        } else if (mimeType.startsWith('video/')) {
+            content = `<video controls class="w-100">
+                              <source src="${dataUrl}" type="${mimeType}">
+                           </video>`;
+        }
+        modal.find('#previewContent').html(content);
+    });
+</script>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

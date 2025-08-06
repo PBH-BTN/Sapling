@@ -1,0 +1,167 @@
+<!-- src/main/resources/templates/admin/tags.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/import :: import(title='种子标签管理', headContent=~{::#pageHead})}">
+    <th:block id="pageHead">
+        <style>
+            .tags-table thead th {
+                background: #f8f9fa;
+                white-space: nowrap;
+            }
+
+            .namespace-badge {
+                font-family: monospace;
+                background-color: #e9ecef;
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+
+<main class="container-fluid my-4 flex-grow-1">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="fas fa-tags mr-2"></i>标签管理</h5>
+            <div class="d-flex">
+                <form th:action="@{/admin/torrents/tags}" method="get" class="form-inline mr-3">
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" name="search"
+                               placeholder="搜索标签" th:value="${param.search}">
+                        <div class="input-group-append">
+                            <button class="btn btn-light" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <button class="btn btn-light btn-sm" data-toggle="modal" data-target="#tagModal">
+                    <i class="fas fa-plus mr-1"></i>新增标签
+                </button>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <table class="table tags-table">
+                <thead>
+                <tr>
+                    <th style="width: 15%">命名空间</th>
+                    <th style="width: 35%">标签名称</th>
+                    <th style="width: 10%">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="tag : ${tags.records}">
+                    <td>
+                        <span class="badge namespace-badge" th:text="${tag.namespace}"></span>
+                    </td>
+                    <td th:text="${tag.tagname}"></td>
+                    <td nowrap>
+                        <button class="btn btn-sm btn-outline-primary mr-2 edit-tag"
+                                th:attr="data-tag-id=${tag.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger delete-tag"
+                                th:attr="data-tag-id=${tag.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <!-- 分页导航 -->
+            <nav th:if="${tags.pages > 1}">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${tags.current == 1} ? 'disabled'">
+                        <a class="page-link" th:href="@{/admin/torrents/tags(search=${param.search}, page=1)}">首页</a>
+                    </li>
+                    <li class="page-item" th:classappend="${tags.current == 1} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/torrents/tags(search=${param.search}, page=${tags.current-1})}">上一页</a>
+                    </li>
+                    <li class="page-item" th:each="page : ${#numbers.sequence(1, tags.pages)}"
+                        th:classappend="${page == tags.current} ? 'active'">
+                        <a class="page-link" th:href="@{/admin/torrents/tags(search=${param.search}, page=${page})}"
+                           th:text="${page}"></a>
+                    </li>
+                    <li class="page-item" th:classappend="${tags.current == tags.pages} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/torrents/tags(search=${param.search}, page=${tags.current+1})}">下一页</a>
+                    </li>
+                    <li class="page-item" th:classappend="${tags.current == tags.pages} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/torrents/tags(search=${param.search}, page=${tags.pages})}">尾页</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</main>
+
+<!-- 编辑/新增模态框 -->
+<div class="modal fade" id="tagModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">标签编辑</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <form id="tagForm" th:action="@{/admin/torrents/tags}" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="tagId">
+                    <div class="form-group">
+                        <label>命名空间</label>
+                        <input type="text" class="form-control" name="namespace" required>
+                    </div>
+                    <div class="form-group">
+                        <label>标签名称</label>
+                        <input type="text" class="form-control" name="tagname" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 编辑标签
+    document.querySelectorAll('.edit-tag').forEach(btn => {
+        btn.onclick = function () {
+            const tagId = this.getAttribute('data-tag-id');
+            fetch('/admin/torrents/tags/' + tagId)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('tagId').value = data.id;
+                    document.querySelector('input[name="namespace"]').value = data.namespace;
+                    document.querySelector('input[name="tagname"]').value = data.tagname;
+                    $('#tagModal').modal('show');
+                });
+        };
+    });
+
+    // 删除标签
+    document.querySelectorAll('.delete-tag').forEach(btn => {
+        btn.onclick = function () {
+            const tagId = this.getAttribute('data-tag-id');
+            if (confirm('确定要删除此标签吗？')) {
+                fetch('/admin/torrents/tags/' + tagId, {
+                    method: 'DELETE'
+                }).then(() => window.location.reload());
+            }
+        };
+    });
+
+    // 重置表单
+    $('#tagModal').on('hidden.bs.modal', function () {
+        document.getElementById('tagForm').reset();
+        document.getElementById('tagForm').action = '/admin/torrents/tags';
+    });
+</script>
+</body>
+</html>

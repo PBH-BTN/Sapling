@@ -1,0 +1,189 @@
+<!-- src/main/resources/templates/admin/torrents/categories.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/import :: import(title='种子分类管理', headContent=~{::#pageHead})}">
+    <style>
+        .category-table thead th {
+            background: #f8f9fa;
+            white-space: nowrap;
+        }
+
+        .color-preview {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            display: inline-block;
+            vertical-align: middle;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .icon-cell {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+</head>
+<body>
+
+<main class="container-fluid my-4 flex-grow-1">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="fas fa-folder mr-2"></i>种子分类管理</h5>
+            <div class="d-flex">
+                <form th:action="@{/admin/torrents/categories}" method="get" class="form-inline mr-3">
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" name="search"
+                               placeholder="搜索分类" th:value="${param.search}">
+                        <div class="input-group-append">
+                            <button class="btn btn-light" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <button class="btn btn-light btn-sm" data-toggle="modal" data-target="#categoryModal">
+                    <i class="fas fa-plus mr-1"></i>新增分类
+                </button>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <table class="table category-table">
+                <thead>
+                <tr>
+                    <th style="width: 10%">ID</th>
+                    <th style="width: 25%">分类名称</th>
+                    <th style="width: 25%">图标URL</th>
+                    <th style="width: 20%">颜色</th>
+                    <th style="width: 20%">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="category : ${categories.records}">
+                    <td th:text="${category.id}"></td>
+                    <td th:text="${category.name}"></td>
+                    <td class="icon-cell" th:text="${category.icon}"></td>
+                    <td>
+                        <div class="color-preview"
+                             th:style="'background-color:'+${category.color}"></div>
+                        <span class="ml-2" th:text="${category.color}"></span>
+                    </td>
+                    <td nowrap>
+                        <button class="btn btn-sm btn-outline-primary mr-2 edit-category"
+                                th:attr="data-category-id=${category.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button disabled class="btn btn-sm btn-outline-danger delete-category"
+                                th:attr="data-category-id=${category.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <!-- 分页导航 -->
+            <nav th:if="${categories.pages > 1}">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${categories.current == 1} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/torrents/categories(search=${param.search}, page=1)}">首页</a>
+                    </li>
+                    <li class="page-item" th:classappend="${categories.current == 1} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/torrents/categories(search=${param.search}, page=${categories.current-1})}">上一页</a>
+                    </li>
+                    <li class="page-item" th:each="page : ${#numbers.sequence(1, categories.pages)}"
+                        th:classappend="${page == categories.current} ? 'active'">
+                        <a class="page-link"
+                           th:href="@{/admin/torrents/categories(search=${param.search}, page=${page})}"
+                           th:text="${page}"></a>
+                    </li>
+                    <li class="page-item" th:classappend="${categories.current == categories.pages} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/torrents/categories(search=${param.search}, page=${categories.current+1})}">下一页</a>
+                    </li>
+                    <li class="page-item" th:classappend="${categories.current == categories.pages} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/torrents/categories(search=${param.search}, page=${categories.pages})}">尾页</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</main>
+
+<!-- 编辑/新增模态框 -->
+<div class="modal fade" id="categoryModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">分类编辑</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <form id="categoryForm" th:action="@{/admin/torrents/categories}" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="categoryId">
+                    <div class="form-group">
+                        <label>分类名称</label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>图标URL</label>
+                        <input type="text" class="form-control" name="icon">
+                    </div>
+                    <div class="form-group">
+                        <label>颜色代码</label>
+                        <input type="text" class="form-control" name="color"
+                               placeholder="#RRGGBB" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 编辑分类
+    document.querySelectorAll('.edit-category').forEach(btn => {
+        btn.onclick = function () {
+            const categoryId = this.getAttribute('data-category-id');
+            fetch('/admin/torrents/categories/' + categoryId)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('categoryId').value = data.id;
+                    document.querySelector('input[name="name"]').value = data.name;
+                    document.querySelector('input[name="icon"]').value = data.icon;
+                    document.querySelector('input[name="color"]').value = data.color;
+                    $('#categoryModal').modal('show');
+                });
+        };
+    });
+
+    // 删除分类
+    document.querySelectorAll('.delete-category').forEach(btn => {
+        btn.onclick = function () {
+            const categoryId = this.getAttribute('data-category-id');
+            if (confirm('确定要删除此分类吗？')) {
+                fetch('/admin/torrents/categories/' + categoryId, {
+                    method: 'DELETE'
+                }).then(() => window.location.reload());
+            }
+        };
+    });
+
+    // 重置表单
+    $('#categoryModal').on('hidden.bs.modal', function () {
+        document.getElementById('categoryForm').reset();
+        document.getElementById('categoryForm').action = '/admin/torrents/categories';
+    });
+</script>
+</body>
+</html>

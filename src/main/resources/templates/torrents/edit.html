@@ -1,0 +1,112 @@
+<!-- src/main/resources/templates/torrents/edit.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/import :: import(title='编辑种子', headContent=~{::#pageHead})}">
+    <th:block id="pageHead">
+        <!-- TinyMCE 编辑器配置 -->
+        <script>
+
+        </script>
+    </th:block>
+</head>
+
+<body>
+<div th:replace="~{fragments/header :: header(${user})}"></div>
+
+<main class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-warning text-dark">
+                    <h3 class="mb-0"><i class="fas fa-edit mr-2"></i>编辑种子</h3>
+                </div>
+
+                <div class="card-body">
+                    <form th:action="@{/torrents/{id}/edit(id=${torrent.id})}"
+                          method="post"
+                          th:object="${form}">
+
+                        <!-- 分类选择 -->
+                        <div class="form-group">
+                            <label class="font-weight-bold">分类<span class="text-danger">*</span></label>
+                            <select class="custom-select" th:field="*{categoryId}" required>
+                                <option th:each="cat : ${categories}"
+                                        th:value="${cat.id}"
+                                        th:selected="${cat.id == torrent.category.id}"
+                                        th:text="${cat.name}"></option>
+                            </select>
+                        </div>
+
+                        <!-- 主标题 -->
+                        <div class="form-group">
+                            <label class="font-weight-bold">主标题<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control"
+                                   th:field="*{title}"
+                                   required>
+                        </div>
+
+                        <!-- 副标题 -->
+                        <div class="form-group">
+                            <label class="font-weight-bold">副标题</label>
+                            <input type="text" class="form-control"
+                                   th:field="*{subtitle}">
+                        </div>
+
+                        <!-- 标签 -->
+                        <div class="form-group">
+                            <label class="font-weight-bold">标签</label>
+                            <input type="text" class="form-control"
+                                   th:field="*{tags}"
+                                   placeholder="使用命名空间格式 “key:value”，不同标签之间使用英文分号(;) 隔开">
+                        </div>
+
+                        <!-- Markdown 编辑器 -->
+                        <div class="form-group">
+                            <label class="font-weight-bold">详细描述</label>
+                            <textarea id="descriptionEditor"
+                                      th:field="*{description}"
+                                      class="form-control tinymce-editor"
+                                      rows="10"></textarea>
+                        </div>
+
+                        <!-- 种子促销 -->
+                        <div class="form-group">
+                            <label class="font-weight-bold">种子促销</label>
+                            <select class="custom-select" th:field="*{promotion}" required>
+                                <option th:value="-1">不使用</option>
+                                <option th:each="pro : ${promotions}"
+                                        th:value="${pro.id}"
+                                        th:selected="${pro.id == torrent.promotions?.id}"
+                                        th:text="${pro.name}"></option>
+                            </select>
+                        </div>
+
+                        <!-- 匿名状态 -->
+                        <div class="form-group form-check">
+                            <input type="checkbox" class="form-check-input"
+                                   id="anonymous" th:field="*{anonymous}">
+                            <label class="form-check-label" for="anonymous">
+                                保持匿名发布状态
+                            </label>
+                        </div>
+
+                        <!-- 操作按钮 -->
+                        <div class="mt-4 d-flex justify-content-between">
+                            <a th:href="@{/torrents/{id}(id=${torrent.id})}"
+                               class="btn btn-outline-secondary">
+                                <i class="fas fa-times mr-2"></i>取消
+                            </a>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-save mr-2"></i>保存更改
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

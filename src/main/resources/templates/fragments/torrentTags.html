@@ -1,0 +1,42 @@
+<!-- fragments/torrentTags.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="tags(torrentTags)">
+    <div class="mb-3">
+        <table class="table table-borderless" style="display: inline-block; float: left;">
+            <tr th:each="namespaceGroup : ${torrentTags}"> <!-- entry set? -->
+                <td class="text-right" style="width: 10%" th:text="${namespaceGroup.key} + ':'"></td>
+                <td class="d-flex">
+                    <div class="text-left" th:each="tagsVO : ${namespaceGroup.value}">
+                        <!-- forEach for List<TorrentTagsVO>, tag is  -->
+                        <a href="#" class="badge badge-info mr-1 tag-link"
+                           th:data-namespace="${tagsVO.tag.namespace}"
+                           th:data-tagname="${tagsVO.tag.tagname}"
+                           th:text="${tagsVO.tag.tagname}"></a>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <div th:if="${#lists.isEmpty(torrentTags)}" class="text-muted">
+            这个种子没有添加任何标签。
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        document.addEventListener('DOMContentLoaded', function () {
+            let selectedTags = [];
+            // 标签点击处理
+            document.querySelectorAll('.tag-link').forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const namespace = this.dataset.namespace;
+                    const tagname = this.dataset.tagname;
+
+                });
+            });
+        });
+        /*]]>*/
+    </script>
+</div>
+</html>

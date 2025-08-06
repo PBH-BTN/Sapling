@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sa="http://www.thymeleaf.org/extras/sa-token">
+<th:block th:fragment="commentSection(comments, torrentId)">
+    <style>
+        .comment-card {
+            margin-bottom: 1rem;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+        }
+
+        .parent-comment {
+            margin-left: 2rem;
+            padding-left: 1rem;
+            border-left: 3px solid #eee;
+        }
+
+        .comment-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .comment-actions {
+            font-size: 0.875rem;
+        }
+    </style>
+
+    <div class="container my-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <!-- 快速评论 -->
+                <div class="mb-4" sa:hasPermissionOr="comment.create">
+                    <h5 class="mb-3">发表评论</h5>
+                    <form th:if="${user}" id="comment-form">
+                        <input type="hidden" name="torrentId" th:value="${torrentId}">
+                        <textarea class="form-control mb-2"
+                                  rows="3"
+                                  name="content"
+                                  placeholder="输入你的评论..."
+                                  required></textarea>
+                        <button type="submit" class="btn btn-primary btn-sm">提交</button>
+                    </form>
+                    <div th:unless="${user}" class="text-muted">
+                        请<a th:href="@{/login}" class="text-primary">登录</a>后评论
+                    </div>
+                </div>
+
+                <!-- 评论列表 -->
+                <h5 class="mb-3">评论（<span th:text="${comments.total}"></span>）</h5>
+                <div th:each="cc : ${comments.records}"> <!-- List<CommentsVO> -->
+                    <div class="card comment-card">
+                        <div class="card-body">
+                            <!-- 用户信息 -->
+                            <div class="d-flex align-items-center mb-3">
+                                <img th:src="${cc.owner.avatar}"
+                                     class="comment-avatar mr-3"
+                                     alt="用户头像">
+                                <div>
+                                    <a th:href="@{/users/profile/{id}(id=${cc.owner.id})}"
+                                       th:style="'color:' + ${cc.owner.primaryPermissionGroup.color}"
+                                       th:text="${cc.owner.name}"
+                                       class="font-weight-bold"></a>
+                                    <div class="text-muted small">
+                                        <span th:text="${timeConverter.formatTime(cc.createdAt, timezone)}"></span>
+                                        <span th:if="${cc.editedAt}">
+                                (编辑于 <span th:text="${timeConverter.formatTime(cc.editedAt, timezone)}"></span>)
+                            </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 评论内容 -->
+                            <div class="mb-3">
+                                <div th:if="${cc.deletedAt}" class="text-muted">
+                                    [评论已删除]
+                                </div>
+                                <div th:unless="${cc.deletedAt}" th:utext="${cc.content}"></div>
+                            </div>
+
+                            <!-- 操作按钮 -->
+                            <div class="comment-actions">
+                                <a href="javascript:;" class="text-primary mr-2"
+                                   th:if="${user != null}"
+                                   th:data-id="${cc.id}"
+                                   sa:hasPermission="comment.delete, comment.delete.other"
+                                   onclick="showReplyForm(this)">
+                                    回复
+                                </a>
+                                <a href="javascript:;"
+                                   class="text-danger"
+                                   th:data-id="${cc.id}"
+                                   sa:hasPermissionOr="comment.delete, comment.delete.other"
+                                   th:if="${cc.deletedAt == null}"
+                                   onclick="deleteComment(this)">
+                                    删除
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 分页 -->
+                <div th:if="${comments.pages > 1}" class="mt-4">
+                    <nav>
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item" th:classappend="${comments.current == 1} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{${'/torrents/' + torrentId} + '?page=' + ${comments.current - 1}}">
+                                    上一页
+                                </a>
+                            </li>
+                            <li class="page-item" th:each="page : ${#numbers.sequence(1, comments.pages)}"
+                                th:classappend="${page == comments.current} ? 'active'">
+                                <a class="page-link"
+                                   th:href="@{${'/torrents/' + torrentId} + '?page=' + ${page}}"
+                                   th:text="${page}"></a>
+                            </li>
+                            <li class="page-item" th:classappend="${comments.current == comments.pages} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{${'/torrents/' + torrentId} + '?page=' + ${comments.current + 1}}">
+                                    下一页
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        document.getElementById('comment-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            fetch('/comments', {
+                method: 'POST',
+                body: new URLSearchParams(formData)
+            }).then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert('评论提交失败');
+                }
+            });
+        });
+
+        function deleteComment(btn) {
+            if (confirm('确定删除该评论？')) {
+                fetch('/comments/' + btn.dataset.id, {
+                    method: 'DELETE'
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    }
+                });
+            }
+        }
+
+        function showReplyForm(btn) {
+            const commentId = btn.dataset.id;
+            // 这里添加回复表单逻辑
+        }
+    </script>
+</th:block>
+</html>

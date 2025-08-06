@@ -1,0 +1,182 @@
+<!-- src/main/resources/templates/admin/permissions/permissionNodes.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/import :: import(title='权限节点分配', headContent=~{::#pageHead})}">
+    <style>
+        .permission-table thead th {
+            background: #f8f9fa;
+            white-space: nowrap;
+        }
+
+        .node-cell {
+            font-family: monospace;
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+</head>
+<body>
+
+<main class="container-fluid my-4 flex-grow-1">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="fas fa-shield-alt mr-2"></i>权限节点管理</h5>
+            <div class="d-flex">
+                <form th:action="@{/admin/permissions/permissionNodes}" method="get" class="form-inline mr-3">
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" name="search"
+                               placeholder="搜索权限节点" th:value="${param.search}">
+                        <div class="input-group-append">
+                            <button class="btn btn-light" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <button class="btn btn-light btn-sm" data-toggle="modal" data-target="#permissionModal">
+                    <i class="fas fa-plus mr-1"></i>新增节点
+                </button>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <table class="table permission-table">
+                <thead>
+                <tr>
+                    <th style="width: 40%">权限节点</th>
+                    <th style="width: 20%">目标权限组</th>
+                    <th style="width: 20%">类型</th>
+                    <th style="width: 20%">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="perm : ${permissions.records}">
+                    <td class="node-cell" th:text="${perm.node}"></td>
+                    <td th:text="${perm.targetGroup}"></td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${perm.targetIsLevelGroup} ? 'badge-info' : 'badge-secondary'"
+                              th:text="${perm.targetIsLevelGroup} ? '等级组' : '普通组'"></span>
+                    </td>
+                    <td nowrap>
+                        <button class="btn btn-sm btn-outline-primary mr-2 edit-perm"
+                                th:attr="data-perm-id=${perm.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger delete-perm"
+                                th:attr="data-perm-id=${perm.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <!-- 分页导航 -->
+            <nav th:if="${permissions.pages > 1}">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${permissions.current == 1} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/permissions/permissionNodes(search=${param.search}, page=1)}">首页</a>
+                    </li>
+                    <li class="page-item" th:classappend="${permissions.current == 1} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/permissions/permissionNodes(search=${param.search}, page=${permissions.current-1})}">上一页</a>
+                    </li>
+                    <li class="page-item" th:each="page : ${#numbers.sequence(1, permissions.pages)}"
+                        th:classappend="${page == permissions.current} ? 'active'">
+                        <a class="page-link"
+                           th:href="@{/admin/permissions/permissionNodes(search=${param.search}, page=${page})}"
+                           th:text="${page}"></a>
+                    </li>
+                    <li class="page-item" th:classappend="${permissions.current == permissions.pages} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/permissions/permissionNodes(search=${param.search}, page=${permissions.current+1})}">下一页</a>
+                    </li>
+                    <li class="page-item" th:classappend="${permissions.current == permissions.pages} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/permissions/permissionNodes(search=${param.search}, page=${permissions.pages})}">尾页</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</main>
+
+<!-- 编辑/新增模态框 -->
+<div class="modal fade" id="permissionModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">权限节点编辑</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <form id="permForm" th:action="@{/admin/permissions/permissionNodes}" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="permId">
+                    <div class="form-group">
+                        <label>权限节点</label>
+                        <input type="text" class="form-control" name="node"
+                               placeholder="例: system:admin:access" required>
+                    </div>
+                    <div class="form-group">
+                        <label>目标权限组 ID</label>
+                        <input type="number" class="form-control" name="targetGroup" required>
+                    </div>
+                    <div class="form-group">
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input"
+                                   id="typeSwitch" name="targetIsLevelGroup">
+                            <label class="custom-control-label" for="typeSwitch">目标为等级权限组</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 编辑权限节点
+    document.querySelectorAll('.edit-perm').forEach(btn => {
+        btn.onclick = function () {
+            const permId = this.getAttribute('data-perm-id');
+            fetch('/admin/permissions/permissionNodes/' + permId)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('permId').value = data.id;
+                    document.querySelector('input[name="node"]').value = data.node;
+                    document.querySelector('input[name="targetGroup"]').value = data.targetGroup;
+                    document.querySelector('#typeSwitch').checked = data.targetIsLevelGroup;
+                    $('#permissionModal').modal('show');
+                });
+        };
+    });
+
+    // 删除权限节点
+    document.querySelectorAll('.delete-perm').forEach(btn => {
+        btn.onclick = function () {
+            const permId = this.getAttribute('data-perm-id');
+            if (confirm('确定要删除此权限节点吗？')) {
+                fetch('/admin/permissions/permissionNodes/' + permId, {
+                    method: 'DELETE'
+                }).then(() => window.location.reload());
+            }
+        };
+    });
+
+    // 重置表单
+    $('#permissionModal').on('hidden.bs.modal', function () {
+        document.getElementById('permForm').reset();
+        document.getElementById('permForm').action = '/admin/permissions/permissionNodes';
+    });
+</script>
+</body>
+</html>

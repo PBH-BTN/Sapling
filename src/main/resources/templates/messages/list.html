@@ -1,0 +1,134 @@
+<!-- 站内信列表页面 src/main/resources/templates/messages/list.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/import :: import(title='我的站内信', headContent=~{::#pageHead})}">
+    <style>
+        .message-item.unread {
+            background-color: #f8f9fa;
+        }
+
+        .message-item:hover {
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/header :: header(${user})}"></div>
+
+<main class="container my-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0"><i class="fas fa-envelope mr-2"></i>我的站内信</h3>
+                    <a th:href="@{/messages/send}" class="btn btn-light btn-sm">
+                        <i class="fas fa-paper-plane mr-1"></i>发送站内信
+                    </a>
+                </div>
+
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        <a th:each="msg : ${messages.records}"
+                           th:href="@{/messages/{id}(id=${msg.id})}"
+                           class="list-group-item list-group-item-action message-item"
+                           th:classappend="${msg.readAt == null} ? 'unread'">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1" th:text="${msg.title}"></h6>
+                                    <small class="text-muted">
+                                        <span th:text="${msg.sender.name}"></span> ·
+                                        <span th:text="${timeConverter.formatTime(msg.createdAt, timezone)}"></span>
+                                    </small>
+                                </div>
+                                <div class="text-right">
+                                    <span th:if="${msg.readAt == null}"
+                                          class="badge badge-pill badge-success">未读</span>
+                                    <span th:if="${msg.readAt != null}"
+                                          class="badge badge-pill badge-secondary">已读</span>
+                                    <button class="btn btn-link text-danger btn-sm ml-2"
+                                            th:if="${msg.deletedAt == null}"
+                                            th:attr="data-msg-id=${msg.id}"
+                                            onclick="deleteMessage(event)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </a>
+                        <div th:if="${messages.records.isEmpty()}" class="text-center text-muted py-4">
+                            <i class="fas fa-inbox fa-2x mb-2"></i>
+                            <p class="mb-0">暂无站内信可读</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 分页导航 -->
+                <nav th:if="${messages.pages > 1}" class="card-footer">
+                    <ul class="pagination justify-content-center mb-0">
+                        <li class="page-item" th:classappend="${messages.current == 1} ? 'disabled'">
+                            <a class="page-link" th:href="@{/messages(page=1)}">首页</a>
+                        </li>
+                        <li class="page-item" th:classappend="${messages.current == 1} ? 'disabled'">
+                            <a class="page-link" th:href="@{/messages(page=${messages.current - 1})}">上一页</a>
+                        </li>
+                        <li class="page-item" th:each="page : ${#numbers.sequence(1, messages.pages)}"
+                            th:classappend="${page == messages.current} ? 'active'">
+                            <a class="page-link" th:href="@{/messages(page=${page})}" th:text="${page}"></a>
+                        </li>
+                        <li class="page-item" th:classappend="${messages.current == messages.pages} ? 'disabled'">
+                            <a class="page-link" th:href="@{/messages(page=${messages.current+1})}">下一页</a>
+                        </li>
+                        <li class="page-item" th:classappend="${messages.current == messages.pages} ? 'disabled'">
+                            <a class="page-link" th:href="@{/messages(page=${messages.pages})}">尾页</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!--&lt;!&ndash; 站内信详情页面（模态框形式） &ndash;&gt;-->
+<!--<div class="modal fade" id="messageModal" tabindex="-1">-->
+<!--    <div class="modal-dialog modal-lg">-->
+<!--        <div class="modal-content">-->
+<!--            <div class="modal-header">-->
+<!--                <h5 class="modal-title" th:text="${message.title}"></h5>-->
+<!--                <button type="button" class="close" data-dismiss="modal">-->
+<!--                    <span>&times;</span>-->
+<!--                </button>-->
+<!--            </div>-->
+<!--            <div class="modal-body">-->
+<!--                <div class="row mb-3">-->
+<!--                    <div class="col-md-6">-->
+<!--                        <small class="text-muted">-->
+<!--                            发件人：<span th:text="${message.sender.name}"></span>-->
+<!--                        </small>-->
+<!--                    </div>-->
+<!--                    <div class="col-md-6 text-right">-->
+<!--                        <small class="text-muted"-->
+<!--                               th:text="${#temporals.format(message.createdAt, 'yyyy-MM-dd HH:mm')}"></small>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="border-top pt-3" th:utext="${message.description}"></div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
+<script>
+    // 删除站内信
+    function deleteMessage(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        const msgId = event.target.closest('button').getAttribute('data-msg-id');
+        if (confirm('确定要删除此消息吗？')) {
+            fetch('/messages/' + msgId, {
+                method: 'DELETE'
+            }).then(() => window.location.reload());
+        }
+    }
+</script>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

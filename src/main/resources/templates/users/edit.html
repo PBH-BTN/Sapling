@@ -1,0 +1,248 @@
+<!-- src/main/resources/templates/user/edit-profile.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sa="http://www.thymeleaf.org/extras/sa-token">
+<head th:replace="~{fragments/import :: import(title='编辑个人资料', headContent=~{::#pageHead})}">
+    <th:block id="pageHead">
+        <style>
+            .bandwidth-input {
+                position: relative;
+            }
+        </style>
+
+    </th:block>
+</head>
+
+
+<body>
+<div th:replace="~{fragments/header :: header(${user})}"></div>
+
+<main class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0"><i class="fas fa-user-edit"></i>编辑个人资料</h3>
+                </div>
+
+                <div class="card-body">
+                    <form th:action="@{/users/profile/edit/{id}(id=${viewUserForm.id})}" method="post"
+                          enctype="multipart/form-data"
+                          th:object="${viewUserForm}">
+
+                        <!-- 头像上传 -->
+                        <div class="form-group text-center mb-4">
+                            <label for="avatarFile" class="d-block cursor-pointer">
+                                <img th:src="@{${viewUserForm.avatar}}"
+                                     id="avatarPreview"
+                                     width="128px"
+                                     height="128px"
+                                     class="avatar-preview shadow rounded-circle"
+                                     alt="头像预览">
+                            </label>
+                            <input type="file"
+                                   id="avatarFile"
+                                   name="avatarFile"
+                                   class="d-none"
+                                   accept="image/*"
+                                   onchange="previewAvatar(event)">
+                            <small class="text-muted d-block mt-2">点击头像更换（建议尺寸 1:1, 512px）</small>
+                        </div>
+
+                        <!-- 用户名 -->
+                        <div class="form-group">
+                            <label class="font-weight-bold">用户名</label>
+                            <input type="text"
+                                   class="form-control"
+                                   th:field="*{name}"
+                                   required
+                                   maxlength="20">
+                            <small class="form-text text-muted">4-20个字符，只能包含字母、数字和下划线</small>
+                        </div>
+
+                        <!-- 主权限组 -->
+                        <div class="form-group" sa:hasPermission="user.edit.primarypermissiongroup">
+                            <label class="font-weight-bold">主权限组</label>
+                            <select class="custom-select" name="primaryGroupId" required>
+                                <option th:each="p : ${viewPrimaryGroups}"
+                                        th:value="${p.id}"
+                                        th:text="${p.name}"
+                                        th:selected="${p.id == viewSelectedPrimaryGroup}"></option> <!-- 动态设置选中项 -->
+                            </select>
+                            <small class="form-text text-muted">选择用户的主权限组</small>
+                        </div>
+
+                        <!-- 头衔 -->
+                        <div class="form-group">
+                            <label class="font-weight-bold">头衔</label>
+                            <input type="text"
+                                   class="form-control"
+                                   th:field="*{title}"
+                                   maxlength="50">
+                            <small class="form-text text-muted">例如：资深种子员</small>
+                        </div>
+
+                        <!-- 签名档 -->
+                        <div class="form-group">
+                            <label class="font-weight-bold">签名档</label>
+                            <textarea class="form-control tinymce-editor"
+                                      id="signatureEditor"
+                                      th:field="*{signature}"
+                                      rows="3"
+                                      maxlength="200"></textarea>
+                            <small class="form-text text-muted">最多200字</small>
+                        </div>
+
+                        <!-- 网络设置 -->
+                        <div class="card border-primary mb-4 mr-2">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0"><i class="fas fa-network-wired mr-2"></i>网络设置</h5>
+                            </div>
+                            <div class="card-body">
+                                <!-- 上传带宽 -->
+                                <div class="form-group bandwidth-input">
+                                    <label class="font-weight-bold">上传带宽 (Mbps)</label>
+                                    <div class="input-group mb-3">
+                                        <input type="number" class="form-control" th:field="*{myBandwidthUpload}"
+                                               min="0" required aria-label="mbps1">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" id="mbps1">Mbps</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 下载带宽 -->
+                                <div class="form-group bandwidth-input">
+                                    <label class="font-weight-bold">下载带宽 (Mbps)</label>
+                                    <div class="input-group mb-3">
+                                        <input type="number" class="form-control" th:field="*{myBandwidthDownload}"
+                                               min="0" required aria-label="mbps2">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" id="mbps2">Mbps</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- ISP -->
+                                <div class="form-group">
+                                    <label class="font-weight-bold">网络服务商</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           th:field="*{myIsp}"
+                                           maxlength="50">
+                                    <small class="form-text text-muted">例如：中国电信</small>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 用户数据修改 -->
+
+                        <div class="card border-warning mb-4" sa:hasPermission="user.edit.data">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0"><i class="fas fa-database mr-2"></i>数据修改</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group bandwidth-input">
+                                    <label class="font-weight-bold">上传量</label>
+                                    <div class="input-group mb-3">
+                                        <input type="number" class="form-control" th:field="*{uploaded}"
+                                               min="0" required aria-label="uploaded">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" id="uploaded">bytes</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group bandwidth-input">
+                                    <label class="font-weight-bold">真实上传量</label>
+                                    <div class="input-group mb-3">
+                                        <input type="number" class="form-control" th:field="*{uploadedReal}"
+                                               min="0" required aria-label="uploaded">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" id="uploadedReal">bytes</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group bandwidth-input">
+                                    <label class="font-weight-bold">下载量</label>
+                                    <div class="input-group mb-3">
+                                        <input type="number" class="form-control" th:field="*{downloaded}"
+                                               min="0" required aria-label="downloaded">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" id="downloaded">bytes</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group bandwidth-input">
+                                    <label class="font-weight-bold">真实下载量</label>
+                                    <div class="input-group mb-3">
+                                        <input type="number" class="form-control" th:field="*{downloadedReal}"
+                                               min="0" required aria-label="downloadReal">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" id="downloadReal">bytes</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group bandwidth-input">
+                                    <label class="font-weight-bold">做种时间</label>
+                                    <div class="input-group mb-3">
+                                        <input type="number" class="form-control" th:field="*{seedTime}"
+                                               min="0" required aria-label="seedTime">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" id="seedTime">ms</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group bandwidth-input">
+                                    <label class="font-weight-bold">下载时间</label>
+                                    <div class="input-group mb-3">
+                                        <input type="number" class="form-control" th:field="*{leechTime}"
+                                               min="0" required aria-label="leechTime">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" id="leechTime">ms</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 操作按钮 -->
+                        <div class="mt-4 d-flex justify-content-between">
+                            <a th:href="@{/users/profile}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times mr-2"></i>取消
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save mr-2"></i>保存更改
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+    // 头像预览功能
+    function previewAvatar(event) {
+        const reader = new FileReader();
+        reader.onload = function () {
+            const preview = document.getElementById('avatarPreview');
+            preview.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+    // 输入验证
+    document.querySelector('form').addEventListener('submit', function (e) {
+        const username = document.querySelector('[name="name"]').value;
+        if (!/^[a-zA-Z0-9_]{4,20}$/.test(username)) {
+            alert('用户名格式不正确');
+            e.preventDefault();
+        }
+    });
+</script>
+</body>
+</html>

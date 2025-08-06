@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<table class="table table-sm" th:fragment="torrentInfo(torrent)">
+    <tbody>
+    <tr>
+        <th scope="row" nowrap>BT Meta 版本:</th>
+        <!--/*@thymesVar id="info" type="com.ghostchu.tracker.sapling.util.bean.TorrentInfo"*/-->
+        <td th:text="${torrent.info.metaVersion()}"></td>
+    </tr>
+    <tr>
+        <th scope="row" nowrap>混合种子:</th>
+        <td th:text="${torrent.info.hybrid()}"></td>
+    </tr>
+    <tr>
+        <th scope="row" nowrap>信息哈希值(info hash) (v1):</th>
+        <td th:text="${torrent.info.infoHashV1()}"></td>
+    </tr>
+    <tr>
+        <th scope="row" nowrap>信息哈希值(info hash) (v2):</th>
+        <td th:text="${torrent.info.infoHashV2()}"></td>
+    </tr>
+    <tr>
+        <th scope="row" nowrap>文件内容总大小:</th>
+        <td th:text="${torrent.info.totalSize() + ' bytes'}"></td>
+    </tr>
+    <tr>
+        <th scope="row" nowrap>文件内容数量:</th>
+        <td th:text="${torrent.info.files()}"></td>
+    </tr>
+    <tr>
+        <th scope="row" nowrap>种子创建工具:</th>
+        <td th:text="${torrent.info.createdBy()}"></td>
+    </tr>
+    <tr>
+        <th scope="row" nowrap>种子创建时间:</th>
+        <td th:text="${timeConverter.formatTime(torrent.info.creationDate(), timezone)}"></td>
+    </tr>
+    <tr>
+        <th scope="row" nowrap>种子创建人:</th>
+        <td th:text="${torrent.info.publisher()}"></td>
+    </tr>
+    <tr>
+        <th scope="row" nowrap>种子备注信息:</th>
+        <td th:text="${torrent.info.comment()}"></td>
+    </tr>
+    </tbody>
+</table>
+</html>

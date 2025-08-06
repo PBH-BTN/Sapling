@@ -1,0 +1,69 @@
+spring:
+  flyway:
+    enabled: false
+    locations: classpath:db/migration
+    validate-on-migrate: true
+  thymeleaf:
+    cache: false
+    encoding: UTF-8
+  data:
+    redis:
+      password: ''
+      database: 0
+      timeout: 10s
+      host: 127.0.0.1
+      jedis:
+        pool:
+          enabled: true
+      port: 6379
+  threads:
+    virtual:
+      enabled: true
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    password: ""
+    username: sapling
+    url: jdbc:postgresql://127.0.0.1:5432/sapling
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+  task:
+    scheduling:
+      pool:
+        size: 20
+  application:
+    name: Sapling
+sa-token:
+  timeout: 2592000
+  token-name: X-Sapling-Token
+  token-style: uuid
+  is-concurrent: true
+  is-log: true
+sapling:
+  tracker:
+    announce:
+      max-parallel: 2000
+server:
+  tomcat:
+    accept-count: 4096
+    max-connections: 10240
+    threads:
+      max: 500
+    relaxed-path-chars: "[,],|,"
+    relaxed-query-chars: "[,],{,},"
+  address: 0.0.0.0
+  port: 18800
+  compression:
+    min-response-size: 128B
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+  http2:
+    enabled: true
+mybatis-plus:
+  global-config:
+    db-config:
+      insert-strategy: ALWAYS
+      update-strategy: ALWAYS
+      id-type: auto

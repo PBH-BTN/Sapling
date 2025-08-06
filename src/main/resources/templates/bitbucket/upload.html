@@ -1,0 +1,65 @@
+<!-- src/main/resources/templates/torrents/upload.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/import :: import(title='向文件仓库上传文件', headContent=~{::#pageHead})}">
+    <th:block id="pageHead">
+        <link href="https://releases.transloadit.com/uppy/v4.13.2/uppy.min.css" rel="stylesheet"/>
+    </th:block>
+<body>
+
+
+<div th:replace="~{fragments/header :: header(${user})}"></div>
+
+<main class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0"><i class="fas fa-cloud-arrow-up mr-2"></i>文件上传</h3>
+                </div>
+                <div class="card-body">
+                    <uppy></uppy>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script type="module">
+    import {
+        Uppy,
+        Dashboard,
+        XHRUpload
+    } from 'https://releases.transloadit.com/uppy/v4.13.2/uppy.min.mjs'
+
+    const maxFileSize = [[${maxFileSize}]];
+    const allowedFileExtensions = [(${allowedFileExtensions})];
+    const uploadEndpoint = '[[@{/bitbucket/upload}]]';
+    const uppy = new Uppy({
+        debug: true,
+        autoProceed: false,
+        restrictions: {
+            maxFileSize: maxFileSize,
+            maxNumberOfFiles: 20,
+            minNumberOfFiles: 1,
+            allowedFileTypes: allowedFileExtensions
+        },
+    })
+    uppy.use(Dashboard, {inline: true, target: 'uppy'})
+        .use(XHRUpload, {
+            endpoint: uploadEndpoint,
+            getResponseData(xhr) {
+                const json = JSON.parse(xhr.responseText)
+                return {
+                    url: json.data.url
+                }
+            }
+        });
+    uppy.on('success', (fileCount) => {
+        console.log(`${fileCount} files uploaded`)
+    })
+</script>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

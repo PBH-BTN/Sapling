@@ -1,0 +1,211 @@
+<!-- src/main/resources/templates/admin/news.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/import :: import(title='站点公告管理', headContent=~{::#pageHead})}">
+    <th:block id="pageHead">
+        <style>
+            .news-table thead th {
+                background: #f8f9fa;
+                white-space: nowrap;
+            }
+
+            .news-content-preview {
+                max-width: 400px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+
+<main class="container-fluid my-4 flex-grow-1">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="fas fa-bullhorn mr-2"></i>公告管理</h5>
+            <button class="btn btn-light btn-sm" data-toggle="modal" data-target="#newsModal">
+                <i class="fas fa-plus mr-1"></i>新增公告
+            </button>
+        </div>
+
+        <div class="card-body">
+            <table class="table news-table">
+                <thead>
+                <tr>
+                    <th style="width: 25%">标题</th>
+                    <th style="width: 45%">内容预览</th>
+                    <th style="width: 15%">创建时间</th>
+                    <th style="width: 15%">过期时间</th>
+                    <th style="width: 15%">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${news.records}">
+                    <td th:text="${item.title}"></td>
+                    <td class="news-content-preview" th:text="${item.description}"></td>
+                    <td th:text="${timeConverter.formatTime(item.createdAt, timezone)}"></td>
+                    <td th:text="${timeConverter.formatTime(item.expiredAt, timezone)}"></td>
+                    <td nowrap>
+                        <button class="btn btn-sm btn-outline-primary mr-2 edit-news"
+                                th:attr="data-news-id=${item.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger delete-news"
+                                th:attr="data-news-id=${item.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <!-- 分页导航 -->
+            <nav th:if="${news.pages > 1}">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${news.current == 1} ? 'disabled'">
+                        <a class="page-link" th:href="@{/admin/site/news(page=1)}">首页</a>
+                    </li>
+                    <li class="page-item" th:classappend="${news.current == 1} ? 'disabled'">
+                        <a class="page-link" th:href="@{/admin/site/news(page=${news.current - 1})}">上一页</a>
+                    </li>
+                    <li class="page-item" th:each="page : ${#numbers.sequence(1, news.pages)}"
+                        th:classappend="${page == news.current} ? 'active'">
+                        <a class="page-link" th:href="@{/admin/site/news(page=${page})}"
+                           th:text="${page}"></a>
+                    </li>
+                    <li class="page-item" th:classappend="${news.current == news.pages} ? 'disabled'">
+                        <a class="page-link" th:href="@{/admin/site/news(page=${news.current + 1})}">下一页</a>
+                    </li>
+                    <li class="page-item" th:classappend="${news.current == news.pages} ? 'disabled'">
+                        <a class="page-link" th:href="@{/admin/site/news(page=${news.pages})}">尾页</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</main>
+
+<!-- 编辑/新增模态框 -->
+<div class="modal fade" id="newsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">公告编辑</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <form id="newsForm" th:action="@{/admin/site/news}" method="post" th:object="${newsForm}">
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="newsId">
+                    <!-- 新增隐藏字段存储时间戳 -->
+                    <input type="hidden" name="expiredAt" id="expiredAtTimestamp" th:field="*{expiredAt}">
+
+                    <div class="form-group">
+                        <label>标题</label>
+                        <input type="text" class="form-control" name="title" th:field="*{title}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>内容</label>
+                        <textarea class="form-control" name="description" rows="8" th:field="*{description}"
+                                  required></textarea>
+                    </div>
+                    <div class="form-group" style="display: none">
+                        <label>过期时间</label>
+                        <div class="col-sm-12" id="htmlTarget">
+                            <label for="expireAtInput" class="form-label">选取时间</label>
+                            <div class="input-group log-event"
+                                 id="expireAtTimePicker"
+                                 data-td-target-input="nearest"
+                                 data-td-target-toggle="nearest">
+                                <!-- 修改后的时间输入框 -->
+                                <input id="expireAtInput"
+                                       type="text"
+                                       class="form-control"
+                                       data-td-target="#expireAtTimePicker"
+                                       placeholder="请选择过期时间"/>
+                                <span class="input-group-text"
+                                      data-td-target="#expireAtTimePicker"
+                                      data-td-toggle="expireAtInput">
+                                  <i class="fas fa-calendar"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 初始化时间选择器
+    const picker = new tempusDominus.TempusDominus(document.getElementById('expireAtInput'), {
+        display: {
+            sideBySide: true,
+            components: {
+                hours: true,
+                minutes: true,
+                seconds: false,
+            },
+        },
+        localization: {
+            locale: 'zh-cn',
+            format: 'yyyy-MM-dd HH:mm'
+        }
+    });
+
+    // 编辑公告
+    document.querySelectorAll('.edit-news').forEach(btn => {
+        btn.onclick = function () {
+            const newsId = this.getAttribute('data-news-id');
+            fetch('/admin/site/news/' + newsId)
+                .then(response => response.json())
+                .then(data => {
+                    // 基础字段填充
+                    document.getElementById('newsId').value = data.id;
+                    document.querySelector('input[name="title"]').value = data.title;
+                    document.querySelector('textarea[name="description"]').value = data.description;
+
+                    // // 处理时间戳
+                    // const expiredAt = parseInt(data.expiredAt);
+                    // if (!isNaN(expiredAt)) {
+                    //     const date = new Date(expiredAt);
+                    //     picker.dates.setValue(date);
+                    //     document.getElementById('expiredAtTimestamp').value = expiredAt;
+                    // }
+
+                    $('#newsModal').modal('show');
+                });
+        };
+    });
+
+    // 删除公告
+    document.querySelectorAll('.delete-news').forEach(btn => {
+        btn.onclick = function () {
+            const newsId = this.getAttribute('data-news-id');
+            if (confirm('确定要删除此公告吗？')) {
+                fetch('/admin/site/news/' + newsId, {
+                    method: 'DELETE'
+                }).then(() => window.location.reload());
+            }
+        };
+    });
+
+    // 重置表单和日期选择器
+    $('#newsModal').on('hidden.bs.modal', function () {
+        document.getElementById('newsForm').reset();
+        picker.dates.setDate(null);
+        document.getElementById('expiredAtTimestamp').value = '';
+        document.getElementById('newsId').value = '';
+    });
+</script>
+</body>
+</html>

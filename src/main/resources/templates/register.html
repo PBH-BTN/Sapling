@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/import :: import(title='用户注册', headContent=~{::#pageHead})}"></head>
+<body>
+<header>
+    <!-- 注册页特殊 Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/}">
+                <i class="fas fa-seedling mr-2"></i>Sapling
+            </a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/auth/login}">登录</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<main class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0"><i class="fas fa-user-plus mr-2"></i>创建新账户</h4>
+                </div>
+                <div class="card-body">
+                    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+                    <form th:action="@{/auth/register}" method="post" th:object="${registerForm}">
+                        <!-- 用户名 -->
+                        <div class="form-group">
+                            <label for="username">用户名(*) (3-30个字符)</label>
+                            <input type="text" id="username" th:field="*{username}"
+                                   class="form-control" required
+                                   th:readonly="*{username}"
+                                   th:classappend="${#fields.hasErrors('username')} ? 'is-invalid'">
+                            <div class="invalid-feedback" th:errors="*{username}"></div>
+                        </div>
+
+                        <!-- 邮箱 -->
+                        <div class="form-group">
+                            <label for="email">电子邮箱(*)</label>
+                            <input type="email" id="email" th:field="*{email}"
+                                   class="form-control" required
+                                   th:readonly="*{email}"
+                                   th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'">
+                            <div class="invalid-feedback" th:errors="*{email}"></div>
+                        </div>
+
+                        <!-- 密码 -->
+                        <div class="form-group">
+                            <label for="password">密码(*) (至少8个字符，包含字母和数字)</label>
+                            <input type="password" id="password" th:field="*{password}"
+                                   class="form-control" required
+                                   th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'">
+                            <div class="invalid-feedback" th:errors="*{password}"></div>
+                        </div>
+
+                        <!-- 确认密码 -->
+                        <div class="form-group">
+                            <label for="confirmPassword">确认密码(*)</label>
+                            <input type="password" id="confirmPassword" th:field="*{confirmPassword}"
+                                   class="form-control" required
+                                   th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid'">
+                            <div class="invalid-feedback" th:errors="*{confirmPassword}"></div>
+                        </div>
+
+                        <!-- 邀请码 -->
+                        <div class="form-group">
+                            <label for="inviteCode">邀请码</label>
+                            <input type="text" id="inviteCode" th:field="*{inviteCode}"
+                                   class="form-control"
+                                   th:readonly="*{inviteCode}"
+                                   th:classappend="${#fields.hasErrors('inviteCode')} ? 'is-invalid'">
+                            <div class="invalid-feedback" th:errors="*{inviteCode}"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="captcha">验证码(*)</label>
+                            <div class="row align-items-center">
+                                <div class="col-7 pr-1">
+                                    <input type="text" id="captcha" name="captcha"
+                                           class="form-control flex-grow-1" required
+                                           th:classappend="${#fields.hasErrors('captcha')} ? 'is-invalid'">
+                                    <div class="invalid-feedback" th:errors="*{captcha}"></div>
+                                </div>
+                                <div class="col-5 pl-1">
+                                    <img src="/auth/captcha" class="img-fluid" style="cursor: pointer;"
+                                         onclick="this.src='/auth/captcha?d='+Date.now()"/>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- 用户协议 -->
+                        <div class="form-group">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input"
+                                       id="agreeTerms" required>
+                                <label class="custom-control-label" for="agreeTerms">
+                                    (*)我已阅读并同意
+                                    <a href="#" class="text-primary">服务条款</a>
+                                    和
+                                    <a href="#" class="text-primary">隐私政策</a>
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-success btn-block">
+                            <i class="fas fa-user-check mr-2"></i>立即注册
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- 使用通用 Footer -->
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>
